@@ -41,7 +41,98 @@ file_name = "08-inferencia"
 - Revisão de Inferência
 
 
+# Inferência Paramétrica
 
+
+## Inferência Paramétrica
+
+- O que é inferência paramétrica?
+
+  + Estimar um **parâmetro** desconhecido de uma <span class="red3">*determinada distribuição*</span>.
+  
+
+- O analista assume que $(x_1,...,x_n)$ são realizações de uma amostra aleatória $(X_1,...,X_n)$, tal que $X_i$ são variáveis aleatórias independentes com essa <span class="red3">*distribuição*</span>.
+
+$$X \sim F(.; \boldsymbol \theta) $$
+
+## Inferência Paramétrica
+
+- Por exemplo, vamos considerar a <span class="red3">**distribuição exponencial**</span>.
+
+$$F(x; \theta) = (1 - e^{-\theta x}) \,\mathbb{1}_{\mathbb{R}_+}(x) $$
+para $\theta \in \mathbb{R}_+$.
+
+- Nosso objetivo é encontrar um **estimador** $\hat{\boldsymbol \theta}$ para $\boldsymbol \theta$.
+
+- Depois de encontrar um estimador, o analista pode obter suas medidas de interesse (média, variância, quantis, probabilidade de sobrevivência, etc.) a partir da distribuição estimada $F(x; \hat{\boldsymbol \theta})$.
+
+
+# Estimador de Máxima Verossimilhança
+
+
+## Estimador de Máxima Verossimilhança
+
+- Como o nome sugere, o EMV é o estimador que maximiza a **verossimilhança** com relação a $\boldsymbol \theta$:
+
+$$\mathcal{L}(\boldsymbol \theta, x_1, \dots, x_n) = \prod_{i=1}^n f_X(x_i; \boldsymbol \theta) $$
+
+- É mais conveniente maximizar a **log-verossimilhança** com relação a $\boldsymbol \theta$.
+
+- Para algumas distribuições, conseguimos encontrar uma forma fechada para o EMV. Caso isso não seja possível, podemos utilizar *otimização númerica* para maximizar a log-verossimilhança.
+
+- No R, o pacote `fitdistrplus` tem funções implementadas para encontrar o EMV de várias distribuições.
+
+```{r echo=FALSE, message=FALSE}
+## Pacotes
+# install.packages("fitdistrplus")  # instalar esse primeiro
+# install.packages("CASdatasets", repos = "http://cas.uqam.ca/pub/R/", type="source")
+require(CASdatasets)
+require(fitdistrplus)
+
+```
+
+
+## <span class="green3">**Exemplo - EMV**</span>
+
+- Dados de indenizações > €500 de seguros automobilísticos contra terceiros na Itália desde 1997.
+
+*(Para instalar o pacote CASdatasets: <http://cas.uqam.ca/>)*
+
+```{r}
+## dados seguro contra terceiros Itália
+data("itamtplcost")
+
+x = itamtplcost$UltimateCost/10^6
+summary(x)
+```
+
+
+## <span class="green3">**Exemplo - EMV**</span>
+
+- Vamos ajustar uma <span class="red3">**distribuição Gama**</span>.
+
+```{r}
+## EMV
+fgamEMV = fitdist(x, "gamma", method="mle")
+fgamEMV
+
+```
+
+
+## <span class="green3">**Exemplo - EMV**</span>
+
+```{r}
+summary(fgamEMV)
+
+```
+
+
+## <span class="green3">**Exemplo - EMV**</span>
+
+```{r fig.align='center', fig.width=9}
+plot(fgamEMV)
+
+```
 
 
 
