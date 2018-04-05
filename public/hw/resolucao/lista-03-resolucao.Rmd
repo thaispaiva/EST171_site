@@ -1,0 +1,80 @@
+---
+title: "Lista de Exercícios 3"
+author: "Thaís Paiva"
+date: "08/04/2018"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+
+## Gráficos no R
+
+
+### Exercício 1
+
+```{r echo=FALSE, fig.align='center', fig.width=5}
+x = seq(0.01,1,by=.01)
+fx = x*log(x)
+
+min.fx = min(fx)
+min.x = x[which(fx==min.fx)]
+
+plot(x, fx, type="l", lwd=2, ylab="f(x)")
+abline(h=min.fx, lty=2, lwd=2, col=2)
+
+```
+
+O ponto de mínimo ocorre para $x=$ `r min.x` e $f(x_{min})$= `r min.fx`.
+
+
+### Exercício 2
+
+A opção `asp=1` fixa a razão entre os eixos $x$ e $y$ em 1. Assim, o gráfico resultante terá as mesmas distâncias em ambos os eixos. Valores de $asp$ maiores do que 1 são úteis para gráficos de latitude e longitude, por exemplo.
+
+
+### Exercício 3
+
+As opções `xaxs` e `yaxs` controlam como o intervalo para plotar cada eixo é calculado. O estilo de eixo `"i"` (internal) encontra um intervalo com divisões suaves que caibam dentro do limite dos dados originais.
+
+
+### Exercício 4
+
+A opção `las` controla a direção em que os *labels* dos eixos são impressos, no caso `las=1` faz com que os números ou nomes das divisões dos eixos sejam impressos sempre na horizontal.
+
+
+### Exercício 5
+
+A opção `xlim` determina os limites inferior e superior para o eixo x. O comando `range(x)` retorna um vetor com o valor mínimo e o valor máximo do vetor `x`, e essa ordem é revertida com a função `rev()`. Assim, a opção `xlim=rev(range(x))` irá fazer com que o gráfico seja plotado com o eixo x revertido, do máximo para o mínimo.
+
+
+## Banco de Dados
+
+
+### Exercício 6
+
+```{r}
+require(ggplot2)
+mpg
+```
+
+Após carregar o pacote e o banco de dados com o comando acima, podemos ver que as variáveis categóricas são: `manufacturer` (marca), `model` (modelo do carro), `trans` (tipo de transmissão), `drv` (tipo de direção), `fl` (tipo de combustível) e `class` (tipo do carro). As variáveis contínuas são: `displ` (capacidade do motor em litros), `year` (ano de fabricação), `cyl` (número de cilindros), `cty` (consumo médio na cidade) e `hpg` (consumo médio na estrada).
+
+
+## Exercício 7
+
+```{r fig.align='center'}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = drv))
+```
+
+
+## Exercício 8
+
+```{r fig.align='center', fig.width=9}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = drv)) +
+  facet_grid(. ~ drv)
+``` 
+

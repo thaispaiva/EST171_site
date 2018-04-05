@@ -1,0 +1,305 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "26 de março de 2018"
+subtitle: "04 - Outras Funções"
+
+output:
+  ioslides_presentation:
+    css: my.css
+    highlight: pygments
+    logo: img/logo_ufmg.png
+    widescreen: true
+    self_contained: false
+    lib_dir: libs
+  beamer_presentation:
+    highlight: pygments
+
+header-includes: \usepackage{amsmath, bm}
+---
+
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
+
+```{r echo=FALSE}
+## EST171 - Métodos Computacionais para Análise de Risco
+## Código da aula 04 - Outras funções
+
+```
+
+```{r echo=FALSE, purl=FALSE}
+file_name = "04-outras_funcoes"
+```
+
+
+
+
+## Aula de Hoje
+
+- Escrevendo suas próprias funções
+
+- Explorando funções para cálculo de Seguros
+
+
+
+## Escrevendo suas próprias funções
+
+- É muito simples escrever sua própria função no R.
+
+- Por exemplo, considere a seguinte função:
+
+$$S = \sum_{i=1}^n \frac{p_i \cdot d_i}{(1+d_i)^i} \qquad \mbox{para } x_i \in \mathbb{R}; \,\, p_i \in [0,1]; \,\, d_i \in \mathbb{R}_{+} $$
+
+
+## Escrevendo suas próprias funções
+
+```{r}
+# Exemplo - função personalizada
+
+f = function(x,p,d){
+  n = length(x)
+  s = sum( p*x/(1+d)^(1:n) )
+  return(s)
+}
+
+```
+
+
+## Escrevendo suas próprias funções
+
+- Se digitarmos `f` no console:
+
+```{r}
+f
+
+```
+
+
+## Escrevendo suas próprias funções
+
+- Para avaliar a função com alguns dados:
+
+```{r}
+f(x=c(100,200,100), p=c(.4,.5,.3), d=0.05)
+
+```
+
+- Se executarmos `f( c(100,200,100), c(.4,.5,.3), 0.05)`, sem o nome dos argumentos, vamos ter o mesmo resultado acima. O R assume que os argumentos estão na ordem em que foram definidos na função.
+
+
+## Escrevendo suas próprias funções
+
+- Também podemos definir um valor *default* para algum argumento da função usando:
+
+`f = function(x,p,d=0.05)`
+
+- Nesse caso, a função pode ser avaliada sem que um outro valor seja especificado para `d`, e o R irá usar o valor *default*.
+
+
+## Escrevendo suas próprias funções
+
+- Essas propriedades são similares para funções do R.
+
+- Por exemplo, a função `qnorm()` computa quantis para a distribuição normal.
+
+```{r}
+qnorm(.95)  # quantil 95% para normal(0,1)
+
+qnorm(.95, mean=1, sd=2)  # quantil 95% para normal(1,4)
+
+```
+
+
+## Escrevendo suas próprias funções
+
+- Também é possível usar funções **recursivamente**. Por exemplo, considere a função:
+
+$$h(n) = \begin{cases} 2\,.h\,.(n-1) + 1 & \mbox{se } n \geq 2 \\ 1 & \mbox{se } n=1 \end{cases} $$
+```{r}
+h = function(n) if(n<=1) return(1) else return(2*h(n-1)+1)
+h(4)
+
+```
+
+
+## Escrevendo suas próprias funções
+
+- A função pode ter <span class="red3">variáveis locais</span> com o mesmo nome de <span class="blue3">variáveis globais</span>.
+
+```{r}
+beta = 0
+slope = function(X,Y){
+  beta = coefficients(lm(Y~X))[2]
+  return(as.numeric(beta))
+}
+attach(cars)
+slope(speed,dist)
+beta
+
+```
+
+
+## Escrevendo suas próprias funções
+
+- Podemos usar a função `cat()` para imprimir comentários ou valores:
+```{r}
+slope = function(X,Y){
+  beta = coefficients(lm(Y~X))[2]
+  cat("A inclinação da reta é ",beta,"\n")
+  return(as.numeric(beta))
+}
+slope(speed,dist)
+
+```
+
+
+# Explorando funções para cálculo de Seguros
+
+
+## Explorando funções para cálculo de Seguros
+
+- Vamos usar uma tabela de vida da França do pacote `lifecontingencies`:
+
+```{r message=FALSE}
+# Funções para cálculo de seguros
+require(lifecontingencies)
+data("demoFrance")
+
+```
+
+- Vamos obter o número de pessoas vivas na idade $x$:
+```{r}
+# carregando a tabela de vida francesa
+alive = demoFrance$TV88_90
+head(alive)   # l_x
+```
+
+
+## Explorando funções para cálculo de Seguros
+
+- Para construir o vetor com o número de mortes a cada idade:
+
+```{r}
+death = -diff(alive)  # d_x
+head(death)
+
+```
+
+
+## Explorando funções para cálculo de Seguros
+
+- Função de Mortalidade de Makeham (função de sobrevivência):
+
+$$S(x) = \exp \left( -ax - \frac{b}{\log c} [c^x -1] \right) \qquad \forall x \geq 0 $$
+para alguns parâmetros $a \geq 0$, $b \geq 0$ e $c > 1$.
+
+```{r echo=FALSE}
+# função de sobrevivência de Makeham
+```
+
+```{r}
+sMakeham = function(x,a,b,c){
+  ifelse( x<0, 1, exp(-a*x-b/log(c)*(c^x-1)) )
+}
+
+```
+
+
+## Explorando funções para cálculo de Seguros
+
+- Função de probabilidade para idades inteiras:
+
+```{r echo=FALSE}
+# função de probabilidade para idades inteiras
+```
+
+```{r}
+dMakeham = function(x,a,b,c){
+  ifelse( x>floor(x), 0, sMakeham(x,a,b,c)-sMakeham(x+1,a,b,c) )
+}
+
+```
+
+$$S(x) - S(x+1) = P(T_0>x) - P(T_0>x+1) = P(x<T_0 \leq x+1) $$
+
+
+## Explorando funções para cálculo de Seguros
+
+- Podemos usar essa função `dMakeham` para estimar os parâmetros $a$, $b$ e $c$ usando Máxima Verossimilhança.
+
+  + *para isso, precisamos remover as mortes ao nascer, e as mortes acima de 105 anos, por restrições da lei de Makeham*
+
+```{r}
+death = death[-c(1,107:111)]  # removendo algumas idades
+ages = 1:(length(death))
+
+# função da log verossimilhança
+loglikMakeham = function(abc){  # abc: vetor com paramêtros
+  - sum( log( dMakeham(ages,abc[1],abc[2],abc[3]))*death[ages] )
+}
+
+```
+
+
+## Explorando funções para cálculo de Seguros
+
+- Podemos usar a função `optim()` para obter estimadores de máxima verossimilhança para os parâmetros da função de mortalidade de Makeham.
+
+```{r warning=FALSE}
+# estimador de máxima verossimilhança
+mlEstim = optim( c(1e-5,1e-4,1.1), loglikMakeham)
+abcml = mlEstim$par
+abcml
+```
+
+
+## Explorando funções para cálculo de Seguros
+
+- Baseado nas idades observadas de morte, podemos calcular a idade esperada de morte:
+
+```{r echo=FALSE}
+# idade esperada de morte
+```
+
+
+```{r}
+sum( (ages+.5)*death )/sum(death)
+```
+
+- Comparando com o estimado de acordo com o modelo de Makeham:
+```{r}
+integrate( sMakeham, 0, Inf, abcml[1], abcml[2], abcml[3])
+
+```
+
+
+## Lidando com funções
+
+- Lidando com erros (Seção 1.3.4)
+
+- Funções eficientes (Seção 1.3.5)
+
+- Integração Numérica (Seção 1.3.6)
+
+
+
+
+
+
+[//]: # ##########################################################
+[//]: # Para gerar arquivo com apenas os comandos do R desta aula
+```{r include=FALSE, purl=FALSE}
+# gerar arquivo com comandos do R
+purl(input=paste0(file_name,".Rmd"),
+     output=paste0("../labs/",file_name,".R"),
+     documentation=0, encoding='UTF-8')
+# Saída: 'filename.R' com apenas o código extraído do arquivo original
+# Opções: documentation=1 inclui o texto no título dos chunks
+# Para excluir um chunk do arquivo final, incluir a opção purl=FALSE no cabeçalho do chunk
+```
+
+
+
+

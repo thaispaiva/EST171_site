@@ -1,0 +1,89 @@
+---
+title: "Lista de Exercícios 2"
+date: "Entrega: **01/04/2018** via Moodle (até as 23:55)"
+output: 
+  html_document: 
+    css: hw.css
+    theme: yeti
+    toc: true
+    toc_float: true
+    fig_caption: true
+---
+
+## 
+
+Você irá entregar essa lista de exercício no Moodle da disciplina. Você deverá submeter o **arquivo pdf gerado automaticamente pelo R** usando *markdown*. Não serão aceitos arquivos em outro formato!
+
+
+## Instruções
+
+- Tenha certeza que as suas versões do R e RStudio estão atualizadas, e que você instalou os pacotes `markdown` e `rmarkdown`.
+
+- Para gerar automaticamente o seu relatório em pdf, você vai precisar instalar o programa MikTek (versão completa): <https://miktex.org/download>. Clique na aba "All downloads" e selecione "Net Installer". Depois de fazer o download, você deve **instalar** o programa no seu computador. Durante a instalação, se pedir para selecionar o tamanho do papel, escolha o tamanho A4. **Cuidado**, este processo pode ser demorado.
+
+- Uma outra opção é instalar o pacote `tinytex` diretamente no R (com o comando `install.packages("tinytex")`). Depois, execute o comando `tinytex::install_tinytex()` para instalar uma versão local do LaTeX. **Importante:** para usar essa opção, você não pode ter o MikTex instalado.
+
+  Reinicie o RStudio e você já deverá conseguir gerar o pdf com a opção **Knit to PDF**. Pode ser que apareça alguma mensagem de erro, mas é possível ignorá-la e gerar o pdf mesmo assim.
+
+- Antes de começar os exercícios, salve o *template* [lista-01.Rmd](lista-01.Rmd) na sua pasta de trabalho com o nome apropriado. Se os acentos não estiverem aparecendo corretamente, antes de editar o arquivo, selecione o menu **File**, a opção **Reopen with Encoding** e selecione `UTF-8`.
+
+- Ao abrir o *template* no RStudio, ele deverá reconhecer automaticamente o formato .Rmd do arquivo. Ao clicar no botão **Knit**, selecione a opção **Knit to PDF**. O R irá executar o comando, e irá criar o relatório em pdf no mesmo diretório que está o seu arquivo que deverá aparecer assim:
+
+<div style= "float:center; position:relative; margin-left:20px">
+```{r echo=FALSE, fig.align="center"}
+knitr::include_graphics("img/cabecalho_pdf.png")
+```
+</div>
+
+- Só comece os exercícios se você conseguir gerar o pdf corretamente. Não serão aceitos arquivos que forem gerados em outros formatos (como word) e depois salvos em pdf.
+
+
+
+## Funções no R
+
+
+1) Escreva uma função `seqrep(n)` que retorne o vetor `(1; 2; 2; 3; 3; 3; : : : ; n)` onde cada inteiro $k$ é repetido $k$ vezes. Qual é o tamanho desse vetor para `n=50`? (Não imprima o vetor todo, acesse apenas o seu tamanho.)
+
+
+2) Dado um vetor `x`, escreva uma função que retorne apenas os elementos de `x` que forem maiores do que a média de `x`.
+
+
+3) Aplique a função do Exercício 2 ao vetor gerado pela função `seqrep(n)` acima para `n=10`, e imprima o resultado.
+
+
+4) Calcule o resultado da expressão:
+$$\sum_{i=10}^{20} (i^2 + 4/i) $$
+
+
+5) Calcule o resultado da expressão:
+$$\sum_{i=1}^{10} \sum_{j=1}^{10} \frac{i^2}{(5+i*j)} $$
+
+
+6) Dado `a = c(-0.2,0.2,0.49,0.5,0.51,.99,1.2)`, qual é a diferença entre as funções `trunc(a)`, `floor(a)`, `ceiling(a)` e `round(a)`?
+
+
+7) Dado um vetor `x`, use a função `ifelse()` para gerar um vetor de mesmo tamanho de `x` com o logaritmo dos números que forem positivos, e `NA` quando os elementos forem negativos. Aplique esta função ao vetor gerado pelos comandos abaixo:
+
+```{r eval=FALSE}
+set.seed(1)
+x = runif(20,-1,1)
+```
+
+
+8) Crie um vetor de tamanho 100, onde os elementos sejam strings da forma "Seg1", "Seg2", ..., "Seg100".
+
+
+## Base de Dados
+
+
+9) Encontre o banco de dados `accident` do pacote `hmmm`. Quantas linhas tem o banco de dados? E quantos acidentes no total foram registrados? Inclua os comandos que você utilizou para encontrar as respostas.
+
+
+10) Qual é a média da variável `Freq` para os acidentes do tipo `uncertain`? Considerando os acidentes do tipo `avoidable`, encontre os valores das demais variáveis (tempo afastado, faixa etária e período do dia) em que houve mais acidentes.
+
+
+## Dicas
+
+- Lembre-se que você pode controlar como o R irá incluir os *chunks* de código com as opções `eval`, `echo`, `results` entre outras. Veja as principais opções no [cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf), ou então mais detalhes no link [https://rmarkdown.rstudio.com/lesson-3.html](https://rmarkdown.rstudio.com/lesson-3.html).
+
+

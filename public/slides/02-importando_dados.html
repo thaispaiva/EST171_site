@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '02 - Importando Dados',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '02-importando_dados_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(02-importando_dados_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="02-importando_dados_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">07 de março de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li>Objetos no <code>R</code>
+
+<ul>
+<li>Vetores</li>
+<li>Matrizes e <em>Arrays</em></li>
+<li>Listas</li>
+</ul></li>
+<li>Importando Dados</li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Objetos no <code>R</code></h2></hgroup><article  id="objetos-no-r">
+
+</article></slide><slide class=""><hgroup><h2>Objetos no <code>R</code></h2></hgroup><article  id="objetos-no-r-1">
+
+<div class="centered">
+<p><em>&ldquo;Everything in S is an object. Every object in S has a class.&rdquo;</em> (Venables &amp; Ripley, 2002)</p></div>
+
+<ul>
+<li>Por exemplo, vamos criar um objeto e dar o valor de \(e^1\):</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>x = exp(1)
+x</pre>
+
+<pre >## [1] 2.718282</pre>
+
+<ul>
+<li>E esse <strong>objeto</strong> será da classe <code>numeric</code>:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>class(x)</pre>
+
+<pre >## [1] &quot;numeric&quot;</pre>
+
+</article></slide><slide class=""><hgroup><h2>Nomes para objetos</h2></hgroup><article  id="nomes-para-objetos">
+
+<ul>
+<li>Podemos usar quase qualquer nome para um <strong>objeto</strong>, exceto alguns nomes que já são usados internamente pelo R, como <code>TRUE</code> ou <code>Inf</code>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>.Machine$double.xmax    # maior numero antes de Inf</pre>
+
+<pre >## [1] 1.797693e+308</pre>
+
+<pre class = 'prettyprint lang-r'>2e+307&lt;Inf   # verdadeiro ou falso?</pre>
+
+<pre >## [1] TRUE</pre>
+
+<pre class = 'prettyprint lang-r'>2e+308&lt;Inf   # verdadeiro ou falso?</pre>
+
+<pre >## [1] FALSE</pre>
+
+</article></slide><slide class=""><hgroup><h2>Nomes para objetos</h2></hgroup><article  id="nomes-para-objetos-1">
+
+<ul>
+<li>Outros objetos e classes já definidos no R:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>0/0   # não está definido</pre>
+
+<pre >## [1] NaN</pre>
+
+<pre class = 'prettyprint lang-r'>pi    # 3,1416...</pre>
+
+<pre >## [1] 3.141593</pre>
+
+<ul>
+<li><p>É possível criar um objeto com o nome <code>pi</code> e sobreescrever o valor <em>default</em>, mas não é uma boa ideia. Assim como não se deve usar <code>T</code> e <code>F</code>.</p></li>
+<li><p>Nomes de objetos também não podem começar com números. Podemos criar os objetos <code>x2</code>, <code>x_2</code>, <code>x.2</code>, mas não <code>2x</code>!</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Criando objetos</h2></hgroup><article  id="criando-objetos">
+
+<ul>
+<li>Podemos criar novos objetos a partir de objetos já existentes.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>y = x+1
+y</pre>
+
+<pre >## [1] 3.718282</pre>
+
+<p>Vai criar o objeto <code>y</code> com valor \(e+1\).</p>
+
+<p><code>y</code>também é da classe <code>numeric</code> e não é uma função de <code>x</code>, ou seja, se o valor <code>x</code> mudar, isso não vai afetar o valor de <code>y</code>.</p>
+
+</article></slide><slide class=""><hgroup><h2>Classes</h2></hgroup><article  id="classes">
+
+<ul>
+<li><p>Um objeto da classe <code>numeric</code> assume valores de \(\mathbb{R}\).</p></li>
+<li><p>Um objeto da classe <code>integer</code> assume valores de \(\mathbb{Z}\).</p></li>
+<li><p>Um objeto da classe <code>logical</code> asssume valores <code>TRUE</code> ou <code>FALSE</code>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Vetores</h2></hgroup><article  id="vetores">
+
+<ul>
+<li>O melhor jeito para armazenar mais de um valor no R é usando um <span class="red3">
+<strong>vetor</strong></span>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>x = c(-1,0,2)
+x</pre>
+
+<pre >## [1] -1  0  2</pre>
+
+<pre class = 'prettyprint lang-r'>y = c(0, 2^x)
+y</pre>
+
+<pre >## [1] 0.0 0.5 1.0 4.0</pre>
+
+</article></slide><slide class=""><hgroup><h2>Vetores</h2></hgroup><article  id="vetores-1">
+
+<ul>
+<li>Criando vetores com sequências de números:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>u = 1:50
+u</pre>
+
+<pre >##  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+## [24] 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46
+## [47] 47 48 49 50</pre>
+
+<pre class = 'prettyprint lang-r'>seq(from=0, to=1, by=.1)</pre>
+
+<pre >##  [1] 0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0</pre>
+
+<pre class = 'prettyprint lang-r'>seq(5,2,-1)</pre>
+
+<pre >## [1] 5 4 3 2</pre>
+
+<pre class = 'prettyprint lang-r'>seq(5,2,len=9)</pre>
+
+<pre >## [1] 5.000 4.625 4.250 3.875 3.500 3.125 2.750 2.375 2.000</pre>
+
+</article></slide><slide class=""><hgroup><h2>Vetores</h2></hgroup><article  id="vetores-2">
+
+<ul>
+<li>Elemento &ldquo;nulo&rdquo;:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>c(NULL,x)</pre>
+
+<pre >## [1] -1  0  2</pre>
+
+<p>Útil para criar objetos para serem usados em um <code>loop</code>:</p>
+
+<pre class = 'prettyprint lang-r'>y = NULL
+for(i in 1:10){
+  y = c(y, max(sin(u[1:i])))
+}
+y</pre>
+
+<pre >##  [1] 0.8414710 0.9092974 0.9092974 0.9092974 0.9092974 0.9092974 0.9092974
+##  [8] 0.9893582 0.9893582 0.9893582</pre>
+
+</article></slide><slide class=""><hgroup><h2>Vetores</h2></hgroup><article  id="vetores-3">
+
+<ul>
+<li>É possível dar <strong>nomes</strong> aos elementos de um vetor:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>names(x) = c(&quot;A&quot;,&quot;B&quot;,&quot;C&quot;)
+x</pre>
+
+<pre >##  A  B  C 
+## -1  0  2</pre>
+
+<ul>
+<li>Acessando os elementos:</li>
+</ul>
+
+<div class="columns-2">
+<pre class = 'prettyprint lang-r'>x[c(3,2)]</pre>
+
+<pre >## C B 
+## 2 0</pre>
+
+<pre class = 'prettyprint lang-r'>x[c(&quot;C&quot;,&quot;B&quot;)]</pre>
+
+<pre >## C B 
+## 2 0</pre></div>
+
+</article></slide><slide class=""><hgroup><h2>Vetores</h2></hgroup><article  id="vetores-4">
+
+<ul>
+<li>Quando fazemos uma operação com dois vetores de tamanhos diferentes, o menor vetor é &ldquo;reciclado&rdquo; até atingir o tamanho do maior vetor.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>x = c(100,200,300,400,500,600,700,800)
+y = c(1,2,3,4)
+x+y</pre>
+
+<pre >## [1] 101 202 303 404 501 602 703 804</pre>
+
+<pre class = 'prettyprint lang-r'>y = c(1,2,3)
+x+y</pre>
+
+<pre >## Warning in x + y: comprimento do objeto maior não é múltiplo do comprimento
+## do objeto menor</pre>
+
+<pre >## [1] 101 202 303 401 502 603 701 802</pre>
+
+</article></slide><slide class=""><hgroup><h2>Vetores</h2></hgroup><article  id="vetores-5">
+
+<ul>
+<li>A vantagem de uma linguagem de programação baseada em vetores é a facilidade de acessar partes de um vetor:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>set.seed(1)
+U = runif(10)
+U</pre>
+
+<pre >##  [1] 0.26550866 0.37212390 0.57285336 0.90820779 0.20168193 0.89838968
+##  [7] 0.94467527 0.66079779 0.62911404 0.06178627</pre>
+
+<pre class = 'prettyprint lang-r'>U[ U &gt; 0.8 ]</pre>
+
+<pre >## [1] 0.9082078 0.8983897 0.9446753</pre>
+
+<pre class = 'prettyprint lang-r'>U[ (U&gt;.4) &amp; (U&lt;.6) ]</pre>
+
+<pre >## [1] 0.5728534</pre>
+
+</article></slide><slide class=""><hgroup><h2>Vetores</h2></hgroup><article  id="vetores-6">
+
+<ul>
+<li>Também é possível retornar os índices dos elementos que satisfazem uma condição:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>which( (U&gt;.4) &amp; (U&lt;.6) )</pre>
+
+<pre >## [1] 3</pre>
+
+<ul>
+<li>E para obter o complementar:
+
+<div class="columns-2">
+</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>which( !((U&gt;.4) &amp; (U&lt;.5)) )</pre>
+
+<pre >##  [1]  1  2  3  4  5  6  7  8  9 10</pre>
+
+<pre class = 'prettyprint lang-r'>which( (U&lt;=.4) | (U&gt;=.5) )</pre>
+
+<pre >##  [1]  1  2  3  4  5  6  7  8  9 10</pre>
+
+</div>
+
+</article></slide><slide class=""><hgroup><h2>Vetores</h2></hgroup><article  id="vetores-7">
+
+<ul>
+<li>Para valores inteiros, podemos usar o teste lógico:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>y</pre>
+
+<pre >## [1] 1 2 3</pre>
+
+<pre class = 'prettyprint lang-r'>y==2</pre>
+
+<pre >## [1] FALSE  TRUE FALSE</pre>
+
+<p>Mas evitar quando fizer comparação entre números não inteiros (por exemplo, usar <code>all.equal</code>).</p>
+
+</article></slide><slide class=""><hgroup><h2>Matrizes e <em>Arrays</em></h2></hgroup><article  id="matrizes-e-arrays">
+
+<ul>
+<li>Uma <span class="red3">
+<strong>matriz</strong></span> é um vetor organizado de acordo com as dimensões especificadas por <code>dim()</code>: número de linhas <code>nrow</code> e número de colunas <code>ncol</code>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>M = matrix(U, nrow=5, ncol=4)
+M</pre>
+
+<pre >##           [,1]       [,2]      [,3]       [,4]
+## [1,] 0.2655087 0.89838968 0.2655087 0.89838968
+## [2,] 0.3721239 0.94467527 0.3721239 0.94467527
+## [3,] 0.5728534 0.66079779 0.5728534 0.66079779
+## [4,] 0.9082078 0.62911404 0.9082078 0.62911404
+## [5,] 0.2016819 0.06178627 0.2016819 0.06178627</pre>
+
+<pre class = 'prettyprint lang-r'>dim(M)</pre>
+
+<pre >## [1] 5 4</pre>
+
+</article></slide><slide class=""><hgroup><h2>Matrizes e <em>Arrays</em></h2></hgroup><article  id="matrizes-e-arrays-1">
+
+<ul>
+<li><p>Podemos acessar os objetos que satisfazem uma condição do mesmo jeito que fizemos com vetores.</p></li>
+<li><p>Por exemplo, se quisermos as linhas de <code>M</code> cujo elemento da última coluna é maior do que 0.8:</p></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>M[ M[,4] &gt; 0.8, ]</pre>
+
+<pre >##           [,1]      [,2]      [,3]      [,4]
+## [1,] 0.2655087 0.8983897 0.2655087 0.8983897
+## [2,] 0.3721239 0.9446753 0.3721239 0.9446753</pre>
+
+</article></slide><slide class=""><hgroup><h2>Matrizes e <em>Arrays</em></h2></hgroup><article  id="matrizes-e-arrays-2">
+
+<ul>
+<li><p>Existem várias funções para manipular matrizes. Por exemplo, a função <code>sweep()</code> pode ser usada para aplicar uma função às linhas (<code>MARGIN=1</code>) ou colunas (<code>MARGIN=2</code>) de uma matriz.</p></li>
+<li><p>Por exemplo, se quisermos somar \(i\) a cada linha \(i\) da matriz <code>M</code>:</p></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>sweep(M, MARGIN=1, STATS=1:nrow(M), FUN=&quot;+&quot;)</pre>
+
+<pre >##          [,1]     [,2]     [,3]     [,4]
+## [1,] 1.265509 1.898390 1.265509 1.898390
+## [2,] 2.372124 2.944675 2.372124 2.944675
+## [3,] 3.572853 3.660798 3.572853 3.660798
+## [4,] 4.908208 4.629114 4.908208 4.629114
+## [5,] 5.201682 5.061786 5.201682 5.061786</pre>
+
+</article></slide><slide class=""><hgroup><h2>Matrizes e <em>Arrays</em></h2></hgroup><article  id="matrizes-e-arrays-3">
+
+<ul>
+<li>A regra de &ldquo;reciclagem&rdquo; também afeta as matrizes.</li>
+</ul>
+
+<div class="columns-1">
+<pre class = 'prettyprint lang-r'>M = matrix(1:8, nrow=4, ncol=3, byrow=FALSE)</pre>
+
+<pre >## Warning in matrix(1:8, nrow = 4, ncol = 3, byrow = FALSE): comprimento dos
+## dados [8] não é um submúltiplo ou múltiplo do número de colunas [3]</pre>
+
+<pre class = 'prettyprint lang-r'>M + c(10,20,30,40,50)</pre>
+
+<pre >## Warning in M + c(10, 20, 30, 40, 50): comprimento do objeto maior não é
+## múltiplo do comprimento do objeto menor</pre>
+
+<pre >##      [,1] [,2] [,3]
+## [1,]   11   55   41
+## [2,]   22   16   52
+## [3,]   33   27   13
+## [4,]   44   38   24</pre></div>
+
+</article></slide><slide class=""><hgroup><h2>Matrizes e <em>Arrays</em></h2></hgroup><article  id="matrizes-e-arrays-4">
+
+<ul>
+<li><p>Função para concatenar vetores: <code>c()</code></p></li>
+<li><p>Funções para concatenar matrizes: <code>rbind()</code> para adicionar linhas, <code>cbind()</code> para adicionar colunas.</p></li>
+</ul>
+
+<div class="columns-2">
+<pre class = 'prettyprint lang-r'>A = matrix(0,2,2)
+A</pre>
+
+<pre >##      [,1] [,2]
+## [1,]    0    0
+## [2,]    0    0</pre>
+
+<pre class = 'prettyprint lang-r'>B = matrix(1,1,2)
+B</pre>
+
+<pre >##      [,1] [,2]
+## [1,]    1    1</pre>
+
+<pre class = 'prettyprint lang-r'>rbind(A,B)</pre>
+
+<pre >##      [,1] [,2]
+## [1,]    0    0
+## [2,]    0    0
+## [3,]    1    1</pre>
+
+<pre class = 'prettyprint lang-r'>cbind(A, t(B))</pre>
+
+<pre >##      [,1] [,2] [,3]
+## [1,]    0    0    1
+## [2,]    0    0    1</pre></div>
+
+</article></slide><slide class=""><hgroup><h2>Matrizes e <em>Arrays</em></h2></hgroup><article  id="matrizes-e-arrays-5">
+
+<ul>
+<li><p><span class="red3">
+<em>Arrays</em></span> são extensões multidimensionais de vetores (matrizes são <em>arrays</em> bidimensionais).</p></li>
+<li><p>Assim como vetores e matrizes, todos os elementos de um <em>array</em> precisam ser do mesmo tipo.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Matrizes e <em>Arrays</em></h2></hgroup><article  id="matrizes-e-arrays-6">
+
+<pre class = 'prettyprint lang-r'>A = array(1:36 ,c(3,6,2))
+A</pre>
+
+<pre >## , , 1
+## 
+##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,]    1    4    7   10   13   16
+## [2,]    2    5    8   11   14   17
+## [3,]    3    6    9   12   15   18
+## 
+## , , 2
+## 
+##      [,1] [,2] [,3] [,4] [,5] [,6]
+## [1,]   19   22   25   28   31   34
+## [2,]   20   23   26   29   32   35
+## [3,]   21   24   27   30   33   36</pre>
+
+</article></slide><slide class=""><hgroup><h2>Listas</h2></hgroup><article  id="listas">
+
+<ul>
+<li>É possível guardar diversos objetos em um único objeto usando uma <span class="red3">
+<strong>lista</strong></span>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>lista = list(subM = M[1:2,], sequence=U)
+lista</pre>
+
+<pre >## $subM
+##      [,1] [,2] [,3]
+## [1,]    1    5    1
+## [2,]    2    6    2
+## 
+## $sequence
+##  [1] 0.26550866 0.37212390 0.57285336 0.90820779 0.20168193 0.89838968
+##  [7] 0.94467527 0.66079779 0.62911404 0.06178627</pre>
+
+<pre class = 'prettyprint lang-r'>names(lista)</pre>
+
+<pre >## [1] &quot;subM&quot;     &quot;sequence&quot;</pre>
+
+</article></slide><slide class=""><hgroup><h2>Listas</h2></hgroup><article  id="listas-1">
+
+<ul>
+<li>Acessando elementos:</li>
+</ul>
+
+<div class="columns-1">
+<pre class = 'prettyprint lang-r'>lista[[2]]</pre>
+
+<pre >##  [1] 0.26550866 0.37212390 0.57285336 0.90820779 0.20168193 0.89838968
+##  [7] 0.94467527 0.66079779 0.62911404 0.06178627</pre>
+
+<pre class = 'prettyprint lang-r'>lista$sequence</pre>
+
+<pre >##  [1] 0.26550866 0.37212390 0.57285336 0.90820779 0.20168193 0.89838968
+##  [7] 0.94467527 0.66079779 0.62911404 0.06178627</pre></div>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Importando Dados</h2></hgroup><article  id="importando-dados">
+
+</article></slide><slide class=""><hgroup><h2>Importando Dados</h2></hgroup><article  id="importando-dados-1">
+
+<ul>
+<li><p>Já vimos como <strong>criar</strong> vários objetos no R, mas muitas vezes precisaremos <span class="blue3">
+<strong>importar</strong></span> objetos e dados de outras fontes.</p></li>
+<li><p>Por exemplo, ao fazer cálculo de seguros de vida, podemos precisar importar <strong>tabelas de vida</strong> ou <strong>histórico de rendimentos</strong>, ou ao precificar seguros de carro, precisaremos de <strong>histórico de indenizações</strong> e <strong>dados sobre as apólices</strong>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Importando Dados</h2></hgroup><article  id="importando-dados-2">
+
+<ul>
+<li><p>Para isso, vamos usar objetos do tipo <em>dataframe</em>, que é uma coleção de vetores nomeados de mesmo tamanho. Funciona como uma planilha ou uma tabela de banco de dados.</p></li>
+<li><p>A função <code>read.table()</code> é usada para importar um <em>dataframe</em> no R.</p>
+
+<ul>
+<li><p>Todas as variáveis no arquivo original devem estar separadas por um caracter definido pelo argumento <code>sep</code> (pode ser espaço, tab, vírgula).</p></li>
+<li><p>Se o <em>dataframe</em> for muito grande para visualizar, podemos usar os comandos <code>head()</code> e <code>tail()</code> para ver as primeiras ou últimas linhas dos dados.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Importando Dados</h2></hgroup><article  id="importando-dados-3">
+
+<ul>
+<li>Para importar os dados, é preciso especificar em qual diretório o arquivo está localizado.</li>
+</ul>
+
+<div class="columns-1">
+<pre class = 'prettyprint lang-r'>setwd(&quot;C:/Documents and Settings/user/Dados&quot;)
+db = read.table(&quot;file.txt&quot;)</pre>
+
+<pre class = 'prettyprint lang-r'>db = read.table(&quot;C:/Documents and Settings/user/Dados/file.txt&quot;)</pre></div>
+
+</article></slide><slide class=""><hgroup><h2>Importando Dados</h2></hgroup><article  id="importando-dados-4">
+
+<ul>
+<li>Vamos importar o banco de dados <code>&#39;extremedatasince1899.csv&#39;</code> com a lista de todos os ciclones tropicais da agência nacional NHC dos EUA entre 1899-2006.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>file = &quot;../datasets/extremedatasince1899.csv&quot;
+StormMax = read.table(file, header=T, sep=&quot;,&quot;)
+head(StormMax, 3)</pre>
+
+<pre >##     Yr Region     Wmax   nao   soi        sst      sstmda sun split
+## 1 1899  Basin 96.64138 -0.64 -0.21 0.05193367 -0.03133333 8.4     0
+## 2 1899   East 90.19791 -0.64 -0.21 0.05193367 -0.03133333 8.4     0
+## 3 1899  Basin 90.35300 -0.64 -0.21 0.05193367 -0.03133333 8.4     0</pre>
+
+</article></slide><slide class=""><hgroup><h2>Importando Dados</h2></hgroup><article  id="importando-dados-5">
+
+<ul>
+<li>Cada coluna é um vetor, tem um nome único e armazena um tipo de variável.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>str(StormMax)   # mostra a estrutura (structure) de um objeto</pre>
+
+<pre >## &#39;data.frame&#39;:    2010 obs. of  9 variables:
+##  $ Yr    : int  1899 1899 1899 1899 1899 1899 1899 1899 1899 1899 ...
+##  $ Region: Factor w/ 5 levels &quot;Basin&quot;,&quot;East&quot;,..: 1 2 1 2 1 1 4 1 2 5 ...
+##  $ Wmax  : num  96.6 90.2 90.4 37.5 51.1 ...
+##  $ nao   : num  -0.64 -0.64 -0.64 -0.64 -0.64 -0.64 -0.64 -0.64 -0.64 -0.64 ...
+##  $ soi   : num  -0.21 -0.21 -0.21 -0.21 -0.21 -0.21 -0.21 -0.21 -0.21 -0.21 ...
+##  $ sst   : num  0.0519 0.0519 0.0519 0.0519 0.0519 ...
+##  $ sstmda: num  -0.0313 -0.0313 -0.0313 -0.0313 -0.0313 ...
+##  $ sun   : num  8.4 8.4 8.4 8.4 8.4 8.4 8.4 8.4 8.4 8.4 ...
+##  $ split : int  0 0 0 0 0 0 0 0 0 0 ...</pre>
+
+<p>Observe que a função <code>read.table</code> converteu variáveis de texto em <code>factors</code>. Isso pode ser evitado usando o argumento <code>stringsAsFactors</code>.</p>
+
+</article></slide><slide class=""><hgroup><h2>Importando Dados </h2><h3> Acessando as variáveis</h3></hgroup><article  id="importando-dados-acessando-as-variaveis">
+
+<ul>
+<li><p>Podemos acessar a terceira coluna usando o seu nome <code>StormMax$Wmax</code> ou com a notação de matriz <code>StormMax[,3]</code>.</p></li>
+<li><p>Podemos usar também a função <code>attach(StormMax)</code> e então acessar as variáveis diretamente com <code>Wmax</code>.</p></li>
+<li><p>Outra opção é usar a função <code>with()</code> ao executar funções com esse <em>dataframe</em>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Manipulando <em>dataframes</em></h2></hgroup><article  id="manipulando-dataframes">
+
+<ul>
+<li>Ordernar a base de acordo com uma variável:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>set.seed(123)
+df = data.frame( x1=rnorm(5), x2=sample(1:2,size=5,replace=T), x3=rnorm(5))
+df</pre>
+
+<pre >##            x1 x2         x3
+## 1 -0.56047565  2  1.2805549
+## 2 -0.23017749  1 -1.7272706
+## 3  1.55870831  2  1.6901844
+## 4  0.07050839  2  0.5038124
+## 5  0.12928774  1  2.5283366</pre>
+
+</article></slide><slide class=""><hgroup><h2>Manipulando <em>dataframes</em></h2></hgroup><article  id="manipulando-dataframes-1">
+
+<ul>
+<li>Ordernar a base de acordo com uma variável:</li>
+</ul>
+
+<p>(crescente em <code>x2</code> e decrescente em <code>x1</code>)</p>
+
+<pre class = 'prettyprint lang-r'>df [ order(df$x2, -df$x1), ]</pre>
+
+<pre >##            x1 x2         x3
+## 5  0.12928774  1  2.5283366
+## 2 -0.23017749  1 -1.7272706
+## 3  1.55870831  2  1.6901844
+## 4  0.07050839  2  0.5038124
+## 1 -0.56047565  2  1.2805549</pre>
+
+</article></slide><slide class=""><hgroup><h2>Importando bases grandes</h2></hgroup><article  id="importando-bases-grandes">
+
+<ul>
+<li><p>Para bases de dados muito grandes, uma estratégia é selecionar algumas colunas para importar, manualmente ou usando uma função do pacote <code>colbycol</code>.</p></li>
+<li><p>Outra opção que pode ser mais rápida é importar uma versão zipada com a função <code>unz</code>.</p></li>
+<li><p>O <code>R</code> usa a memória RAM do computador, e por isso tem um limite do tamanho de dados que podemos carregar. Há alguns pacotes e outras alternativas para trabalhar com bases de dados grandes no R.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><em>Missing data</em></h2></hgroup><article  id="missing-data">
+
+<ul>
+<li><p>Em bases reais, pode haver dados ausentes (<em>missing data</em>). Esse valores normalmente são representados por <code>NA</code>.</p></li>
+<li><p>Para testar se há dados ausentes, use a função <code>is.na()</code>. Ela irá retornar <code>TRUE</code> ou <code>FALSE</code>.</p></li>
+<li><p>Para trabalhar apenas com a parte dos dados completa:</p></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>Xfull = X[!is.na(X)]</pre>
+
+<ul>
+<li>Várias funções no R tem uma opção para como lidar com <em>missing data</em> (<code>na.rm</code> ou <code>na.action</code>).</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Importando Dados </h2><h3> Excel</h3></hgroup><article  id="importando-dados-excel">
+
+<ul>
+<li><p>Planilhas do Excel são um formato comum para armazenamento de dados e comunicação entre profissionais como atuários.</p></li>
+<li><p>Como as planilhas podem ter sub-planilhas com fórmulas conectadas e outras funções, pode ser complicado ler as planilhas corretamente no R. Por isso, é recomendado extrair as informações do Excel usando um ou mais arquivos de texto, para depois importar no R.</p></li>
+<li><p>Para importar planilhas diretamente, ou arquivos de outros softwares, usar o pacote <code>foreign</code>.</p></li>
+</ul></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>

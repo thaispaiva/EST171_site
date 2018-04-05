@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '04 - Outras Funções',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '04-outras_funcoes_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(04-outras_funcoes_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="04-outras_funcoes_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">26 de março de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li><p>Escrevendo suas próprias funções</p></li>
+<li><p>Explorando funções para cálculo de Seguros</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Escrevendo suas próprias funções</h2></hgroup><article  id="escrevendo-suas-proprias-funcoes">
+
+<ul>
+<li><p>É muito simples escrever sua própria função no R.</p></li>
+<li><p>Por exemplo, considere a seguinte função:</p></li>
+</ul>
+
+<p>\[S = \sum_{i=1}^n \frac{p_i \cdot d_i}{(1+d_i)^i} \qquad \mbox{para } x_i \in \mathbb{R}; \,\, p_i \in [0,1]; \,\, d_i \in \mathbb{R}_{+} \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Escrevendo suas próprias funções</h2></hgroup><article  id="escrevendo-suas-proprias-funcoes-1">
+
+<pre class = 'prettyprint lang-r'># Exemplo - função personalizada
+
+f = function(x,p,d){
+  n = length(x)
+  s = sum( p*x/(1+d)^(1:n) )
+  return(s)
+}</pre>
+
+</article></slide><slide class=""><hgroup><h2>Escrevendo suas próprias funções</h2></hgroup><article  id="escrevendo-suas-proprias-funcoes-2">
+
+<ul>
+<li>Se digitarmos <code>f</code> no console:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>f</pre>
+
+<pre >## function(x,p,d){
+##   n = length(x)
+##   s = sum( p*x/(1+d)^(1:n) )
+##   return(s)
+## }</pre>
+
+</article></slide><slide class=""><hgroup><h2>Escrevendo suas próprias funções</h2></hgroup><article  id="escrevendo-suas-proprias-funcoes-3">
+
+<ul>
+<li>Para avaliar a função com alguns dados:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>f(x=c(100,200,100), p=c(.4,.5,.3), d=0.05)</pre>
+
+<pre >## [1] 154.7133</pre>
+
+<ul>
+<li>Se executarmos <code>f( c(100,200,100), c(.4,.5,.3), 0.05)</code>, sem o nome dos argumentos, vamos ter o mesmo resultado acima. O R assume que os argumentos estão na ordem em que foram definidos na função.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Escrevendo suas próprias funções</h2></hgroup><article  id="escrevendo-suas-proprias-funcoes-4">
+
+<ul>
+<li>Também podemos definir um valor <em>default</em> para algum argumento da função usando:</li>
+</ul>
+
+<p><code>f = function(x,p,d=0.05)</code></p>
+
+<ul>
+<li>Nesse caso, a função pode ser avaliada sem que um outro valor seja especificado para <code>d</code>, e o R irá usar o valor <em>default</em>.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Escrevendo suas próprias funções</h2></hgroup><article  id="escrevendo-suas-proprias-funcoes-5">
+
+<ul>
+<li><p>Essas propriedades são similares para funções do R.</p></li>
+<li><p>Por exemplo, a função <code>qnorm()</code> computa quantis para a distribuição normal.</p></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>qnorm(.95)  # quantil 95% para normal(0,1)</pre>
+
+<pre >## [1] 1.644854</pre>
+
+<pre class = 'prettyprint lang-r'>qnorm(.95, mean=1, sd=2)  # quantil 95% para normal(1,4)</pre>
+
+<pre >## [1] 4.289707</pre>
+
+</article></slide><slide class=""><hgroup><h2>Escrevendo suas próprias funções</h2></hgroup><article  id="escrevendo-suas-proprias-funcoes-6">
+
+<ul>
+<li>Também é possível usar funções <strong>recursivamente</strong>. Por exemplo, considere a função:</li>
+</ul>
+
+<p>\[h(n) = \begin{cases} 2\,.h\,.(n-1) + 1 &amp; \mbox{se } n \geq 2 \\ 1 &amp; \mbox{se } n=1 \end{cases} \]</p>
+
+<pre class = 'prettyprint lang-r'>h = function(n) if(n&lt;=1) return(1) else return(2*h(n-1)+1)
+h(4)</pre>
+
+<pre >## [1] 15</pre>
+
+</article></slide><slide class=""><hgroup><h2>Escrevendo suas próprias funções</h2></hgroup><article  id="escrevendo-suas-proprias-funcoes-7">
+
+<ul>
+<li>A função pode ter <span class="red3">
+variáveis locais</span> com o mesmo nome de <span class="blue3">
+variáveis globais</span>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>beta = 0
+slope = function(X,Y){
+  beta = coefficients(lm(Y~X))[2]
+  return(as.numeric(beta))
+}
+attach(cars)
+slope(speed,dist)</pre>
+
+<pre >## [1] 3.932409</pre>
+
+<pre class = 'prettyprint lang-r'>beta</pre>
+
+<pre >## [1] 0</pre>
+
+</article></slide><slide class=""><hgroup><h2>Escrevendo suas próprias funções</h2></hgroup><article  id="escrevendo-suas-proprias-funcoes-8">
+
+<ul>
+<li>Podemos usar a função <code>cat()</code> para imprimir comentários ou valores:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>slope = function(X,Y){
+  beta = coefficients(lm(Y~X))[2]
+  cat(&quot;A inclinação da reta é &quot;,beta,&quot;\n&quot;)
+  return(as.numeric(beta))
+}
+slope(speed,dist)</pre>
+
+<pre >## A inclinação da reta é  3.932409</pre>
+
+<pre >## [1] 3.932409</pre>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Explorando funções para cálculo de Seguros</h2></hgroup><article  id="explorando-funcoes-para-calculo-de-seguros">
+
+</article></slide><slide class=""><hgroup><h2>Explorando funções para cálculo de Seguros</h2></hgroup><article  id="explorando-funcoes-para-calculo-de-seguros-1">
+
+<ul>
+<li>Vamos usar uma tabela de vida da França do pacote <code>lifecontingencies</code>:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'># Funções para cálculo de seguros
+require(lifecontingencies)
+data(&quot;demoFrance&quot;)</pre>
+
+<ul>
+<li>Vamos obter o número de pessoas vivas na idade \(x\):</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'># carregando a tabela de vida francesa
+alive = demoFrance$TV88_90
+head(alive)   # l_x</pre>
+
+<pre >## [1] 100000  99352  99294  99261  99236  99214</pre>
+
+</article></slide><slide class=""><hgroup><h2>Explorando funções para cálculo de Seguros</h2></hgroup><article  id="explorando-funcoes-para-calculo-de-seguros-2">
+
+<ul>
+<li>Para construir o vetor com o número de mortes a cada idade:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>death = -diff(alive)  # d_x
+head(death)</pre>
+
+<pre >## [1] 648  58  33  25  22  20</pre>
+
+</article></slide><slide class=""><hgroup><h2>Explorando funções para cálculo de Seguros</h2></hgroup><article  id="explorando-funcoes-para-calculo-de-seguros-3">
+
+<ul>
+<li>Função de Mortalidade de Makeham (função de sobrevivência):</li>
+</ul>
+
+<p>\[S(x) = \exp \left( -ax - \frac{b}{\log c} [c^x -1] \right) \qquad \forall x \geq 0 \] para alguns parâmetros \(a \geq 0\), \(b \geq 0\) e \(c &gt; 1\).</p>
+
+<pre class = 'prettyprint lang-r'>sMakeham = function(x,a,b,c){
+  ifelse( x&lt;0, 1, exp(-a*x-b/log(c)*(c^x-1)) )
+}</pre>
+
+</article></slide><slide class=""><hgroup><h2>Explorando funções para cálculo de Seguros</h2></hgroup><article  id="explorando-funcoes-para-calculo-de-seguros-4">
+
+<ul>
+<li>Função de probabilidade para idades inteiras:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>dMakeham = function(x,a,b,c){
+  ifelse( x&gt;floor(x), 0, sMakeham(x,a,b,c)-sMakeham(x+1,a,b,c) )
+}</pre>
+
+<p>\[S(x) - S(x+1) = P(T_0&gt;x) - P(T_0&gt;x+1) = P(x&lt;T_0 \leq x+1) \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Explorando funções para cálculo de Seguros</h2></hgroup><article  id="explorando-funcoes-para-calculo-de-seguros-5">
+
+<ul>
+<li><p>Podemos usar essa função <code>dMakeham</code> para estimar os parâmetros \(a\), \(b\) e \(c\) usando Máxima Verossimilhança.</p>
+
+<ul>
+<li><em>para isso, precisamos remover as mortes ao nascer, e as mortes acima de 105 anos, por restrições da lei de Makeham</em></li>
+</ul></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>death = death[-c(1,107:111)]  # removendo algumas idades
+ages = 1:(length(death))
+
+# função da log verossimilhança
+loglikMakeham = function(abc){  # abc: vetor com paramêtros
+  - sum( log( dMakeham(ages,abc[1],abc[2],abc[3]))*death[ages] )
+}</pre>
+
+</article></slide><slide class=""><hgroup><h2>Explorando funções para cálculo de Seguros</h2></hgroup><article  id="explorando-funcoes-para-calculo-de-seguros-6">
+
+<ul>
+<li>Podemos usar a função <code>optim()</code> para obter estimadores de máxima verossimilhança para os parâmetros da função de mortalidade de Makeham.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'># estimador de máxima verossimilhança
+mlEstim = optim( c(1e-5,1e-4,1.1), loglikMakeham)
+abcml = mlEstim$par
+abcml</pre>
+
+<pre >## [1] 4.022473e-04 4.366993e-06 1.123549e+00</pre>
+
+</article></slide><slide class=""><hgroup><h2>Explorando funções para cálculo de Seguros</h2></hgroup><article  id="explorando-funcoes-para-calculo-de-seguros-7">
+
+<ul>
+<li>Baseado nas idades observadas de morte, podemos calcular a idade esperada de morte:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>sum( (ages+.5)*death )/sum(death)</pre>
+
+<pre >## [1] 81.19984</pre>
+
+<ul>
+<li>Comparando com o estimado de acordo com o modelo de Makeham:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>integrate( sMakeham, 0, Inf, abcml[1], abcml[2], abcml[3])</pre>
+
+<pre >## 81.15647 with absolute error &lt; 9.2e-05</pre>
+
+</article></slide><slide class=""><hgroup><h2>Lidando com funções</h2></hgroup><article  id="lidando-com-funcoes">
+
+<ul>
+<li><p>Lidando com erros (Seção 1.3.4)</p></li>
+<li><p>Funções eficientes (Seção 1.3.5)</p></li>
+<li><p>Integração Numérica (Seção 1.3.6)</p></li>
+</ul></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>

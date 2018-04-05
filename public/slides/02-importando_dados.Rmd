@@ -1,0 +1,495 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "07 de março de 2018"
+subtitle: "02 - Importando Dados"
+
+output:
+  ioslides_presentation:
+    css: my.css
+    highlight: pygments
+    logo: img/logo_ufmg.png
+    widescreen: true
+    self_contained: false
+    lib_dir: libs
+  beamer_presentation:
+    highlight: pygments
+
+header-includes: \usepackage{amsmath, bm}
+---
+
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
+
+```{r echo=FALSE}
+## EST171 - Métodos Computacionais para Análise de Risco
+## Código da aula 02-Importando Dados
+```
+
+
+
+## Aula de Hoje
+
+- Objetos no `R`
+  + Vetores
+  + Matrizes e *Arrays*
+  + Listas
+  
+- Importando Dados
+
+
+
+# Objetos no `R`
+
+
+## Objetos no `R`
+
+<div class="centered">
+*"Everything in S is an object. Every object in S has a class."*
+(Venables & Ripley, 2002)
+</div>
+
+- Por exemplo, vamos criar um objeto e dar o valor de $e^1$:
+
+```{r}
+x = exp(1)
+x
+```
+
+- E esse **objeto** será da classe `numeric`:
+
+```{r}
+class(x)
+```
+
+
+## Nomes para objetos
+
+- Podemos usar quase qualquer nome para um **objeto**, exceto alguns nomes que já são usados internamente pelo R, como `TRUE` ou `Inf`.
+
+```{r}
+.Machine$double.xmax    # maior numero antes de Inf
+```
+
+```{r}
+2e+307<Inf   # verdadeiro ou falso?
+2e+308<Inf   # verdadeiro ou falso?
+```
+
+
+## Nomes para objetos
+
+- Outros objetos e classes já definidos no R:
+
+```{r}
+0/0   # não está definido
+```
+
+```{r}
+pi    # 3,1416...
+```
+
+- É possível criar um objeto com o nome `pi` e sobreescrever o valor *default*, mas não é uma boa ideia. Assim como não se deve usar `T` e `F`.
+
+- Nomes de objetos também não podem começar com números. Podemos criar os objetos `x2`, `x_2`, `x.2`, mas não `2x`!
+
+
+## Criando objetos
+
+- Podemos criar novos objetos a partir de objetos já existentes.
+
+```{r}
+y = x+1
+y
+```
+
+Vai criar o objeto `y` com valor $e+1$. 
+
+`y`também é da classe `numeric` e não é uma função de `x`, ou seja, se o valor `x` mudar, isso não vai afetar o valor de `y`.
+
+
+## Classes
+
+- Um objeto da classe `numeric` assume valores de $\mathbb{R}$.
+
+- Um objeto da classe `integer` assume valores de $\mathbb{Z}$.
+
+- Um objeto da classe `logical` asssume valores `TRUE` ou `FALSE`.
+
+
+## Vetores
+
+- O melhor jeito para armazenar mais de um valor no R é usando um <span class="red3">**vetor**</span>.
+
+```{r}
+x = c(-1,0,2)
+x
+```
+
+```{r}
+y = c(0, 2^x)
+y
+```
+
+
+## Vetores
+
+- Criando vetores com sequências de números:
+
+```{r}
+u = 1:50
+u
+```
+
+```{r}
+seq(from=0, to=1, by=.1)
+seq(5,2,-1)
+seq(5,2,len=9)
+```
+
+
+## Vetores
+
+- Elemento "nulo":
+
+```{r}
+c(NULL,x)
+```
+
+Útil para criar objetos para serem usados em um `loop`:
+
+```{r}
+y = NULL
+for(i in 1:10){
+  y = c(y, max(sin(u[1:i])))
+}
+y
+```
+
+
+## Vetores
+
+- É possível dar **nomes** aos elementos de um vetor:
+
+```{r}
+names(x) = c("A","B","C")
+x
+```
+
+- Acessando os elementos:
+
+<div class="columns-2">
+```{r}
+x[c(3,2)]
+```
+
+```{r}
+x[c("C","B")]
+```
+</div>
+
+
+## Vetores
+
+- Quando fazemos uma operação com dois vetores de tamanhos diferentes, o menor vetor é "reciclado" até atingir o tamanho do maior vetor.
+
+```{r}
+x = c(100,200,300,400,500,600,700,800)
+y = c(1,2,3,4)
+x+y
+```
+
+```{r}
+y = c(1,2,3)
+x+y
+```
+
+
+## Vetores
+
+- A vantagem de uma linguagem de programação baseada em vetores é a facilidade de acessar partes de um vetor:
+
+```{r}
+set.seed(1)
+U = runif(10)
+U
+U[ U > 0.8 ]
+U[ (U>.4) & (U<.6) ]
+```
+
+
+## Vetores
+
+- Também é possível retornar os índices dos elementos que satisfazem uma condição:
+```{r}
+which( (U>.4) & (U<.6) )
+```
+
+- E para obter o complementar:
+<div class="columns-2">
+```{r}
+which( !((U>.4) & (U<.5)) )
+```
+
+```{r}
+which( (U<=.4) | (U>=.5) )
+```
+</div>
+
+
+## Vetores
+
+- Para valores inteiros, podemos usar o teste lógico:
+
+```{r}
+y
+y==2
+```
+
+Mas evitar quando fizer comparação entre números não inteiros (por exemplo, usar `all.equal`).
+
+
+## Matrizes e *Arrays*
+
+- Uma <span class="red3">**matriz**</span> é um vetor organizado de acordo com as dimensões especificadas por `dim()`: número de linhas `nrow` e número de colunas `ncol`.
+
+```{r}
+M = matrix(U, nrow=5, ncol=4)
+M
+dim(M)
+```
+
+
+## Matrizes e *Arrays*
+
+- Podemos acessar os objetos que satisfazem uma condição do mesmo jeito que fizemos com vetores.
+
+- Por exemplo, se quisermos as linhas de `M` cujo elemento da última coluna é maior do que 0.8:
+
+```{r}
+M[ M[,4] > 0.8, ]
+```
+
+
+## Matrizes e *Arrays*
+
+- Existem várias funções para manipular matrizes. Por exemplo, a função `sweep()` pode ser usada para aplicar uma função às linhas (`MARGIN=1`) ou colunas (`MARGIN=2`) de uma matriz.
+
+- Por exemplo, se quisermos somar $i$ a cada linha $i$ da matriz `M`:
+```{r}
+sweep(M, MARGIN=1, STATS=1:nrow(M), FUN="+")
+```
+
+
+## Matrizes e *Arrays*
+
+- A regra de "reciclagem" também afeta as matrizes.
+
+<div class="columns-1">
+```{r}
+M = matrix(1:8, nrow=4, ncol=3, byrow=FALSE)
+```
+
+```{r}
+M + c(10,20,30,40,50)
+```
+</div>
+
+
+## Matrizes e *Arrays*
+
+- Função para concatenar vetores: `c()`
+
+- Funções para concatenar matrizes: `rbind()` para adicionar linhas,
+`cbind()` para adicionar colunas.
+
+<div class="columns-2">
+```{r}
+A = matrix(0,2,2)
+A
+B = matrix(1,1,2)
+B
+```
+```{r}
+rbind(A,B)
+cbind(A, t(B))
+```
+</div>
+
+
+## Matrizes e *Arrays*
+
+- <span class="red3">*Arrays*</span> são extensões multidimensionais de vetores (matrizes são *arrays* bidimensionais).
+
+- Assim como vetores e matrizes, todos os elementos de um *array* precisam ser do mesmo tipo.
+
+
+## Matrizes e *Arrays*
+
+```{r}
+A = array(1:36 ,c(3,6,2))
+A
+```
+
+
+## Listas
+
+- É possível guardar diversos objetos em um único objeto usando uma <span class="red3">**lista**</span>.
+
+```{r}
+lista = list(subM = M[1:2,], sequence=U)
+lista
+names(lista)
+```
+
+
+## Listas
+
+- Acessando elementos:
+
+<div class="columns-1">
+```{r}
+lista[[2]]
+lista$sequence
+```
+</div>
+
+
+# Importando Dados
+
+
+## Importando Dados
+
+- Já vimos como **criar** vários objetos no R, mas muitas vezes precisaremos <span class="blue3">**importar**</span> objetos e dados de outras fontes.
+
+- Por exemplo, ao fazer cálculo de seguros de vida, podemos precisar importar **tabelas de vida** ou **histórico de rendimentos**, ou ao precificar seguros de carro, precisaremos de **histórico de indenizações** e **dados sobre as apólices**.
+
+
+## Importando Dados
+
+- Para isso, vamos usar objetos do tipo *dataframe*, que é uma coleção de vetores nomeados de mesmo tamanho. Funciona como uma planilha ou uma tabela de banco de dados. 
+
+- A função `read.table()` é usada para importar um *dataframe* no R.
+  
+  + Todas as variáveis no arquivo original devem estar separadas por um caracter definido pelo argumento `sep` (pode ser espaço, tab, vírgula).
+
+  + Se o *dataframe* for muito grande para visualizar, podemos usar os comandos `head()` e `tail()` para ver as primeiras ou últimas linhas dos dados.
+
+
+## Importando Dados
+
+- Para importar os dados, é preciso especificar em qual diretório o arquivo está localizado.
+
+<div class="columns-1">
+```{r eval=FALSE, purl=FALSE}
+setwd("C:/Documents and Settings/user/Dados")
+db = read.table("file.txt")
+```
+```{r eval=FALSE, purl=FALSE}
+db = read.table("C:/Documents and Settings/user/Dados/file.txt")
+```
+</div>
+
+
+## Importando Dados
+
+- Vamos importar o banco de dados `'extremedatasince1899.csv'` com a lista de todos os ciclones tropicais da agência nacional NHC dos EUA entre 1899-2006.
+
+```{r}
+file = "../datasets/extremedatasince1899.csv"
+StormMax = read.table(file, header=T, sep=",")
+head(StormMax, 3)
+```
+
+
+## Importando Dados
+
+- Cada coluna é um vetor, tem um nome único e armazena um tipo de variável.
+
+```{r}
+str(StormMax)   # mostra a estrutura (structure) de um objeto
+```
+
+Observe que a função `read.table` converteu variáveis de texto em `factors`. Isso pode ser evitado usando o argumento `stringsAsFactors`.
+
+
+## Importando Dados | Acessando as variáveis
+
+- Podemos acessar a terceira coluna usando o seu nome `StormMax$Wmax` ou com a notação de matriz `StormMax[,3]`.
+
+- Podemos usar também a função `attach(StormMax)` e então acessar as variáveis diretamente com `Wmax`.
+
+- Outra opção é usar a função `with()` ao executar funções com esse *dataframe*.
+
+
+## Manipulando *dataframes*
+
+- Ordernar a base de acordo com uma variável:
+
+```{r}
+set.seed(123)
+df = data.frame( x1=rnorm(5), x2=sample(1:2,size=5,replace=T), x3=rnorm(5))
+df
+```
+
+
+## Manipulando *dataframes*
+
+- Ordernar a base de acordo com uma variável:
+
+(crescente em `x2` e decrescente em `x1`)
+
+```{r}
+df [ order(df$x2, -df$x1), ]
+```
+
+
+## Importando bases grandes
+
+- Para bases de dados muito grandes, uma estratégia é selecionar algumas colunas para importar, manualmente ou usando uma função do pacote `colbycol`.
+
+- Outra opção que pode ser mais rápida é importar uma versão zipada com a função `unz`.
+
+- O `R` usa a memória RAM do computador, e por isso tem um limite do tamanho de dados que podemos carregar. Há alguns pacotes e outras alternativas para trabalhar com bases de dados grandes no R.
+
+
+## *Missing data*
+
+- Em bases reais, pode haver dados ausentes (*missing data*). Esse valores normalmente são representados por `NA`. 
+
+- Para testar se há dados ausentes, use a função `is.na()`. Ela irá retornar `TRUE` ou `FALSE`.
+
+- Para trabalhar apenas com a parte dos dados completa:
+
+```{r eval=FALSE, purl=FALSE}
+Xfull = X[!is.na(X)]
+```
+
+- Várias funções no R tem uma opção para como lidar com *missing data* (`na.rm` ou `na.action`).
+
+
+## Importando Dados | Excel
+
+- Planilhas do Excel são um formato comum para armazenamento de dados e comunicação entre profissionais como atuários.
+
+- Como as planilhas podem ter sub-planilhas com fórmulas conectadas e outras funções, pode ser complicado ler as planilhas corretamente no R. Por isso, é recomendado extrair as informações do Excel usando um ou mais arquivos de texto, para depois importar no R.
+
+- Para importar planilhas diretamente, ou arquivos de outros softwares, usar o pacote `foreign`.
+  
+  
+
+[//]: # ##########################################################
+[//]: # Para gerar arquivo com apenas os comandos do R desta aula
+```{r include=FALSE, purl=FALSE}
+# gerar arquivo com comandos do R
+purl("02-importando_dados.Rmd", documentation=0, encoding='UTF-8')
+# Saída: 'filename.R' com apenas o código extraído do arquivo original
+# Opções: documentation=1 inclui o texto no título dos chunks
+# Para excluir um chunk do arquivo final, incluir a opção purl=FALSE no cabeçalho do chunk
+```
+
+
+
+

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '07 - Principais Distribuições Estatísticas',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '07-principais_distribuicoes_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(07-principais_distribuicoes_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="07-principais_distribuicoes_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">04 de abril de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li><p>Principais distribuições estatísticas para Atuária</p>
+
+<ul>
+<li><p>Distribuições contínuas</p></li>
+<li><p>Distribuições discretas</p></li>
+<li><p>Distribuições mistas</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Variáveis Aleatórias</h2></hgroup><article  id="variaveis-aleatorias">
+
+</article></slide><slide class=""><hgroup><h2>Variáveis Aleatórias</h2></hgroup><article  id="variaveis-aleatorias-1">
+
+<ul>
+<li><p>Temos interesse em medir quantias incertas, que podem ser representadas por <strong>variáveis aleatórias</strong>.</p></li>
+<li><p>Variáveis aleatórias são uma representação matemática de eventos incertos.</p></li>
+<li><p>Para isso, precisamos definir o <span class="blue3">
+suporte</span> (valores que pode assumir) e a <span class="blue3">
+distribuição de probabilidade</span> (probabilidades associadas) da nossa variável aleatória.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Variáveis Aleatórias</h2></hgroup><article  id="variaveis-aleatorias-2">
+
+<ul>
+<li><p>Modelos atuariais dependem de suposições sobre a distribuição de probabilidade da variável aleatória de interesse.</p></li>
+<li><p>Por exemplo, se \(X\) é uma v.a. do <strong>valor de uma indenização</strong> ou <strong>tempo de vida futuro</strong>, esperamos que sua distribuição de probabilidade esteja definida em \(\mathbb{R}_{+}\). Ou se \(X\) representa o <strong>número de indenizações</strong>, sua distribuição estará definida em \(\mathbb{N}\).</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Variáveis Aleatórias</h2></hgroup><article  id="variaveis-aleatorias-3">
+
+<ul>
+<li><p>Além do suporte em que a v.a. \(X\) está definida, precisamos determinar a distribuição de probabilidade.</p>
+
+<ul class = 'build'>
+<li><strong>Variáveis discretas</strong>: a distribuição de probabilidade é caracterizada pela função de probabilidade \(p_X(x) = \mathbb{P}(X=x)\) para \(x \in \mathbb{N}\).</li>
+</ul>
+
+<ul class = 'build'>
+<li><strong>Variáveis contínuas</strong>: a disttribuição de probabilidade é definida pela função de densidade \(f_X(x)\) (versão infinitesimal de \(p_X\), tal que \(f_X(x)dx=\mathbb{P}(X \in [x,x+dx])\)).</li>
+</ul>
+
+<ul class = 'build'>
+<li><strong>Variáveis mistas</strong>: a variável tem partes contínua e discreta. Definimos a variável aleatória com a função de distribuição acumulada \(F_X(x) = \mathbb{P}(X \leq x)\).</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Variáveis Aleatórias</h2></hgroup><article  id="variaveis-aleatorias-4">
+
+<ul>
+<li>Para <strong>variáveis discretas</strong>, a função de distribuição é: \[F_X(x) = \sum_{n=0}^{\lfloor x \rfloor} p_X(n) \]</li>
+<li>Para <strong>variáveis contínuas</strong>, a função de distribuição é: \[F_X(x) = \int_{-\infty}^x f_X(y)\, dy \]</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Variáveis Aleatórias</h2></hgroup><article  id="variaveis-aleatorias-5">
+
+<ul>
+<li><p>Vamos ver agora as principais distribuições de probabilidade para aplicações em atuária.</p>
+
+<ul>
+<li>contínuas, discretas, mistas.</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Distribuições contínuas</h2></hgroup><article  id="distribuicoes-continuas">
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas</h2></hgroup><article  id="distribuicoes-continuas-1">
+
+<ul>
+<li><p>Há várias maneiras de se classificar distribuições de probabilidade.</p></li>
+<li><p><span class="blue3">
+<strong>Sistema de Pearson</strong></span>: considere a família de distribuições de probabilidade tal que a densidade satisfaça a seguinte condição (equação diferencial):</p></li>
+</ul>
+
+<p>\[\frac{1}{f_X(x)} \frac{d \, f_X(x)}{dx} = - \frac{a+x}{c_0 + c_1 x + c_2 x^2} \] onde \(a\), \(c_0\), \(c_1\) e \(c_2\) são constantes.</p>
+
+<ul>
+<li>A solução da equação diferencial está definida até a constante \(K\) que pode ser encontrada pela restrição \(\int_{\mathbb{R}} f_X(x)\, dx = 1\).</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas</h2></hgroup><article  id="distribuicoes-continuas-2">
+
+<ul>
+<li><span class="blue3">
+Pearson Tipo 0</span> é obtida quando \(c_1=c_2=0\).</li>
+</ul>
+
+<p>\[f_X(x) = K.\, e^{-(2a+x)x/(2.\,c_0)} \] que é conhecida como <span class="blue3">
+<strong>distribuição Normal</strong></span>.</p>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas</h2></hgroup><article  id="distribuicoes-continuas-3">
+
+<ul>
+<li><span class="blue3">
+Pearson Tipo 1</span> é obtida quando \(c_0 + c_1 x + c_2 x^2\) tem duas raízes reais \(a_1\) e \(a_2\) tal que \(a_1 &lt; 0 &lt; a_2\).</li>
+</ul>
+
+<p>\[f_X(x) = K.\,(x-a_1)^{m_1}.\, (a_2-x)^{m_2} \] que é conhecida como <span class="blue3">
+<strong>distribuição Beta</strong></span>.</p>
+
+<ul>
+<li><span class="blue3">
+Pearson Tipo 2</span> corresponde ao caso em que \(m+1=m_2=m\).</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas</h2></hgroup><article  id="distribuicoes-continuas-4">
+
+<ul>
+<li><span class="blue3">
+Pearson Tipo 3</span> é obtida quando \(c_2 = 0\).</li>
+</ul>
+
+<p>\[f_X(x) = K.\,(c_0 + c_1 x)^m .\, e^{x+c_1} \] que é conhecida como <span class="blue3">
+<strong>distribuição Gama</strong></span>.</p>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas de Pearson</h2></hgroup><article  id="distribuicoes-continuas-de-pearson">
+
+<p><img src="07-principais_distribuicoes_files/figure-html/unnamed-chunk-4-1.png" width="864" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas</h2></hgroup><article  id="distribuicoes-continuas-5">
+
+<ul>
+<li>Outra classe importante de distribuições de probabilidade contínuas é a <span class="blue3">
+<strong>família exponencial</strong></span>, onde a densidade pode ser escrita como:</li>
+</ul>
+
+<p>\[f_X(x) = \exp \left( \sum_{j=1}^d a_j(x).\, \alpha_j(\boldsymbol \theta) + b(x) + \beta(\boldsymbol \theta)\right) \]</p>
+
+<p>onde \(\boldsymbol{\theta} \in \mathbb{R}^d\) é o vetor de parâmetros, e \(a_j\), \(\alpha_j\), \(b\) e \(\beta\) são funções conhecidas.</p>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas</h2></hgroup><article  id="distribuicoes-continuas-6">
+
+<ul>
+<li><p>Várias distribuições conhecidas pertencem à <span class="blue3">
+<strong>família exponencial</strong></span>:</p>
+
+<ul>
+<li><span class="blue3">
+<strong>distribuição exponencial</strong></span>:</li>
+</ul>
+
+<p>\[f_X(x) = \lambda \, e^{-\lambda x} \] com \(d=1\), \(a(x)=x\), \(\alpha(x)=\lambda\), \(b(x)=0\) e \(\beta(\lambda)=\log(\lambda)\).</p>
+
+<ul>
+<li><span class="blue3">
+<strong>distribuição normal</strong></span>:</li>
+</ul>
+
+<p>\[f_X(x) = e^{-(x-\mu)^2/(2 \sigma^2)}/\sqrt{2 \pi \sigma^2} \] com \(d=2\), \(a_1(x)=x^2\), \(\alpha_1(\mu,\sigma^2)=-1/(2\sigma^2)\), \(a_2(x)=x\), \(\alpha_2(\mu,\sigma^2)=\mu/\sigma^2\), \(b(x)=0\) e \(\beta(\mu,\sigma^2)=-\mu^2/(2\sigma^2)-\log(\sqrt{2\pi \sigma^2})\).</p>
+
+<ul>
+<li>outras distribuições de interesse para atuária: <span class="blue3">
+<strong>gama</strong></span>, <span class="blue3">
+<strong>normal inversa</strong></span>.</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições de probabilidade no R</h2></hgroup><article  id="distribuicoes-de-probabilidade-no-r">
+
+<ul>
+<li><p>No R, cada distribuição de probabilidade é implementada por um conjunto de quatro funções e um &ldquo;nome raiz&rdquo; <code>foo</code>:</p>
+
+<ul>
+<li><p><code>dfoo</code> computa a <strong>função de densidade</strong> \(f_X(x)\) ou <strong>função de probabilidade</strong> \(p_X(x)\);</p></li>
+<li><p><code>pfoo</code> computa a <strong>função de distribuição acumulada</strong> \(F_X(x)\);</p></li>
+<li><p><code>qfoo</code> computa o <strong>quantil</strong> \(F_X^{-1}(x)\);</p></li>
+<li><p>e <code>rfoo</code> é a <strong>função para gerar números aleatórios</strong> de acordo com a distribuição de probabilidade.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas no R</h2></hgroup><article  id="distribuicoes-continuas-no-r">
+
+<p><img src="img/continuous_dist.png" width="90%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas no R</h2></hgroup><article  id="distribuicoes-continuas-no-r-1">
+
+<ul>
+<li>Lista completa de distribuições em outros pacotes:</li>
+</ul>
+
+<p><a href='https://cran.r-project.org/web/views/Distributions.html' title=''>https://cran.r-project.org/web/views/Distributions.html</a></p>
+
+<ul>
+<li>Entre os diversos pacotes, <code>actuar</code> e <code>ActuDistns</code> focam em distribuições relevantes para ciências atuariais.</li>
+</ul>
+
+<p>O pacote <code>actuar</code> calcula os momentos \(\mathbb{E}(X^k)\) (função <code>mfoo</code>), valor esperado limitado \(\mathbb{E}(\min(X,l)^k)\) (função <code>levfoo</code>), e a função geradora de momentos \(\mathbb{E}(e^{tX})\) (função <code>mgffoo</code>) para diversas distribuições de probabilidade.</p>
+
+</article></slide><slide class=""><hgroup><h2>Transformações</h2></hgroup><article  id="transformacoes">
+
+<ul>
+<li><p>Em alguns casos, pode ser necessário transformar a distribuição de probabilidade de \(X\):</p>
+
+<ul>
+<li>translação \(X+c\);</li>
+<li>mudança de escala \(\lambda X\);</li>
+<li>potência \(X^{\alpha}\);</li>
+<li>inverso \(1/X\);</li>
+<li>logaritmo \(\log(X)\);</li>
+<li>exponencial \(\exp(X)\);</li>
+<li>razão de chances \(X / (1-X)\).</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Transformações</h2></hgroup><article  id="transformacoes-1">
+
+<ul>
+<li>Para encontrar as densidades das variáveis após alguma transformação:</li>
+</ul>
+
+<p>\[f_Y(y) = \left| \frac{d}{dy} \left( g^{-1}(y) \right) \right| \cdot f_X\left( g^{-1}(y) \right)\] onde \(Y = g(Y)\) e \(g\) é uma transformação monótona.</p>
+
+</article></slide><slide class=""><hgroup><h2>Transformações de \(X\sim Gama(2,1)\)</h2></hgroup><article  id="transformacoes-de-xsim-gama21">
+
+<p><img src="07-principais_distribuicoes_files/figure-html/unnamed-chunk-6-1.png" width="864" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas</h2></hgroup><article  id="distribuicoes-continuas-7">
+
+<ul>
+<li><span class="blue3">
+<strong>Distribuição Uniforme</strong></span>: distribuição contínua com suporte finito.</li>
+</ul>
+
+<p>\[f_X(x) = \mathbb{1}_{[0,1]}(x) \]</p>
+
+<p>É usada para gerar amostra de outras distribuições de probabilidade (se \(U\sim Unif(0,1)\), \(Y = F_X(U)^{-1}\) tem distribuição \(F_X\)).</p>
+
+<p>No R: <code>?dunif</code></p>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas</h2></hgroup><article  id="distribuicoes-continuas-8">
+
+<ul>
+<li><span class="blue3">
+<strong>Distribuição Beta</strong></span>:</li>
+</ul>
+
+<p>\[f_X(x) = \frac{x^{a-1}(1-x)^{b-1}}{\beta(a,b)} \cdot \mathbb{1}_{[0,1]}(x) \] \[F_X(x) = \frac{\beta(a,b,x)}{a,b} \]</p>
+
+<p>onde \(\beta(.,.)\) é a <a href='https://pt.wikipedia.org/wiki/Fun%C3%A7%C3%A3o_beta' title=''>função beta</a>, e \(\beta(.,.,.)\) é a <a href='https://pt.wikipedia.org/wiki/Fun%C3%A7%C3%A3o_beta#Fun%C3%A7%C3%A3o_beta_incompleta' title=''>função beta incompleta</a>.</p>
+
+<ul>
+<li><p>Caso especial: quando \(a=b=1\), temos a distribuição uniforme.</p></li>
+<li><p>Quando \(a,b&lt;1\), a densidade tem formato de &ldquo;U&rdquo;; quando \(a,b&gt;1\), a densidade é unimodal; outros formatos no <a href='https://en.wikipedia.org/wiki/Beta_distribution#Shapes' title=''>link</a>.</p>
+
+<p>No R: <code>?dbeta</code></p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas</h2></hgroup><article  id="distribuicoes-continuas-9">
+
+<ul>
+<li><p><span class="blue3">
+<strong>Família Gama</strong></span>: família de transformações da distribuição gama, com valores contínuos positivos.</p></li>
+<li><p>Seja \(X \sim Gama(\alpha, 1)\). A transformação da <strong>família gama</strong> é dada por \(Y=X^{1/\tau}/\lambda\) com \(\tau&gt;0\).</p></li>
+</ul>
+
+<p>\[f_Y(y) = \frac{\lambda^{\tau \alpha}}{\Gamma(\alpha)} \tau \, y^{\alpha \tau - 1} e^{-(\lambda y)^\tau} \] \[F_Y(y) = \Gamma(\alpha, (\lambda y)^\tau)/\Gamma(\alpha)\] onde \(\Gamma(.,.)\) denota a <a href='https://pt.wikipedia.org/wiki/Fun%C3%A7%C3%A3o_gama' title=''>função gama incompleta</a>.</p>
+
+<ul>
+<li>Quando \(\tau&lt;0\), temos a <strong>família gama inversa</strong>.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas</h2></hgroup><article  id="distribuicoes-continuas-10">
+
+<p><img src="img/dist_gama.png" width="90%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições contínuas</h2></hgroup><article  id="distribuicoes-continuas-11">
+
+<ul>
+<li><span class="blue3">
+<strong>Pareto</strong></span>: distribuição de cauda pesada com parâmetros \((\alpha, \theta)\).</li>
+</ul>
+
+<p>\[f_X(x) = \frac{\alpha}{\theta} \left( \frac{\theta}{\theta+x} \right)^{\alpha+1} \] para \(x, \alpha, \theta&gt;0\).</p>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Distribuições discretas</h2></hgroup><article  id="distribuicoes-discretas">
+
+</article></slide><slide class=""><hgroup><h2>Distribuições discretas</h2></hgroup><article  id="distribuicoes-discretas-1">
+
+<ul>
+<li><span class="blue3">
+<strong>Família Sundt (a, b, 0)</strong></span>: distribuições que satisfazem a relação:</li>
+</ul>
+
+<p>\[\frac{\mathbb{P}(X=k+1)}{\mathbb{P}(X=k)} = a + \frac{b}{k} \] para \(k \in \mathbb{N}\) e \(a,b \geq 0\).</p>
+
+<ul>
+<li>Essa relação recursiva pode ser vista como uma simplificação discreta do sistema de Pearson.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições discretas</h2></hgroup><article  id="distribuicoes-discretas-2">
+
+<ul>
+<li><p><span class="blue3">
+<strong>Distribuição Binomial</strong></span>: quando \(a=-p/(1-p)\) e \(b=p(n+1)/(1-p)\);</p></li>
+<li><p><span class="blue3">
+<strong>Distribuição Poisson</strong></span>: quando \(a=0\) e \(b=\lambda\);</p></li>
+<li><p><span class="blue3">
+<strong>Distribuição Binomial Negativa</strong></span>: quando \(a=1-p\) e \(b=(1-p)(m-1)\).</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições discretas</h2></hgroup><article  id="distribuicoes-discretas-3">
+
+<ul>
+<li>A <span class="blue3">
+<strong>família exponencial</strong></span> também inclue algumas distribuições discretas com função de probabilidade:</li>
+</ul>
+
+<p>\[p_X(k) = \exp \left( \sum_{j=1}^d a_j(k) \alpha_j(\theta) + b(k) + \beta(\theta)\right)\]</p>
+
+<ul>
+<li><p><span class="blue3">
+<strong>Bernoulli</strong></span>: \(d=1\), \(a(x)=x\), \(\alpha(p)=\log(p/(1-p))\), \(b(x)=0\) e \(\beta(p)=\log(1-p)\);</p></li>
+<li><p><span class="blue3">
+<strong>Poisson</strong></span>: \(d=1\), \(a(x)=x\), \(\alpha(\lambda)=\lambda\), \(b(x)=-\log(x!)\) e \(\beta(\lambda)=-\lambda\).</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições discretas no R</h2></hgroup><article  id="distribuicoes-discretas-no-r">
+
+<ul>
+<li><p>Assim como as distribuições contínuas, as distribuições discretas também estão implementadas no R:</p>
+
+<ul>
+<li><p><code>dfoo</code> calcula a massa de probabilidade \(p_X\);</p></li>
+<li><p><code>pfoo</code> calcula a função de distribuição acumulada \(F_X\);</p></li>
+<li><p><code>qfoo</code> calcula o quantil \(F_X^{-1}\);</p></li>
+<li><p>e <code>rfoo</code> gera números aleatórios.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições discretas no R</h2></hgroup><article  id="distribuicoes-discretas-no-r-1">
+
+<ul>
+<li><p>Algumas das principais distribuições discretas que vamos usar são:</p>
+
+<ul>
+<li><p><span class="blue3">
+<strong>Binomial (n,p)</strong></span> (no R <code>?dbinom</code>);</p></li>
+<li><p><span class="blue3">
+<strong>Poisson (\(\lambda\))</strong></span> (no R <code>?dpois</code>);</p></li>
+<li><p><span class="blue3">
+<strong>Binomial Negativa (m,p)</strong></span> (no R <code>?dnbinom</code>).</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Distribuições mistas</h2></hgroup><article  id="distribuicoes-mistas">
+
+</article></slide><slide class=""><hgroup><h2>Distribuições mistas</h2></hgroup><article  id="distribuicoes-mistas-1">
+
+<ul>
+<li><p>Distribuições mistas são obtidas a partir de mistura entre variáveis aleatórias discretas e contínuas.</p></li>
+<li><p>A função de distribuição tem partes contínuas, e pontos de descontinuidade.</p></li>
+<li><p>Por exemplo, uma <span class="blue3">
+<strong>distribuição gama modificada em zero</strong></span> tem função de distribuição:</p></li>
+</ul>
+
+<p>\[F_X(x) = p.\,\mathbb{1}_{x \geq 0} + (1-p).\,\frac{\Gamma(\alpha,\lambda x)}{\Gamma(\alpha)}\]</p>
+
+<ul>
+<li><p>\(X\) tem função de densidade <em>imprópria</em> \(f_X(x) = (1-p) \lambda^\alpha x^{\alpha-1} e^{-\lambda x}/\Gamma(\alpha)\).</p></li>
+<li><p>Similarmente, também podemos definir outras variáveis com pontos de massa discretos.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições mistas</h2></hgroup><article  id="distribuicoes-mistas-2">
+
+<ul>
+<li><p><span class="green3">
+<strong>Exemplo 1</strong></span>: Modelo para taxa de destruição em seguros:</p>
+
+<ul>
+<li><p>Vamos considerar a variável aleatória \(X = L/d\), onde \(L\) é o valor da perda e \(d\) é a perda máxima definida no contrato.</p></li>
+<li><p>Por definição, \(X \in [0,1]\), e pode ter um <strong>ponto de massa em 1</strong> quando o objeto segurado é completamente destruído (perda total).</p></li>
+<li><p>Para modelar essa v.a., vamos usar uma <span class="blue3">
+<strong>distribuição beta modificada em 1</strong></span>.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições mistas</h2></hgroup><article  id="distribuicoes-mistas-3">
+
+<p><span class="blue3">
+<strong>Distribuição beta modificada em 1:</strong></span></p>
+
+<p>É a distribuição de \(X=BY\), onde \(Y\sim Beta(a,b)\) e \(B\sim Bern(q)\).</p>
+
+<ul>
+<li>Função de distribuição:</li>
+</ul>
+
+<p>\[F_X(x) = (1-q) .\, \frac{\beta(a,b,x)}{\beta} + q .\, \mathbb{1}_{x \geq 1} \]</p>
+
+<ul>
+<li>Função de densidade <em>imprópria</em>: \(f_X(x) = (1-q) \, x^{a-1} \, (1-x)^{b-1} / \beta(a,b)\).</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições mistas - Exemplo</h2></hgroup><article  id="distribuicoes-mistas---exemplo">
+
+<ul>
+<li>Como definir essas funções no R:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>dbetaOM = function(x, prob, a, b)
+  dbeta(x, a, b)*(1-prob)*(x != 1) + prob*(x == 1)
+
+pbetaOM = function(q, prob, a, b)
+  pbeta(q, a, b)*(1-prob) + prob*(q &gt;= 1)</pre>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições mistas</h2></hgroup><article  id="distribuicoes-mistas-4">
+
+<ul>
+<li><p><strong>Mistura de distribuições</strong>: podemos selecionar uma distribuição aleatoriamente de um conjunto finito de distribuições.</p></li>
+<li><p>Considere o conjunto de distribuições \((F_1,\dots,F_p)\) com pesos \(\omega_1,\dots,\omega_p \in [0,1]\). A distribuição escolhida é \(\Theta\) tal que \(\mathbb{P}(\Theta=i)=\omega_i\) para \(i=1,\dots,p\).</p></li>
+<li><p>Essa mistura é caracterizada pela função de distribuição:</p></li>
+</ul>
+
+<p>\[F_X(x) = \sum_{i=1}^p \omega_i \, F_i(x)\] - Se as distribuições \(F_i\) forem diferenciáveis, a densidade da mistura é dada por \(f_X(x) = \sum_{i=1}^p \omega_i \, f_i(x)\).</p>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições mistas</h2></hgroup><article  id="distribuicoes-mistas-5">
+
+<ul>
+<li><span class="green3">
+<strong>Exemplo 2:</strong></span> mistura de duas normais \(N(m_1, s^2_1)\)e \(N(m_2, s^2_2)\)</li>
+</ul>
+
+<p>\[f_X(x) = p.\, \frac{e^{-(x-m_1)^2/(2s^2_1)}}{\sqrt{2\pi s^2_1}} + (1-p) .\, \frac{e^{-(x-m_2)^2/(2s^2_2)}}{\sqrt{2\pi s^2_2}} \] com \(p \in [0,1]\) e \(x \in \mathbb{R}\).</p>
+
+<ul>
+<li>Essa distribuição está implementada nos pacotes <code>mixtools</code> e <code>norm1mix</code>.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições mistas</h2></hgroup><article  id="distribuicoes-mistas-6">
+
+<ul>
+<li><span class="green3">
+<strong>Exemplo 3:</strong></span> mistura de uma distribuição com cauda normal e uma distribuição com <em>cauda pesada</em>. Por exemplo, \(Gama(\nu, \lambda)\) e \(Pareto(\alpha,\theta)\).</li>
+</ul>
+
+<p>\[f_X(x) = p.\, \frac{\lambda^\nu x^{\nu-1}e^{-\lambda x}}{\Gamma(\nu)} + (1-p).\,\alpha/\theta \left( \frac{\theta}{\theta+x} \right)^{\alpha+1} \] com \(p \in [0,1]\) e \(x \in \mathbb{R}_{+}\).</p>
+
+</article></slide><slide class=""><hgroup><h2>Distribuições mistas</h2></hgroup><article  id="distribuicoes-mistas-7">
+
+<ul>
+<li>Implementando no R:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>library(actuar)   # carregando pacote com dist. pareto
+
+dmixgampar &lt;- function(x, prob, nu, lambda, alpha, theta)
+  prob*dgamma(x, nu, lambda) + (1-prob)*dpareto(x, alpha, theta)
+
+pmixgampar &lt;- function(q, prob, nu, lambda, alpha, theta)
+  prob*pgamma(q, nu, lambda) + (1-prob)*ppareto(q, alpha, theta)</pre></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
