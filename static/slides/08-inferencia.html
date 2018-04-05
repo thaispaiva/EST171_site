@@ -120,6 +120,395 @@
 
 <ul>
 <li>Revisão de Inferência</li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Inferência Paramétrica</h2></hgroup><article  id="inferencia-parametrica">
+
+</article></slide><slide class=""><hgroup><h2>Inferência Paramétrica</h2></hgroup><article  id="inferencia-parametrica-1">
+
+<ul>
+<li><p>O que é inferência paramétrica?</p>
+
+<ul>
+<li>Estimar um <strong>parâmetro</strong> desconhecido de uma <span class="red3">
+<em>determinada distribuição</em></span>.</li>
+</ul></li>
+<li><p>O analista assume que \((x_1,...,x_n)\) são realizações de uma amostra aleatória \((X_1,...,X_n)\), tal que \(X_i\) são variáveis aleatórias independentes com essa <span class="red3">
+<em>distribuição</em></span>.</p></li>
+</ul>
+
+<p>\[X \sim F(.; \boldsymbol \theta) \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Inferência Paramétrica</h2></hgroup><article  id="inferencia-parametrica-2">
+
+<ul>
+<li>Por exemplo, vamos considerar a <span class="red3">
+<strong>distribuição exponencial</strong></span>.</li>
+</ul>
+
+<p>\[F(x; \theta) = (1 - e^{-\theta x}) \,\mathbb{1}_{\mathbb{R}_+}(x) \] para \(\theta \in \mathbb{R}_+\).</p>
+
+<ul>
+<li><p>Nosso objetivo é encontrar um <strong>estimador</strong> \(\hat{\boldsymbol \theta}\) para \(\boldsymbol \theta\).</p></li>
+<li><p>Depois de encontrar um estimador, o analista pode obter suas medidas de interesse (média, variância, quantis, probabilidade de sobrevivência, etc.) a partir da distribuição estimada \(F(x; \hat{\boldsymbol \theta})\).</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Estimador de Máxima Verossimilhança</h2></hgroup><article  id="estimador-de-maxima-verossimilhanca">
+
+</article></slide><slide class=""><hgroup><h2>Estimador de Máxima Verossimilhança</h2></hgroup><article  id="estimador-de-maxima-verossimilhanca-1">
+
+<ul>
+<li>Como o nome sugere, o EMV é o estimador que maximiza a <strong>verossimilhança</strong> com relação a \(\boldsymbol \theta\):</li>
+</ul>
+
+<p>\[\mathcal{L}(\boldsymbol \theta, x_1, \dots, x_n) = \prod_{i=1}^n f_X(x_i; \boldsymbol \theta) \]</p>
+
+<ul>
+<li><p>É mais conveniente maximizar a <strong>log-verossimilhança</strong> com relação a \(\boldsymbol \theta\).</p></li>
+<li><p>Para algumas distribuições, conseguimos encontrar uma forma fechada para o EMV. Caso isso não seja possível, podemos utilizar <em>otimização númerica</em> para maximizar a log-verossimilhança.</p></li>
+<li><p>No R, o pacote <code>fitdistrplus</code> tem funções implementadas para encontrar o EMV de várias distribuições.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - EMV</strong></span></h2></hgroup><article  id="exemplo---emv">
+
+<ul>
+<li>Dados de indenizações &gt; €500 de seguros automobilísticos contra terceiros na Itália desde 1997.</li>
+</ul>
+
+<p><em>(Para instalar o pacote CASdatasets: <a href='http://cas.uqam.ca/' title=''>http://cas.uqam.ca/</a>)</em></p>
+
+<pre class = 'prettyprint lang-r'>## dados seguro contra terceiros Itália
+data(&quot;itamtplcost&quot;)
+
+x = itamtplcost$UltimateCost/10^6
+summary(x)</pre>
+
+<pre >##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+## 0.002161 0.627719 0.844011 1.015352 1.224316 6.639500</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - EMV</strong></span></h2></hgroup><article  id="exemplo---emv-1">
+
+<ul>
+<li>Vamos ajustar uma <span class="red3">
+<strong>distribuição Gama</strong></span>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## estimador máxima verossimilhança
+fgamEMV = fitdist(x, &quot;gamma&quot;, method=&quot;mle&quot;)
+fgamEMV</pre>
+
+<pre >## Fitting of the distribution &#39; gamma &#39; by maximum likelihood 
+## Parameters:
+##       estimate Std. Error
+## shape 2.398655  0.1489696
+## rate  2.362486  0.1631542</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - EMV</strong></span></h2></hgroup><article  id="exemplo---emv-2">
+
+<pre class = 'prettyprint lang-r'>summary(fgamEMV)</pre>
+
+<pre >## Fitting of the distribution &#39; gamma &#39; by maximum likelihood 
+## Parameters : 
+##       estimate Std. Error
+## shape 2.398655  0.1489696
+## rate  2.362486  0.1631542
+## Loglikelihood:  -385.1474   AIC:  774.2947   BIC:  782.5441 
+## Correlation matrix:
+##           shape      rate
+## shape 1.0000000 0.8992915
+## rate  0.8992915 1.0000000</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - EMV</strong></span></h2></hgroup><article  id="exemplo---emv-3">
+
+<pre class = 'prettyprint lang-r'>plot(fgamEMV)</pre>
+
+<p><img src="08-inferencia_files/figure-html/unnamed-chunk-8-1.png" width="768" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Método de Momentos</h2></hgroup><article  id="metodo-de-momentos">
+
+</article></slide><slide class=""><hgroup><h2>Método de Momentos</h2></hgroup><article  id="metodo-de-momentos-1">
+
+<ul>
+<li><p>Também podemos encontrar estimadores para os parâmetros usando o Método de Momentos.</p></li>
+<li><p>Ele consiste em encontrar o valor de \(\boldsymbol \theta\) que iguala os momentos teóricos aos momentos empíricos:</p></li>
+</ul>
+
+<p>\[\mathbb{E}(X^k | \boldsymbol \theta) = \frac{1}{n}\sum_{i=1}^n x_i^k \] para \(k=1,\dots,d\), onde \(d\) é o número de parâmetros a estimar, e \(x_i\) são as \(n\) observações da variável \(X\).</p>
+
+</article></slide><slide class=""><hgroup><h2>Método de Momentos</h2></hgroup><article  id="metodo-de-momentos-2">
+
+<ul>
+<li><p>Por exemplo, considere \(X \sim Gama(\alpha, \lambda)\).</p></li>
+<li><p>A estimação do Método de Momentos (MME) consiste em encontrar a solução para:</p></li>
+</ul>
+
+<p>\[\begin{cases} \alpha/\lambda &amp;= \bar{x}_n \\ \alpha/\lambda^2 &amp;= m_2 = \frac{1}{n}\sum_{i=1}^n (x_i - \bar{x}_n)  \end{cases} \quad \Longleftrightarrow \quad \begin{cases} \alpha &amp;= (\bar{x}_n)^2 / m_2 \\ \lambda &amp;= \bar{x}_n/m_2 \end{cases}\]</p>
+
+<ul>
+<li>Normalmente não há forma fechada para esses estimadores e é preciso estimar numericamente.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - EMM</strong></span></h2></hgroup><article  id="exemplo---emm">
+
+<pre class = 'prettyprint lang-r'>## estimador método de momentos
+fgamEMM = fitdist(x, &quot;gamma&quot;, method=&quot;mme&quot;)
+
+cbind(EMV=fgamEMV$estimate, EMM=fgamEMM$estimate)</pre>
+
+<pre >##            EMV      EMM
+## shape 2.398655 2.229563
+## rate  2.362486 2.195851</pre>
+
+</article></slide><slide class=""><hgroup><h2>Outros métodos de Estimação</h2></hgroup><article  id="outros-metodos-de-estimacao">
+
+<ul>
+<li><p>Método dos Quantis (Seção 2.2.3 do livro)</p>
+
+<p>consiste em igualar os quantis teóricos aos quantis empíricos</p></li>
+<li><p>Método de Máxima Bondade de Ajuste ou Distância Mínima (Seção 2.2.4)</p>
+
+<p>consiste em encontrar o estimador que minimiza alguma medida de distância entre a distribuição acumulada empírica e teórica</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Medidas de Adequação de Ajuste</h2></hgroup><article  id="medidas-de-adequacao-de-ajuste">
+
+</article></slide><slide class=""><hgroup><h2>Medidas de Adequação de Ajuste</h2></hgroup><article  id="medidas-de-adequacao-de-ajuste-1">
+
+<ul>
+<li><p>Como escolher entre métodos de estimação ou distribuições?</p></li>
+<li><p>Vamos ver como verificar a adequação de ajuste com métodos gráficos e numéricos.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Histogramas</h2></hgroup><article  id="histogramas">
+
+<ul>
+<li>O <strong>histograma</strong> é um gráfico muito útil para verificar a adequação de uma distribuição de probabilidade.</li>
+</ul>
+
+<ol>
+<li><p>Os dados são divididos em \(k\) intervalos \((a_{j-1},a_j]\), com \(j=1,\dots,k\);</p></li>
+<li><p>as frequências \(f_j\), ou seja, o número de observações em cada intervalo, é calculada;</p></li>
+<li><p>o gráfico plota os retângulos com base \((a_{j-1},a_j]\) e altura \(f_i\) ou \(f_i/n\).</p></li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Histogramas</h2></hgroup><article  id="histogramas-1">
+
+<pre class = 'prettyprint lang-r'>## histograma e densidades das distribuições ajustadas
+denscomp(list(fgamEMV, fgamEMM), legendtext=c(&quot;EMV&quot;,&quot;EMM&quot;), fitcol=1:2, lwd=2,
+         main=&quot;Histograma e densidades gama ajustadas&quot;)</pre>
+
+<p><img src="08-inferencia_files/figure-html/unnamed-chunk-10-1.png" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Histogramas</h2></hgroup><article  id="histogramas-2">
+
+<pre class = 'prettyprint lang-r'>## histograma e densidade empírica
+hist(x, prob=TRUE, ylim=c(0, 1), main=&quot;Histograma e densidade empírica&quot;)
+lines(density(x), lty=5, lwd=2, col=4)</pre>
+
+<p><img src="08-inferencia_files/figure-html/unnamed-chunk-11-1.png" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Gráfico da Função de Distribuição Acumulada</h2></hgroup><article  id="grafico-da-funcao-de-distribuicao-acumulada">
+
+<ul>
+<li>Outra maneira para verificar o ajuste de uma distribuição é fazer o gráfico da <strong>função de distribuição ajustada</strong> \(F(.;\hat{\theta})\) e a <strong>função de distribuição empírica</strong> \(F_n\).</li>
+</ul>
+
+<p>\[F_n(x) = \sum_{i=1}^n \mathbb{1}_{x_i \leq x} \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Gráfico da Função de Distribuição Acumulada</h2></hgroup><article  id="grafico-da-funcao-de-distribuicao-acumulada-1">
+
+<ul>
+<li>Para ilustrar, vamos usar outro banco de dados. O banco <code>danishuni</code> contém dados de perda em incêndios de uma resseguradora em Copenhague, na Dinamarca, entre 1980 e 1990.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Dados de perda em incêndios na Dinamarca
+data(&quot;danishuni&quot;)
+head(danishuni)</pre>
+
+<pre >##         Date     Loss
+## 1 1980-01-03 1.683748
+## 2 1980-01-04 2.093704
+## 3 1980-01-05 1.732581
+## 4 1980-01-07 1.779754
+## 5 1980-01-07 4.612006
+## 6 1980-01-10 8.725274</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - Dados de incêndio</strong></span></h2></hgroup><article  id="exemplo---dados-de-incendio">
+
+<pre class = 'prettyprint lang-r'>x = danishuni$Loss
+hist(x, main=&quot;Histograma das indenizações de incêndio&quot;)</pre>
+
+<p><img src="08-inferencia_files/figure-html/unnamed-chunk-13-1.png" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - Dados de incêndio</strong></span></h2></hgroup><article  id="exemplo---dados-de-incendio-1">
+
+<ul>
+<li>Vamos ajustar três distribuições: <span class="red3">
+Gama</span>, <span class="red3">
+Pareto</span>, e a <span class="red3">
+mistura de Gama e Pareto</span>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## ajustando as distribuições
+fgam = fitdist(x, &quot;gamma&quot;, lower=0) # gama
+fpar = fitdist(x, &quot;pareto&quot;, start=list(shape=2, scale=2), lower=0) # pareto
+
+# mistura gama e pareto (última aula)
+dmixgampar = function(x, prob, nu, lambda, alpha, theta)
+  prob*dgamma(x, nu, lambda) + (1-prob)*dpareto(x, alpha, theta)
+pmixgampar = function(q, prob, nu, lambda, alpha, theta)
+  prob*pgamma(q, nu, lambda) + (1-prob)*ppareto(q, alpha, theta)
+
+fmixgampar = fitdist(x, &quot;mixgampar&quot;,
+                     start=list(prob=1/2, nu=1, lambda=1, alpha=2, theta=2), lower=0)</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - Dados de incêndio</strong></span></h2></hgroup><article  id="exemplo---dados-de-incendio-2">
+
+<pre class = 'prettyprint lang-r'>## Resultados dos modelos separados (Gama e Pareto) e modelo de mistura
+cbind(SINGLE= c(NA, fgam$estimate, fpar$estimate), MIXTURE=fmixgampar$estimate)</pre>
+
+<pre >##           SINGLE    MIXTURE
+##               NA  0.6849901
+## shape  1.2976762 10.8671174
+## rate   0.3833939  6.5413112
+## shape  5.3689492  5.4070157
+## scale 13.8424418 29.9966023</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - Dados de incêndio</strong></span></h2></hgroup><article  class="smaller" id="exemplo---dados-de-incendio-3">
+
+<pre class = 'prettyprint lang-r'>## Gráfico das funções de distribuição ajustadas
+cdfcomp(list(fgam, fpar, fmixgampar), xlogscale=TRUE, datacol=&quot;grey&quot;, lwd=2,
+        legendtext=c(&quot;Gama&quot;,&quot;Pareto&quot;,&quot;Gam-Par&quot;), main=&quot;Funções de distribuição ajustadas&quot;)</pre>
+
+<p><img src="08-inferencia_files/figure-html/unnamed-chunk-16-1.png" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>QQ-Plot</h2></hgroup><article  id="qq-plot">
+
+<ul>
+<li><p>Nos gráficos anteriores, comparamos a <em>densidade empírica</em> com as <em>densidades ajustadas</em>, e a <em>função de distribuição empírica</em> com as <em>funções de distribuição ajustadas</em>.</p></li>
+<li><p>O <strong>QQ-plot</strong> consiste em plotar diretamente os valores dos quantis (inverso da função de distribuição) <em>empíricos</em> versus <em>teóricos</em>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - Dados de incêndio</strong></span></h2></hgroup><article  id="exemplo---dados-de-incendio-4">
+
+<pre class = 'prettyprint lang-r'>## qqplot
+qqcomp(list(fgam, fpar, fmixgampar), xlog=TRUE, ylog=TRUE, main=&quot;QQ-plot Dados de Incêndio&quot;,
+       legendtext=c(&quot;Gama&quot;,&quot;Pareto&quot;,&quot;Gam-Par&quot;), fitpch=c(4,20,1))</pre>
+
+<p><img src="08-inferencia_files/figure-html/unnamed-chunk-18-1.png" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Gráficos para Adequação de Ajuste</h2></hgroup><article  id="graficos-para-adequacao-de-ajuste">
+
+<ul>
+<li><p>A função <code>plot</code> aplicada a um objeto do tipo <code>fitdist</code> retorna os gráficos que acabamos de ver:</p>
+
+<ul>
+<li><p>histograma com a densidade ajustada;</p></li>
+<li><p>gráfico da função de distribuição acumulada ajustada;</p></li>
+<li><p>qq-plot com quantis teóricos e empíricos;</p></li>
+<li><p>e pp-plot com probabilidades acumuladas teóricas e empíricas.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Testes de Adequação de Ajuste</h2></hgroup><article  id="testes-de-adequacao-de-ajuste">
+
+<ul>
+<li><p>Podemos usar testes estatísticos para complementar a nossa verificação da qualidade do ajuste.</p></li>
+<li><p>Para <span class="red3">
+<strong>distribuições contínuas</strong></span>, podemos usar as distâncias mencionadas na Seção 2.2.4 entre asfunções de distribuição empírica e teórica.</p></li>
+<li><p>Para <span class="red3">
+<strong>distribuições discretas</strong></span>, o teste mais comum é a <strong>estatística qui-quadrado</strong>:</p></li>
+</ul>
+
+<p>\[\Delta^2 = \sum_{i=0}^m \frac{(n_i - n.p_i)^2}{n.p_i} \] onde \(n_i\) é a frequência empírica para a célula \(i\), \(n\) é o número total de observações; \(p_i=P(X=i; \,\theta)\) é a probabilidade teórica, e \(m\) é o número de células.</p>
+
+</article></slide><slide class=""><hgroup><h2>Testes de Adequação de Ajuste</h2></hgroup><article  id="testes-de-adequacao-de-ajuste-1">
+
+<ul>
+<li><p>Na prática, o número de células é fixado pelo analista, ou escolhido tal que as frequências observadas sejam maiores do que 5 e \(p_i\) é substituído por \(\hat{p}_i\).</p></li>
+<li><p>Sob \(H_0\) (o ajuste é adequado), \(\Delta^2\) converge em distribuição para \(\chi^2(m-d-1)\) (onde \(d\) é o número de parâmetros).</p></li>
+<li><p>Além disso, ainda podemos considerar os critérios AIC e BIC para esse teste.</p></li>
+<li><p>Esse teste está disponível na função <code>gofstat</code> do pacote <code>fitdistrplus</code>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - Testes de Adequação de Ajuste</strong></span></h2></hgroup><article  id="exemplo---testes-de-adequacao-de-ajuste">
+
+<ul>
+<li><p><strong>Dados</strong>: <code>tplclaimnumber</code> do pacote <code>CASdatasets</code> contém dados de apólices de seguro contra terceiros. Os dados são o número de indenizações registradas para cada apólice com duração de um ano.</p></li>
+<li><p>Vamos ajustar as distribuições Poisson, Binomial Negativa, e uma Poisson modificada em zero.</p></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>data(tplclaimnumber)
+summary(tplclaimnumber)</pre>
+
+<pre >##    policy.id        claim.number        driver.age   
+##  Min.   :      1   Min.   : 0.00000   Min.   : 18.0  
+##  1st Qu.:1157951   1st Qu.: 0.00000   1st Qu.: 34.0  
+##  Median :2272152   Median : 0.00000   Median : 44.0  
+##  Mean   :2621857   Mean   : 0.03904   Mean   : 45.5  
+##  3rd Qu.:4046274   3rd Qu.: 0.00000   3rd Qu.: 55.0  
+##  Max.   :6114330   Max.   :16.00000   Max.   :100.0</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - Testes de Adequação de Ajuste</strong></span></h2></hgroup><article  id="exemplo---testes-de-adequacao-de-ajuste-1">
+
+<pre class = 'prettyprint lang-r'>x = tplclaimnumber$claim.number
+
+fpois = fitdist(x, &quot;pois&quot;)  # poisson
+fnbinom = fitdist(x, &quot;nbinom&quot;)  # binomial negativa</pre>
+
+<pre class = 'prettyprint lang-r'>## funções para definir a distribuição poisson modificada em zero
+dpoisZM &lt;- function(x, prob, lambda)
+  prob*(x == 0) + (1-prob)*(x &gt; 0)*dpois(x-1, lambda)
+ppoisZM &lt;- function(q, prob, lambda)
+  prob*(q &gt;= 0) + (1-prob)*(q &gt; 0)*ppois(q-1, lambda)
+qpoisZM &lt;- function(p, prob, lambda)
+  ifelse(p &lt;= prob, 0, 1+qpois((p-prob)/(1-prob), lambda))</pre>
+
+<pre class = 'prettyprint lang-r'>fpoisZM = fitdist(x, &quot;poisZM&quot;, start=list(prob=sum(x == 0)/length(x), lambda=mean(x)),
+                  lower=c(0,0), upper=c(1, Inf))  # poisson modificada</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - Testes de Adequação de Ajuste</strong></span></h2></hgroup><article  id="exemplo---testes-de-adequacao-de-ajuste-2">
+
+<pre class = 'prettyprint lang-r'>gofstat(list(fpois, fnbinom, fpoisZM), chisqbreaks=c(0:4, 9),
+        discrete=TRUE, fitnames=c(&quot;Poisson&quot;,&quot;NegBinomial&quot;,&quot;ZM-Poisson&quot;))</pre>
+
+<pre >## Chi-squared statistic:  Inf 11765679 Inf 
+## Degree of freedom of the Chi-squared distribution:  5 4 4 
+## Chi-squared p-value:  0 0 0 
+##    the p-value may be wrong with some theoretical counts &lt; 5  
+## Chi-squared table:
+##      obscounts theo Poisson theo NegBinomial theo ZM-Poisson
+## &lt;= 0    653047 6.520559e+05     6.530606e+05    6.530492e+05
+## &lt;= 1     23592 2.545374e+04     2.353633e+04    2.350864e+04
+## &lt;= 2      1299 4.968076e+02     1.326372e+03    1.411925e+03
+## &lt;= 3        62 6.464481e+00     8.372804e+01    4.239999e+01
+## &lt;= 4         5 6.308707e-02     5.568862e+00    8.488455e-01
+## &lt;= 9         5 4.957574e-04     4.104209e-01    1.290002e-02
+## &gt; 9          3 0.000000e+00     7.649401e-07    0.000000e+00
+## 
+## Goodness-of-fit criteria
+##                                 Poisson NegBinomial ZM-Poisson
+## Akaike&#39;s Information Criterion 226880.4    225375.1   225585.7
+## Bayesian Information Criterion 226891.8    225398.0   225608.5</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo - Testes de Adequação de Ajuste</strong></span></h2></hgroup><article  id="exemplo---testes-de-adequacao-de-ajuste-3">
+
+<ul>
+<li>Pelo valor da estatística \(\Delta^2\), pela tabela com os valores de \(n_i\) observados e \(n.\hat{p}_i\) estimado para cada distribuição, e pelos critérios AIC e BIC, a distribuição <strong>Binomial Negativa</strong> fornece o melhor ajuste para esses dados.</li>
 </ul></article></slide>
 
 
