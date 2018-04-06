@@ -6,21 +6,14 @@
 # install.packages("CASdatasets", repos = "http://cas.uqam.ca/pub/R/", type="source")
 require(CASdatasets)
 require(fitdistrplus)
-<<<<<<< HEAD
 require(actuar)
-=======
->>>>>>> b23e883855bc904e7949ad01807b78113a44ed28
 
 ## dados seguro contra terceiros Itália
 data("itamtplcost")
 
 x = itamtplcost$UltimateCost/10^6
 summary(x)
-<<<<<<< HEAD
 ## estimador máxima verossimilhança
-=======
-## EMV
->>>>>>> b23e883855bc904e7949ad01807b78113a44ed28
 fgamEMV = fitdist(x, "gamma", method="mle")
 fgamEMV
 
@@ -28,7 +21,6 @@ summary(fgamEMV)
 
 plot(fgamEMV)
 
-<<<<<<< HEAD
 ## estimador método de momentos
 fgamEMM = fitdist(x, "gamma", method="mme")
 
@@ -103,5 +95,3 @@ fpoisZM = fitdist(x, "poisZM", start=list(prob=sum(x == 0)/length(x), lambda=mea
 
 gofstat(list(fpois, fnbinom, fpoisZM), chisqbreaks=c(0:4, 9),
         discrete=TRUE, fitnames=c("Poisson","NegBinomial","ZM-Poisson"))
-=======
->>>>>>> b23e883855bc904e7949ad01807b78113a44ed28
