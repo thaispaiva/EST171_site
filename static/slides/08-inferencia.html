@@ -169,6 +169,15 @@
 <li><p>No R, o pacote <code>fitdistrplus</code> tem funções implementadas para encontrar o EMV de várias distribuições.</p></li>
 </ul>
 
+<<<<<<< HEAD
+=======
+<pre >## Warning: package &#39;xts&#39; was built under R version 3.4.4</pre>
+
+<pre >## Warning: package &#39;sp&#39; was built under R version 3.4.4</pre>
+
+<pre >## Warning: package &#39;fitdistrplus&#39; was built under R version 3.4.4</pre>
+
+>>>>>>> b23e883855bc904e7949ad01807b78113a44ed28
 </article></slide><slide class=""><hgroup><h2><span class="green3">
 <strong>Exemplo - EMV</strong></span></h2></hgroup><article  id="exemplo---emv">
 
@@ -195,7 +204,11 @@ summary(x)</pre>
 <strong>distribuição Gama</strong></span>.</li>
 </ul>
 
+<<<<<<< HEAD
 <pre class = 'prettyprint lang-r'>## estimador máxima verossimilhança
+=======
+<pre class = 'prettyprint lang-r'>## EMV
+>>>>>>> b23e883855bc904e7949ad01807b78113a44ed28
 fgamEMV = fitdist(x, &quot;gamma&quot;, method=&quot;mle&quot;)
 fgamEMV</pre>
 
@@ -226,6 +239,7 @@ fgamEMV</pre>
 
 <pre class = 'prettyprint lang-r'>plot(fgamEMV)</pre>
 
+<<<<<<< HEAD
 <p><img src="08-inferencia_files/figure-html/unnamed-chunk-8-1.png" width="768" style="display: block; margin: auto;" /></p>
 
 </article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Método de Momentos</h2></hgroup><article  id="metodo-de-momentos">
@@ -510,6 +524,9 @@ qpoisZM &lt;- function(p, prob, lambda)
 <ul>
 <li>Pelo valor da estatística \(\Delta^2\), pela tabela com os valores de \(n_i\) observados e \(n.\hat{p}_i\) estimado para cada distribuição, e pelos critérios AIC e BIC, a distribuição <strong>Binomial Negativa</strong> fornece o melhor ajuste para esses dados.</li>
 </ul></article></slide>
+=======
+<p><img src="08-inferencia_files/figure-html/unnamed-chunk-8-1.png" width="864" style="display: block; margin: auto;" /></p></article></slide>
+>>>>>>> b23e883855bc904e7949ad01807b78113a44ed28
 
 
   <slide class="backdrop"></slide>
