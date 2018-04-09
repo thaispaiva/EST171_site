@@ -1,0 +1,339 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "05 de março de 2018"
+subtitle: "01 - Introdução e Estrutura do Curso"
+
+output:
+  ioslides_presentation:
+    css: my.css
+    highlight: pygments
+    logo: img/logo_ufmg.png
+    widescreen: true
+    self_contained: false
+    lib_dir: libs
+  beamer_presentation:
+    highlight: pygments
+
+header-includes: \usepackage{amsmath, bm}
+---
+
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
+
+```{r echo=FALSE}
+## EST171 - Métodos Computacionais para Análise de Risco
+## Código da aula 01-Introdução
+```
+
+
+
+# Introdução
+
+
+## Objetivo
+
+- O objetivo do curso é apresentar uma série de funções e aplicações computacionais presentes no dia a dia de trabalho de um atuário e profissionais que venham a trabalhar com cálculo de risco. 
+
+- O curso vai abordar tópicos básicos de manipulação e análise de bases de dados no R, juntamente com as principais funções para aplicações de cálculos de risco, matemática atuarial e tarifação de seguros.
+
+- **Pré-requisitos: Técnicas Atuariais I**
+
+
+## Informações
+
+Site: http://www.est.ufmg.br/~thaispaiva/Disciplinas/2018_1/MetComp/
+
+
+## Bibliografia
+
+- Charpentier, A. (Ed.). (2014). **Computational actuarial science with R**. CRC Press.
+
+```{r fig.align='center', out.width = "20%", echo=FALSE, purl=FALSE}
+include_graphics("img/charpentier.jpg") 
+```
+
+- Hothorn, T., & Everitt, B. S. (2014). **A handbook of statistical analyses using R**. CRC press.
+
+
+## Avaliação
+
+Atividade             | Nota
+----------------------|----------------
+Participação          | 10 pts
+Listas semanais       | 50 pts
+Trabalho Final        | 40 pts
+
+
+# R para Atuária?
+
+
+## Por que usar R
+
+- R é um software livre e *open-source*.
+
+- Isso faz com que o R possa ser instalado gratuitamente na maioria dos computadores e servidores.
+
+- Por ser independente do sistema operacional e *open-source*, é a linguagem ideal para **pesquisa reproduzível**.
+
+- E porque <span class="blue3">**atuários**</span> devem usar o R?
+
+  + R permite que seus usuários façam análises complexas sem saber a fundo os detalhes de sistemas computacionais.
+
+  
+## Métodos Computacionais para Atuária
+
+- Para ilustrar a importância de métodos computacionais para atuária, vamos considerar um exemplo:
+
+  + Suponha que você precise calcular o quantil 99,5% de uma <span class="red3">soma aleatória de indenizações</span> (popular entre atuários que precisam calcular *Value-at-Risk*). 
+  
+  + Do ponto de vista probabilístico, precisamos encontrar, para todo $s \in \mathbb{R}$:
+  
+$$ F(s) = \mathbb{P}(S \leq s), \mbox{ onde }\,\, S = \sum_{i=1}^N X_i $$
+
+
+## Exemplo - Soma de Indenizações
+
+  + Sob independência, podemos usar uma fórmula para a convolução:
+  
+$$ F(s) = \sum_{n=0}^{\infty} F_X^{*n}(x) \,.\, \mathbb{P}(N=n) $$
+
+  + Precisamos estimar:
+     1. a distribuição das **indenizações** $X_i$;
+     2. e a distribuição do **número de sinistros** $N$.
+
+
+## Exemplo - Soma de Indenizações {.build}
+
+  + Vamos simular uma amostra de 200 indenizações:
+```{r}
+# fixar a semente
+set.seed(1)
+# gerar uma amostra de tamanho 200
+X = rexp(200, rate=1/100)
+head(X)
+```
+  + Média?
+```{r}
+mean(X)
+```
+  + Vamos supor que essas são as nossas observações.
+  
+
+## Exemplo - Soma de Indenizações 
+
+- Vamos estimar a <span class="blue3">distribuição dos $X_i's$</span>. 
+
+- Uma distribuição razoável para indenizações é a **Gama($\alpha$,$\beta$)**.
+
+> - Um método para encontrar $\hat{\alpha}$ e $\hat{\beta}$ é resolvendo as equações normais abaixo:
+    $$ \log{\hat{\alpha}} - \frac{\Gamma'(\hat{\alpha})}{\Gamma(\hat{\alpha})} - \log{\bar{X}} + \overline{\log{X}} = 0  $$
+    $$\hat{\beta} = \frac{\hat{\alpha}}{\bar{X}} $$
+
+
+## Exemplo - Soma de Indenizações
+
+```{r}
+# equação em função de x=alfa
+f = function(x){
+  log(x) - digamma(x) - log(mean(X)) + mean(log(X))
+}
+
+# encontrar a raiz da equação
+alpha = uniroot(f, interval = c(1e-8,1e8))$root
+alpha # estimador para alfa
+
+beta = alpha/mean(X) # estimador para beta
+beta
+```
+
+
+## Exemplo - Soma de Indenizações
+
+- Com os valores de $\hat{\alpha}$ e $\hat{\beta}$, temos uma distribuição estimada para as indenizações $X_i$.
+
+$$X_i \sim Gamma (\hat{\alpha}, \hat{\beta}) $$
+
+> - Para o número de sinistros, vamos assumir que
+$$N \sim Poisson(\lambda = 100) $$
+
+> - Agora, precisamos calcular o quantil 99,5% da soma aleatória $S=\sum_{i=1}^N X_i$. Isso pode ser feito facilmente de maneira computacional.
+
+
+## Exemplo - Soma de Indenizações
+
+- Uma maneira é calcular numericamente (para um número fixo de termos) a fórmula da convolução:
+
+$$ F(s) = \mathbb{P}(S \leq s) = \sum_{n=0}^{\infty} F_{X}^{*n}(x) \,.\, \mathbb{P}(N=n) $$
+
+> - Para calcular o primeiro termo, $F_{X}^{*n}(x)$, vamos usar o fato de que a [soma de $n$ v.a.'s iid Gama$(\alpha;\, \beta)$ também é Gama](https://en.wikipedia.org/wiki/Gamma_distribution#Summation) com parâmetros $(n*\alpha; \, \beta)$.
+
+> - O segundo termo é a função de probabilidade da Poisson.
+
+
+## Exemplo - Soma de Indenizações {.build}
+
+- Função para calcular a distribuição acumulada de $S$:
+```{r}
+
+# função da distribuição acumulada de S
+F = function(x, lambda=100, nmax=1000){
+  n = 0:nmax
+  return( sum(pgamma(x, n*alpha, beta)*dpois(n, lambda)) )
+}
+```
+
+- Agora precisamos encontrar $x$ tal que $F(x)=0.995$ (ou equivalentemente encontrar a raiz da função $F(x)-0.995=0$).
+```{r}
+
+# encontrando o quantil .995
+uniroot(function(x) F(x)-.995, c(1e-8,1e8) )$root
+```
+
+
+## Exemplo - Soma de Indenizações
+
+- Isso quer dizer que, com os valores estimados de $\hat{\alpha}=$ `r round(alpha,2)`, $\hat{\beta}=$ `r round(beta,2)`, e assumindo $\lambda=100$, temos um quantil estimado para a soma aleatória das indenizações.
+
+$$\mathbb{P} \left( S = \sum_{i=1}^N X_i \leq 13654.43 \right) = 0.995 $$
+
+
+## <span class="green3">Exercícios | Estendendo o exemplo</span>
+
+1) Repetir o exemplo da aula, mudando o valor da *semente*.
+
+2) Você pode mudar também o *tamanho da amostra* e a *média* que usamos para gerar as primeiras observações e estimar $\hat{\alpha}$ e $\hat{\beta}$. Veja o que muda nas estimativas dos parâmetros.
+
+3) Repita os passos para encontrar o novo valor do *quantil*.
+
+    a) O que acontece se mudarmos o valor de $\lambda$?
+    b) O que acontece se aumentarmos o valor de `nmax`?
+
+
+
+# A linguagem R
+
+
+## A linguagem R
+
+- R é uma linguagem para **manipulação de dados**, **análise estatística** e **visualização gráfica**.
+
+- R foi baseado no ambiente S (*Statistics*), criado na década de 70.
+
+- R é uma linguagem interpretada (*interpreted language*): as expressões digitadas no *consolde* são executados imediatamente pelo **interpretador**. Por exemplo, se você digitar `2+3` na linha de comando, o computador irá retornar `5`.
+
+
+## A linguagem R
+
+- R é uma <span class="red3">linguagem orientada a objetos</span> (*object-oriented language*):
+
+  + são criados **objetos** (veremos mais detalhes sobre eles nas próximas aulas) que contém informações úteis e que podem ser chamados por outras **funções**;
+  
+  > + por exemplo, quando ajustamos um <span class="blue3">modelo de regressão</span> no R com a **função** `lm` (*Linear Models*), a **função** retorna um **objeto** que contém várias informações (por exemplo, os coeficientes estimados $\hat{\beta}$, os resíduos $\hat{e}$, a matriz de variância estimada $var(\hat{\beta})$, etc.).
+  
+
+## Vetores e Matrizes 
+
+- Os **objetos** mais usados no R são <span class="red3">**vetores**</span>. Eles podem conter números inteiros, números reais, resultados de um teste lógico (`TRUE`-`FALSE`).
+
+- Eles podem ser usados em expressões aritméticas, onde as operações são feitas elemento a elemento:
+
+  > por exemplo, o comando `a*b` irá retornar um vetor com os elementos $[a_i \cdot b_i]$.
+  
+- <span class="red3">**Matrizes**</span> são a extensão bidimensional dos vetores.
+
+
+## Vetores em Cálculos Atuariais
+  
+- Em aplicações de Ciências Atuariais, várias quantidades podem ser escritas como **vetores** ou **matrizes**.
+
+    + Por exemplo, a <span class="blue3">probabilidade que uma pessoa de idade $x$ irá sobreviver $k$ anos</span> é denotada por ${}_{k}p_x$ (função de $x$ e $k$ inteiros), e pode ser armazenada em uma <span class="red3">**matriz**</span> `p`.
+
+
+## Vetores em Cálculos Atuariais {.build}
+
+- Suponha que queremos calcular a <span class="blue3">expectativa de vida em anos inteiros</span>, dada por:
+  
+  $$ e_x = \sum_{k=1}^{\infty} {}_{k}p_x$$
+- Com a matriz `p`, basta fazer:
+
+```{r purl=FALSE}
+life.exp = function(x){
+  sum(p[1:nrow(p),x])
+}
+```
+
+## R para Ciências Atuariais
+
+- Vários cálculos do cotidiano de um atuário, como precificação de seguros e cálculo de reservas, são feitos baseados em **dados passados** para criar modelos para descrever o **comportamento futuro** (*predictive modelling*).
+
+- O objetivo é <span class="red3">**inferir**</span> dos dados as características para melhor explicar o risco e calcular o prêmio para diferentes segurados, ou calcular reservas para diferentes tipos de sinistros.
+
+- Nesse curso, vamos aprender como calcular essas quantidades usando o R.
+
+
+## Pacotes do R
+
+- Um pacote é um conjunto de funções (incluindo arquivos de ajuda e bancos de dados) para fazer algumas operações específicas.
+
+- O R já vem com alguns pacotes carregados por *default*:
+
+```{r purl=FALSE}
+getOption("defaultPackages")
+```
+
+- Para ver todos os pacotes instalados:
+
+```{r eval=FALSE, purl=FALSE}
+(.packages(all.available = TRUE))
+```
+
+
+## Pacotes do R
+
+- Para instalar outros pacotes de um repositório na internet:
+
+```{r eval=FALSE, purl=FALSE}
+install.packages("quantreg", dependencies=TRUE)
+```
+
+  + A opção `dependencies=TRUE` significa que vai instalar também os outros pacotes que forem usados pelas funções do pacote `quantreg`.
+  
+- Você só precisa <span class="red3">**instalar**</span> o pacote uma vez. Mas precisa <span class="red3">**carregá-lo**</span> toda vez que for usar! Para isso, você pode usar qualquer um dos comandos:
+
+```{r eval=FALSE, purl=FALSE}
+library(quantreg)
+require(quantreg)
+```
+
+
+## <span class="green3">Exercício</span>
+
+- Para a próxima aula:
+
+    1) Revisar os conceitos da aula de hoje;
+    
+    2) Instalar (ou atualizar) a versão mais recente do `R` e `RStudio` (links na seção [*Ferramentas*](http://www.est.ufmg.br/~thaispaiva/Disciplinas/2018_1/MetComp/ferramentas/) do site).
+    
+    3) Fazer os exercícios da primeira parte da aula.
+
+
+
+
+
+[//]: # ##########################################################
+[//]: # Para gerar arquivo com apenas os comandos do R desta aula
+```{r include=FALSE, purl=FALSE}
+# gerar arquivo com comandos do R
+purl("01-introducao.Rmd", documentation=0, encoding='UTF-8')
+# Saída: 'filename.R' com apenas o código extraído do arquivo original
+# Opções: documentation=1 inclui o texto no título dos chunks
+# Para excluir um chunk do arquivo final, incluir a opção purl=FALSE no cabeçalho do chunk
+```
+
+
+
+
+

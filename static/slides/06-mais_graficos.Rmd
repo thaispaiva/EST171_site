@@ -1,0 +1,296 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "02 de abril de 2018"
+subtitle: "06 - Mais Gráficos no R"
+
+output:
+  ioslides_presentation:
+    css: my.css
+    highlight: pygments
+    logo: img/logo_ufmg.png
+    widescreen: true
+    self_contained: false
+    lib_dir: libs
+  beamer_presentation:
+    highlight: pygments
+
+header-includes: \usepackage{amsmath, bm}
+---
+
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
+
+```{r echo=FALSE}
+## EST171 - Métodos Computacionais para Análise de Risco
+## Código da aula 06 - Mais Gráficos no R
+
+```
+
+```{r echo=FALSE, purl=FALSE}
+file_name = "06-mais_graficos"
+```
+
+
+
+
+## Aula de Hoje
+
+- Gráficos Avançados
+
+  + `ggplot2`
+
+- Algumas recomendações para como inserir gráficos com o `markdown`
+
+
+## Gráficos no R - Básico
+
+```{r fig.align='center', out.width = "80%", echo=FALSE, purl=FALSE}
+include_graphics("img/bike1.jpg") 
+```
+
+
+## Gráficos no R - Avançado
+
+```{r fig.align='center', out.width = "70%", echo=FALSE, purl=FALSE}
+include_graphics("img/bike2.jpg") 
+```
+
+
+## ggplot2
+
+- `ggplot2` é um pacote para criar gráficos de maneira <span class="red3">declarativa</span> baseada no livro *The Grammar of Graphics* de Leland Wilkinson.
+
+- Você fornece os dados, informa como mapear as variáveis esteticamente, qual função primitica usar, e o pacote cuida do resto.
+
+- O pacote [`ggplot2`](http://ggplot2.tidyverse.org) é parte da coleção de pacotes [`tidyverse`](https://www.tidyverse.org/packages/) para **ciência de dados**.
+
+- Você pode instalar todos os pacotes usando `install.packages("tidyverse")`, ou apenas `install.packages("ggplot2")`.
+
+
+## ggplot2
+
+- O jeito de usar o `ggplot2` utiliza uma filosofia diferente de visualização.
+
+- Na maioria das vezes:
+
+  1) vamos começar com `ggplot()`;
+  
+  2) depois fornecer os dados e o "mapeamento estético" (*aesthetic mapping*) com o comando `aes()`;
+  
+  3) podemos adicionar camadas (com `geom_point()` ou `geom_histogram()`), alterar escalas (com `scale_colour_brewer()`), lapidar (com `facet_wrap()`), sistema de coordenadas (com ` coord_flip()`)... 
+
+
+## ggplot2
+
+```{r fig.align='center', out.width = "70%", echo=FALSE, purl=FALSE}
+include_graphics("img/bike3.jpg") 
+```
+
+
+## Learning ggplot2
+
+- Recomendações do próprio [site do ggplot](http://ggplot2.tidyverse.org/#learning-ggplot2):
+
+    + "If you are new to ggplot2 you are better off starting with a systematic introduction, rather than trying to learn from reading individual documentation pages. Currently, there are three good places to start:
+
+    + The [data visualisation](http://r4ds.had.co.nz/data-visualisation.html) and [graphics for communication](http://r4ds.had.co.nz/graphics-for-communication.html) chapters in [R for data science](http://r4ds.had.co.nz). (...)"
+
+
+## Learning ggplot2
+
+```{r fig.align='center', out.width = "70%", echo=FALSE, purl=FALSE}
+include_graphics("img/bike4.jpg") 
+```
+
+
+## ggplot2
+
+- Para começar a usar o pacote:
+```{r message=FALSE}
+require(ggplot2)
+
+```
+
+- A estrutura dos códigos pode ser resumida em
+
+```
+ggplot(data = [dataset], aes(x = [x-variable], y = [y-variable])) +
+   geom_xxx() +
+   other options
+```
+
+- `geom_xxx()` determina o tipo de gráfico que você irá produzir.
+
+
+## Exemplo - mpg
+
+- **Dados:** `mpg` - dados de gasto de combustível para diferentes modelos de carro (carregado com o pacote `ggplot2`)
+
+  + algumas variáveis: `displ` (cilindrada em litros), `hwy` (consumo em milhas por galão)
+  
+  + descrição: `?mpg`
+
+  
+## Exemplo - mpg {.smaller}
+
+- Vamos fazer um *scatterplot* com a variável `displ` no eixo x, e `hwy` no eixo y:
+
+```{r fig.align='center', fig.height=4}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+```
+
+
+## Exemplo - mpg {.smaller}
+
+```{r fig.align='center', fig.height=4.5}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+
+```
+
+
+## Exemplo - mpg {.smaller}
+
+```{r fig.align='center', fig.height=4.5, warning=FALSE}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+
+```
+
+
+## Exemplo - mpg {.smaller}
+
+```{r fig.align='center', fig.height=4.5}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+
+```
+
+
+## Ótimo material extra
+
+- Slides da aula de [Visualização de Dados](http://www2.stat.duke.edu/courses/Fall17/sta112.01/slides/03-deck.html) da disciplina de [*Data Science*](http://www2.stat.duke.edu/courses/Fall17/sta112.01/) oferecida por Mine Çetinkaya-Rundel para graduação na Duke University.
+
+
+## Exemplo - Starwars
+
+```{r fig.align='center', out.width = "70%", echo=FALSE, purl=FALSE}
+include_graphics("img/starwars1.png") 
+```
+
+
+## Exemplo - Starwars
+
+```{r fig.align='center', out.width = "70%", echo=FALSE, purl=FALSE}
+include_graphics("img/starwars2.png") 
+```
+
+
+## Exemplo - Starwars
+
+- [*Scatterplots*](http://www2.stat.duke.edu/courses/Fall17/sta112.01/slides/03-deck.html#15)
+
+- Variáveis adicionais:
+
+  + *aesthetics*: formato, cor, tamanho
+  
+```{r echo=FALSE, warning=FALSE, message=FALSE, fig.align='center', fig.height=3.5}
+# Exemplo Starwars
+require(dplyr)
+
+ggplot(data = starwars, aes(x = height, y = mass, color = gender)) +
+  geom_point()
+
+```
+
+
+## Exemplo - Starwars
+
+  + *faceting*: gráficos menores com *subsets* dos dados de acordo com uma categoria
+
+```{r echo=FALSE, warning=FALSE, fig.align='center', fig.height=3.5}
+ggplot(data = starwars, aes(x = height, y = mass)) +
+  facet_grid(. ~ gender) +
+  geom_point()
+
+```
+
+
+## Exemplo - Starwars
+
+- [Gráficos de densidade estimada](http://www2.stat.duke.edu/courses/Fall17/sta112.01/slides/03-deck.html#34)
+
+```{r echo=FALSE, warning=FALSE, fig.align='center', fig.heigth=3.5, message=FALSE}
+ggplot(data = starwars, aes(x = height, y = mass)) +
+  geom_smooth()
+
+```
+
+
+## Exemplo - Starwars
+
+- [Histograma](http://www2.stat.duke.edu/courses/Fall17/sta112.01/slides/03-deck.html#39)
+
+```{r echo=FALSE, warning=FALSE, fig.align='center', fig.height=3.5}
+ggplot(starwars, aes(x = height)) +
+  geom_histogram(binwidth = 10)
+
+```
+
+
+## Exemplo - Starwars
+
+- [Gráfico de barra](http://www2.stat.duke.edu/courses/Fall17/sta112.01/slides/03-deck.html#40)
+
+```{r echo=FALSE, warning=FALSE, fig.align='center', fig.height=3.5}
+ggplot(starwars, aes(x = gender)) +
+  geom_bar()
+
+```
+
+
+## Mais materiais
+
+- [Data visualization with ggplot2 Cheat Sheet](https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf)
+
+- [ggplot2 tutorial by Jenny Bryan](https://github.com/jennybc/ggplot2-tutorial)
+
+- More by Jenny Bryan (University of British Columbia):
+
+  + <http://stat545.com/topics.html> (Seção *All the graph things*)
+  
+  + <http://stat545.com/block015_graph-dos-donts.html> (Muito interessante!)
+  
+  + <http://shiny.stat.ubc.ca/r-graph-catalog/> (Catálogo com vários exemplos de gráficos feitos no R)
+
+
+## Mais materiais
+
+```{r fig.align='center', out.width = "70%", echo=FALSE, purl=FALSE}
+include_graphics("img/bike5.jpg") 
+```
+
+
+
+
+
+[//]: # ##########################################################
+[//]: # Para gerar arquivo com apenas os comandos do R desta aula
+```{r include=FALSE, purl=FALSE}
+# gerar arquivo com comandos do R
+purl(input=paste0(file_name,".Rmd"),
+     output=paste0("../labs/",file_name,".R"),
+     documentation=0, encoding='UTF-8')
+# Saída: 'filename.R' com apenas o código extraído do arquivo original
+# Opções: documentation=1 inclui o texto no título dos chunks
+# Para excluir um chunk do arquivo final, incluir a opção purl=FALSE no cabeçalho do chunk
+```
+
+
+
+

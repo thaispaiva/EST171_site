@@ -1,0 +1,126 @@
+---
+title: "Lista de Exercícios 2"
+author: "Thaís Paiva"
+date: "30/03/2018"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+
+## Funções no R
+
+
+### Exercício 1
+
+```{r}
+seqrep = function(n){
+  return( rep(1:n, times=1:n) )
+}
+
+length(seqrep(50))
+```
+
+
+### Exercício 2
+
+```{r}
+maior.xbarra = function(x){
+  return( x[x>mean(x)] )
+}
+```
+
+
+### Exercício 3
+
+```{r}
+maior.xbarra(seqrep(10))
+```
+
+
+### Exercício 4
+
+```{r}
+i = 10:20
+sum( i^2 + 4/i )
+```
+
+
+### Exercício 5
+
+```{r}
+s = NULL
+for(i in 1:10){
+  for(j in 1:10){
+    s = sum(s, i^2/(5 + i*j) )
+#    cat("i: ",i,"j: ",j," soma: ",s,"\n")
+  }
+}
+s
+```
+
+
+### Exercício 6
+
+```{r}
+a = c(-0.2, 0.2, 0.49, 0.5, 0.51, .99, 1.2)
+trunc(a)
+floor(a)
+ceiling(a)
+round(a)
+```
+
+A função `trunc(a)` pega a parte inteira dos números de `a`. A função `floor(a)` retorna o maior número inteiro menor do que os números de `a`, já a função `ceiling(a)` retorna o menor número inteiro maior do que os números de `a`. Por último, a função `round(a)` arredonda os números de `a` com o número de digitos especificados, no caso, zero.
+
+
+### Exercício 7
+
+```{r}
+set.seed(1)
+x = runif(20,-1,1)
+ifelse(x>0, log(x), NA)
+```
+
+
+### Exercício 8
+
+```{r}
+paste0("Ins",1:100)
+```
+
+
+## Base de Dados
+
+
+### Exercício 9
+
+```{r results='hide', message=FALSE, warning=FALSE}
+require(hmmm)
+data("accident")
+```
+
+```{r}
+nrow(accident)
+sum(accident$Freq)
+```
+
+O banco de dados possui `r nrow(accident)` linhas. Como as covariáveis são todas categóricas, cada linha representa uma categoria de tipo de acidente (`uncertain`, `avoidable`, `not-avoidable`), tempo em dias que o empregado ficou afastado (`0-7`, `7-21`, `21-60`, `>60`), faixa etária do empregado (`<=25`, `26-45`, `>45`), e o período do dia em que o acidente ocorreu (`morning`, `afternoon`). Para cada combinação entre as covariáveis, foi registrado o número de acidentes com aquelas características na coluna `Freq`. Assim, o número total de acidentes é `r sum(accident$Freq)`.
+
+
+### Exercício 10
+
+```{r}
+attach(accident)
+mean(Freq[Type=="uncertain"])
+```
+
+O número médio de acidentes do tipo `uncertain` por categoria das demais covariáveis é de `r mean(Freq[Type=="uncertain"])`.
+
+A combinação de variáveis com o maior número de acidentes do tipo `avoidable` é dada por:
+
+```{r}
+accident[ which( Freq == max(Freq[Type=="avoidable"]) ), ]
+```
+
+ou seja, o maior número de acidentes evitáveis foi registrado para acidentes que ocorreram na manhã, com empregados com idade entre 26 e 45 anos, e que ficaram afastados por menos de uma semana.
