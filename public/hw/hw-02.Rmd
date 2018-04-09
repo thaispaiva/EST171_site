@@ -87,3 +87,6 @@ x = runif(20,-1,1)
 - Lembre-se que você pode controlar como o R irá incluir os *chunks* de código com as opções `eval`, `echo`, `results` entre outras. Veja as principais opções no [cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf), ou então mais detalhes no link [https://rmarkdown.rstudio.com/lesson-3.html](https://rmarkdown.rstudio.com/lesson-3.html).
 
 
+## Resolução
+
+Sugestão de respostas: [Resolução Lista 2](./resolucao/lista-02-resolucao.html)

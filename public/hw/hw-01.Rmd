@@ -82,3 +82,7 @@ knitr::include_graphics("img/header2.png")
 
 4) Faça um gráfico de dispersão da velocidade do vento por ano. Há alguma tendência de mudança da velocidade do vento ao longo do século XX?
 
+
+## Resolução
+
+Sugestão de respostas: [Resolução Lista 1](./resolucao/lista-01-resolucao.html)
