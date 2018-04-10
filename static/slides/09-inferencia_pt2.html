@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '09 - Inferência',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '09-inferencia_pt2_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(09-inferencia_pt2_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="09-inferencia_pt2_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">11 de abril de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li><p>Regressão Linear</p></li>
+<li><p>Perda Agregada</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Regressão Linear</h2></hgroup><article  id="regressao-linear">
+
+</article></slide><slide class=""><hgroup><h2>Regressão Linear</h2></hgroup><article  id="regressao-linear-1">
+
+<ul>
+<li><p>Até agora, estamos fazendo inferência assumindo que observações são <strong>i.i.d.</strong>, por exemplo, com distribuição \(Normal(\mu,\sigma^2)\).</p></li>
+<li><p>Em muitos casos, esse modelo pode ser muito restritivo.</p></li>
+<li><p>Vamos ver com um exemplo.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura">
+
+<ul>
+<li><p>Base de dados <code>Davis</code> do pacote <code>CASdatasets</code></p></li>
+<li><p>Contém dados de 200 indivíduos sobre: sexo, peso em kg e altura em cm.</p></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Dados de peso e altura de 200 indivíduos (Fonte: Davis, 1990)
+require(CASdatasets)
+data(Davis)
+head(Davis,3)</pre>
+
+<pre >##   sex weight height reportedWeight reportedHeight
+## 1   M     77    182             77            180
+## 2   F     58    161             51            159
+## 3   F     53    161             54            158</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-1">
+
+<pre class = 'prettyprint lang-r'>## ajustando altura
+X = Davis$height
+hist(X, freq=F, main=&quot;Histograma da altura&quot;, ylim=c(0,0.05))
+lines(density(X), lwd=2, lty=4)</pre>
+
+<p><img src="09-inferencia_pt2_files/figure-html/unnamed-chunk-5-1.png" width="480" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-2">
+
+<ul>
+<li>Distribuição Normal?</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## ajustando distribuição normal
+require(fitdistrplus)
+mod.normal = fitdist(X, &quot;norm&quot;)
+param = mod.normal$estimate
+param</pre>
+
+<pre >##      mean        sd 
+## 170.56500   8.90987</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-3">
+
+<p><img src="09-inferencia_pt2_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-4">
+
+<ul>
+<li>Mistura de duas normais?</li>
+</ul>
+
+<p>\[X \quad \sim \quad p.\, N(\mu_1,\sigma^2_1) + (1-p).\,N(\mu_2,\sigma^2_2) \]</p>
+
+<pre class = 'prettyprint lang-r'>## Mistura de duas Normais
+## log da densidade
+logdf = function(x,parameter){
+  p = parameter[1]; m1 = parameter[2]; m2 = parameter[3]
+  s1 = parameter[4]; s2 = parameter[5]
+  return(log(p*dnorm(x,m1,s1)+(1-p)*dnorm(x,m2,s2)))
+}</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-5">
+
+<ul>
+<li><p>Nesse caso, temos várias restrições para serem satisfeitas ao mesmo tempo: \(p \in (0,1)\) e \(\sigma_1,\sigma_2 \in (0,\infty)\).</p>
+
+<ul>
+<li>Em notação matricial para \(\boldsymbol \theta = (p, \mu_1, \mu_2, \sigma_1, \sigma_2)&#39;\):</li>
+</ul></li>
+</ul>
+
+<p>\[\begin{pmatrix} 1&amp;0&amp;0&amp;0&amp;0 \\ -1&amp;0&amp;0&amp;0&amp;0 \\ 0&amp;0&amp;0&amp;1&amp;0 \\ 0&amp;0&amp;0&amp;0&amp;1 \end{pmatrix} \boldsymbol \theta + \begin{pmatrix} 0 \\ 1 \\ 0 \\ 0 \end{pmatrix} \geq \boldsymbol 0 \]</p>
+
+<ul>
+<li>Precisamos usar outra função de otimização para encontrar o <strong>Estimador de Máxima Verossimilhança</strong>.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-6">
+
+<ul>
+<li>Vamos usar a função <code>constrOptim()</code> que encontra o <em>mínimo</em> de uma função sob restrições lineares.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>logL = function(parameter) -sum(logdf(X,parameter))
+
+## restrições
+Amat = matrix(c(1,-1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1), 4, 5)
+bvec = c(0,-1,0,0)
+mix1 = constrOptim(c(.5,160,180,10,10), logL, NULL, ui = Amat, ci = bvec)$par
+mix1</pre>
+
+<pre >## [1]   0.5996263 165.2690084 178.4991624   5.9447675   6.3564746</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-7">
+
+<ul>
+<li>Outra maneira seria usar o <a href='https://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm' title=''>algoritmo EM</a> para encontrar o EMV.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## outra maneira - algoritmo EM
+require(mixtools)
+mix2 = normalmixEM(X)</pre>
+
+<pre >## number of iterations= 201</pre>
+
+<pre class = 'prettyprint lang-r'>c(mix2$lambda[1], mix2$mu, mix2$sigma)</pre>
+
+<pre >## [1]   0.1501924 163.7585213 171.7679496   2.5654084   9.0894452</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-8">
+
+<p><img src="09-inferencia_pt2_files/figure-html/unnamed-chunk-11-1.png" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-9">
+
+<ul>
+<li><p>Para o <span class="blue3">
+<strong>modelo de mistura</strong></span>, consideramos que a variável da mistura \(\Theta\) era uma <em>variável latente</em>, isto é, não observada, a ser estimada pelo modelo.</p></li>
+<li><p>Mas considerando a estrutura dos nossos dados, temos uma <em>variável observada</em> que seria uma boa variável para determinar os grupos da mistura.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-10">
+
+<p><img src="09-inferencia_pt2_files/figure-html/unnamed-chunk-12-1.png" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-11">
+
+<ul>
+<li>Vamos ajustar um <span class="blue3">
+<strong>modelo de mistura</strong></span> para os diferentes sexos:</li>
+</ul>
+
+<p>\[X \quad \sim \quad p_M\,.\, N(\mu_M,\sigma^2_M) + p_F\,.\,N(\mu_F,\sigma^2_F) \]</p>
+
+<ul>
+<li>Aqui, \(p_M\) e \(p_F\) são as proporções de homens e mulheres na população, respectivamente.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-12">
+
+<pre class = 'prettyprint lang-r'>## Ajustando a mistura por sexo
+sex = Davis$sex
+(pM = mean(sex==&quot;M&quot;))</pre>
+
+<pre >## [1] 0.44</pre>
+
+<pre class = 'prettyprint lang-r'>(paramF = fitdistr(X[sex==&quot;F&quot;],&quot;normal&quot;)$estimate)</pre>
+
+<pre >##       mean         sd 
+## 164.714286   5.633808</pre>
+
+<pre class = 'prettyprint lang-r'>(paramM = fitdistr(X[sex==&quot;M&quot;],&quot;normal&quot;)$estimate)</pre>
+
+<pre >##       mean         sd 
+## 178.011364   6.404001</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-13">
+
+<p><img src="09-inferencia_pt2_files/figure-html/unnamed-chunk-14-1.png" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+ Exemplo - Distribuição altura</span></h2></hgroup><article  id="exemplo---distribuicao-altura-14">
+
+<ul>
+<li><p>Na verdade, esse modelo de mistura baseado no sexo é um caso de modelo linear.</p></li>
+<li><p>Vamor (re)ver mais detalhes.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Linear</h2></hgroup><article  id="regressao-linear-2">
+
+<ul>
+<li><p>Denote por \(Y\) a <strong>variável resposta</strong> (nossa variável de interesse).</p></li>
+<li><p>E assuma que temos outras variáveis observadas para os indivíduos que estão relacionadas a \(Y\). Vamos denotar essas <strong>covariáveis</strong> por \(\boldsymbol X = (\boldsymbol X_1,\dots,\boldsymbol X_k)\).</p></li>
+<li><p>Isso quer dizer que para cada observação \(Y_i\), também observamos \(\boldsymbol X_i=(X_{1,i},\dots,X_{k,i})\).</p></li>
+<li><p>As covariáveis (ou variáveis explicativas) \(X_k\) podem ser <em>contínuas</em> ou <em>categóricas</em>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Linear</h2></hgroup><article  id="regressao-linear-3">
+
+<ul>
+<li><p>No banco de dados <code>Davis</code>, a variável de interesse é a <strong>altura</strong>, e as covariáveis são <strong>sexo</strong> e <strong>peso</strong>.</p></li>
+<li><p>Ao invés de assumir \(Y \sim N(\mu, \sigma^2)\), em um <span class="red3">
+<strong>modelo de regressão</strong></span>, vamos assumir que:</p></li>
+</ul>
+
+<p>\[ Y | \boldsymbol X = \boldsymbol x \quad \sim \quad N \left( \mu(\boldsymbol x), \, \sigma^2\right) \] onde \(\mu(\boldsymbol x)\) agora é uma função das covariáveis.</p>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Linear</h2></hgroup><article  id="regressao-linear-4">
+
+<ul>
+<li><p>No nosso caso, \(\boldsymbol x=(x_1,x_2)\), onde \(x_1\) é o sexo e \(x_2\) é o peso em kg dos indivíduos. Assim, \(\mu(x_1,x_2)=\beta_0 + \beta_{1,M}.\mathbb{1}(x1=M) + \beta_{1,F}.\mathbb{1}(x1=F) + \beta_2.x_2\).</p></li>
+<li><p>O modelo com \(\mu(x_1,x_2)\) acima não pode ser <em>identificado</em>, não podemos ter o intercepto mais um parâmetro para cada um dos grupos. O usual é manter o intercepto e escolher um dos grupos para ser a categoria de referência.</p></li>
+<li><p>Podemos escrever o modelo completo como:</p></li>
+</ul>
+
+<p>\[ Y = \beta_0 + \beta_{1,M}.\mathbb{1}(x1=M) + \beta_2.x_2 + \varepsilon  \] onde \(\varepsilon \sim N(0,\sigma^2)\) é o erro.</p>
+
+<ul>
+<li>Parâmetros a serem estimados: \(\beta_0\), \(\beta_{1,M}\), \(\beta_2\) e \(\sigma^2\).</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Linear - Inferência</h2></hgroup><article  id="regressao-linear---inferencia">
+
+<ul>
+<li>O Estimador de Máxima Verossimilhança pode ser obtido maximizando-se:</li>
+</ul>
+
+<p>\[\mathcal{L} \left( (\boldsymbol \beta, \sigma); \boldsymbol y, \boldsymbol x \right) = \prod_{i=1}^n \varphi(y_i\,;\,\beta_0+ \beta_1 x_1 + \beta_2 x_2, \sigma^2 ) \] onde \(\varphi(y; \mu,\sigma^2)\) é a densidade da normal.</p>
+
+<ul>
+<li>Nesse modelo, encontrar o EMV é o mesmo que minimizar a soma dos quadrados dos resíduos (Método dos Mínimos Quadrados).</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+Regressão Linear - Exemplo</span></h2></hgroup><article  class="smaller" id="regressao-linear---exemplo">
+
+<ul>
+<li>Podemos ajustar um <strong>modelo de regressão linear</strong> no R usando a função <code>lm()</code>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>mod.lin = lm(Y~X1+X2)
+summary(mod.lin)</pre>
+
+<pre >## 
+## Call:
+## lm(formula = Y ~ X1 + X2)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -14.4301  -3.0775   0.2414   3.3052  18.9547 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 145.86123    2.26947  64.271  &lt; 2e-16 ***
+## X1M           6.99928    1.04305   6.710 2.01e-10 ***
+## X2            0.33138    0.03896   8.506 4.50e-15 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 5.157 on 197 degrees of freedom
+## Multiple R-squared:   0.67,  Adjusted R-squared:  0.6666 
+## F-statistic:   200 on 2 and 197 DF,  p-value: &lt; 2.2e-16</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+Regressão Linear - Exemplo</span></h2></hgroup><article  id="regressao-linear---exemplo-1">
+
+<ul>
+<li><strong>Predições</strong>: e se quisermos estimar a altura de três pessoas com sexo M, M e F e peso 100kg, 70kg e 65kg, respectivamente?</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>new.obs = data.frame(X1=c(&quot;M&quot;,&quot;M&quot;,&quot;F&quot;),X2=c(100,70,65))
+predict(mod.lin, newdata=new.obs)</pre>
+
+<pre >##        1        2        3 
+## 185.9983 176.0570 167.4008</pre>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Perda Agregada</h2></hgroup><article  id="perda-agregada">
+
+</article></slide><slide class=""><hgroup><h2>Perda Agregada</h2></hgroup><article  id="perda-agregada-1">
+
+<ul>
+<li>Já vimos a definição de <strong>soma aleatória</strong> ou <strong>perda agregada</strong>:</li>
+</ul>
+
+<p>\[S = \sum_{i=1}^N X_i \] onde \(N\) é o <span class="red3">
+número de indenizações</span> e \((X_i)\) é o <span class="red3">
+valor de cada indenização</span>, com \(S=0\) se \(N=0\).</p>
+
+</article></slide><slide class=""><hgroup><h2>Distribuição da Soma Agregada</h2></hgroup><article  id="distribuicao-da-soma-agregada">
+
+<ul>
+<li><p>Suposições:</p>
+
+<ul>
+<li><p>\(N\) e \(X_i\) são independentes;</p></li>
+<li><p>\((X_i) \stackrel{iid}{\sim} F_X\).</p></li>
+</ul></li>
+<li><p>Assim, a <strong>função de distribuição acumulada</strong> da soma agregada é:</p></li>
+</ul>
+
+<p>\[ F_S(s) = \sum_{n=0}^{\infty} \mathbb{P}(N=n).\, \mathbb{P}(X_1+\dots+X_n \leq s) \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Distribuição da Soma Agregada</h2></hgroup><article  id="distribuicao-da-soma-agregada-1">
+
+<ul>
+<li><p>Para algumas distribuições, conseguimos encontrar facilmente a distribuição da soma \(X_1 + \dots + X_n\).</p></li>
+<li><p>Por exemplo, se \(X_i \sim Gama(\alpha, \lambda)\), então</p></li>
+</ul>
+
+<p>\[X_1 + \dots + X_n \sim Gama(n\alpha, \,\lambda) \]</p>
+
+<ul>
+<li><p>Em geral, a distribuição da soma \(S = X_1 + \dots + X_n\) não terá necessariamente a mesma distribuição de \(X\).</p></li>
+<li><p>Há algumas alternativas para computar a distribuição da soma agregada nesses casos (recursão de Panjer, aproximação normal, aproximação potência da normal, aproximação Gama - ver Seção 2.5.1). Esses métodos estão implementados na função <code>aggregateDist</code> no pacote <code>actuar</code>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Processo de Poisson</h2></hgroup><article  id="processo-de-poisson">
+
+<ul>
+<li><p>O <span class="blue3">
+<strong>Processo de Poisson</strong></span> é um dos processos estocásticos mais importantes para seguros.</p></li>
+<li><p>É utilizado para descrever o <span class="blue3">
+número de sinistros</span> que ocorreram em um intervalo de tempo.</p></li>
+<li><p>É um <strong>processo de contagem</strong> com incrementos <em>independentes</em> e <em>estacionários</em> (distribuição não muda com o tempo).</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Processo de Poisson</h2></hgroup><article  id="processo-de-poisson-1">
+
+<ul>
+<li>\(N_t\): número de sinistros que ocorreram até o tempo \(t\).</li>
+</ul>
+
+<p>\[N_t \sim Poisson(\lambda) \]</p>
+
+<ul>
+<li>\((T_i)\): tempo até a \(i\)-ésima ocorrência</li>
+</ul>
+
+<p>\[\{ N_t = n \} = \{ T_n \leq t \;\;\cap\;\;  T_{n+1}&gt;t\} \quad \mbox{para todo } n \geq 1\]</p>
+
+<ul>
+<li><p>\(W_i = T_i - T_{i-1}\): tempo entre ocorrências</p></li>
+<li><p>Quando \(W_i \sim exp(\lambda)\), então \((N_t)\) é um <strong>Processo de Poisson</strong>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Processo de Poisson</h2></hgroup><article  id="processo-de-poisson-2">
+
+<ul>
+<li>Processo de Poisson Homogêneo:</li>
+</ul>
+
+<p>\[ \mathbb{P}(N_{t+h} - N_t = k) = \frac{1}{k!} e^{-\lambda h} (\lambda h)^k \]</p>
+
+<ul>
+<li>Processo de Poisson Não-homogêneo:</li>
+</ul>
+
+<p>\[ \mathbb{P}(N_{t+h} - N_t = k) = \frac{1}{k!} e^{-\int_t^{t+h} \lambda_s \, ds} \left(\int_t^{t+h} \lambda_s \, ds \right)^k \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Processo de Poisson</h2></hgroup><article  id="processo-de-poisson-3">
+
+<ul>
+<li><p>Alguns algoritmos para gerar um Processo de Poisson são apresentados na seção 2.5.2.</p></li>
+<li><p>Uma aplicação usual é quando temos <span class="blue3">
+<strong>seguros com franquias</strong></span>.</p>
+
+<ul>
+<li><p>Suponha que as ocorrências de sinistros seguem um Processo de Poisson com intensidade \(\lambda\), e as indenizações individuais tem distribuição \(F\).</p></li>
+<li><p>Então o processo de indenizações acima da franquia \(d\) também segue um Processo de Poisson com intensidade \([1-F(d)].\lambda\).</p></li>
+</ul></li>
+<li><p><strong>Processo de Poisson composto</strong>: \(S_t = \displaystyle \sum_{i=1}^{N_t} X_i\) onde \(N_t\) é PP e \(X_i\)’s são v.a.’s iid (seção 2.5.3).</p></li>
+</ul></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>

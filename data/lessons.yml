@@ -45,6 +45,8 @@ lessons:
     lab: "08-inferencia.R"
   - date: "11/04/18"
     title: "Revisão de Estatística: inferência"
+    slides: "09-inferencia_pt2.html"
+    lab: "09-inferencia_pt2.R"
   - date: "16/04/18"
     title: "Revisão de Estatística (eventos extremos)"  
   - date: "18/04/18"
