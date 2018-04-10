@@ -19,11 +19,19 @@ output:
 header-includes: \usepackage{amsmath, amsbsy}
 ---
 
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
 
+```{r echo=FALSE}
+## EST171 - Métodos Computacionais para Análise de Risco
+## Código da aula 09 - Inferência
 
+```
 
-
-
+```{r echo=FALSE, purl=FALSE}
+file_name = "09-inferencia_pt2"
+```
 
 
 
@@ -53,57 +61,45 @@ header-includes: \usepackage{amsmath, amsbsy}
 
 - Contém dados de 200 indivíduos sobre: sexo, peso em kg e altura em cm.
 
-
-```r
+```{r message=FALSE, warning=FALSE}
 ## Dados de peso e altura de 200 indivíduos (Fonte: Davis, 1990)
 require(CASdatasets)
 data(Davis)
 head(Davis,3)
-```
 
-```
-##   sex weight height reportedWeight reportedHeight
-## 1   M     77    182             77            180
-## 2   F     58    161             51            159
-## 3   F     53    161             54            158
 ```
 
 
 ## <span class="green3"> Exemplo - Distribuição altura</span>
 
-
-```r
+```{r fig.align='center', fig.width=5}
 ## ajustando altura
 X = Davis$height
 hist(X, freq=F, main="Histograma da altura", ylim=c(0,0.05))
 lines(density(X), lwd=2, lty=4)
 ```
 
-<img src="09-inferencia_pt2_files/figure-html/unnamed-chunk-5-1.png" width="480" style="display: block; margin: auto;" />
-
 
 ## <span class="green3"> Exemplo - Distribuição altura</span>
 
 - Distribuição Normal?
 
-
-```r
+```{r warning=FALSE, message=FALSE}
 ## ajustando distribuição normal
 require(fitdistrplus)
 mod.normal = fitdist(X, "norm")
 param = mod.normal$estimate
 param
-```
 
-```
-##      mean        sd 
-## 170.56500   8.90987
 ```
 
 
 ## <span class="green3"> Exemplo - Distribuição altura</span>
 
-<img src="09-inferencia_pt2_files/figure-html/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" />
+```{r echo=FALSE, fig.align='center', fig.width=7}
+plot(mod.normal)
+
+```
 
 
 ## <span class="green3"> Exemplo - Distribuição altura</span>
@@ -112,8 +108,7 @@ param
 
 $$X \quad \sim \quad p.\, N(\mu_1,\sigma^2_1) + (1-p).\,N(\mu_2,\sigma^2_2) $$
 
-
-```r
+```{r}
 ## Mistura de duas Normais
 ## log da densidade
 logdf = function(x,parameter){
@@ -139,8 +134,7 @@ $$\begin{pmatrix} 1&0&0&0&0 \\ -1&0&0&0&0 \\ 0&0&0&1&0 \\ 0&0&0&0&1 \end{pmatrix
 
 - Vamos usar a função `constrOptim()` que encontra o *mínimo* de uma função sob restrições lineares.
 
-
-```r
+```{r}
 logL = function(parameter) -sum(logdf(X,parameter))
 
 ## restrições
@@ -148,10 +142,7 @@ Amat = matrix(c(1,-1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1), 4, 5)
 bvec = c(0,-1,0,0)
 mix1 = constrOptim(c(.5,160,180,10,10), logL, NULL, ui = Amat, ci = bvec)$par
 mix1
-```
 
-```
-## [1]   0.5996263 165.2690084 178.4991624   5.9447675   6.3564746
 ```
 
 
@@ -159,29 +150,27 @@ mix1
 
 - Outra maneira seria usar o [algoritmo EM](https://en.wikipedia.org/wiki/Expectation%E2%80%93maximization_algorithm) para encontrar o EMV.
 
-
-```r
+```{r warning=FALSE, message=FALSE}
 ## outra maneira - algoritmo EM
 require(mixtools)
 mix2 = normalmixEM(X)
-```
-
-```
-## number of iterations= 201
-```
-
-```r
 c(mix2$lambda[1], mix2$mu, mix2$sigma)
-```
 
-```
-## [1]   0.1501924 163.7585213 171.7679496   2.5654084   9.0894452
 ```
 
 
 ## <span class="green3"> Exemplo - Distribuição altura</span>
 
-<img src="09-inferencia_pt2_files/figure-html/unnamed-chunk-11-1.png" width="720" style="display: block; margin: auto;" />
+```{r echo=FALSE, fig.align='center'}
+## histograma com densidades estimadas
+aux = seq(min(X),max(X),len=1000)
+hist(X, freq=F, main="Histograma da altura", ylim=c(0,0.05))
+lines(aux, dnorm(aux, mean=param[1], sd=param[2]), lwd=2, col=2, lty=2)
+lines(aux, mix1[1]*dnorm(aux,mix1[2],mix1[4]) + (1-mix1[1])*dnorm(aux,mix1[3],mix1[5]),
+      lwd=2, col=4)
+lines(density(X), lwd=2, lty=4)
+legend("topright", leg=c("Normal","Mistura Normais","Kernel"), lwd=2, lty=c(2,1,4), col=c(2,4,1), bty="n")
+```
 
 
 ## <span class="green3"> Exemplo - Distribuição altura</span>
@@ -193,7 +182,11 @@ c(mix2$lambda[1], mix2$mu, mix2$sigma)
 
 ## <span class="green3"> Exemplo - Distribuição altura</span>
 
-<img src="09-inferencia_pt2_files/figure-html/unnamed-chunk-12-1.png" width="720" style="display: block; margin: auto;" />
+```{r echo=FALSE, fig.align='center'}
+## Modelo de mistura por sexo
+boxplot(height ~ sex, data=Davis, horizontal=T, names=c("Female","Male"))
+
+```
 
 
 ## <span class="green3"> Exemplo - Distribuição altura</span>
@@ -207,38 +200,28 @@ $$X \quad \sim \quad p_M\,.\, N(\mu_M,\sigma^2_M) + p_F\,.\,N(\mu_F,\sigma^2_F) 
 
 ## <span class="green3"> Exemplo - Distribuição altura</span>
 
-
-```r
+```{r}
 ## Ajustando a mistura por sexo
 sex = Davis$sex
 (pM = mean(sex=="M"))
-```
-
-```
-## [1] 0.44
-```
-
-```r
 (paramF = fitdistr(X[sex=="F"],"normal")$estimate)
-```
-
-```
-##       mean         sd 
-## 164.714286   5.633808
-```
-
-```r
 (paramM = fitdistr(X[sex=="M"],"normal")$estimate)
-```
-
-```
-##       mean         sd 
-## 178.011364   6.404001
 ```
 
 ## <span class="green3"> Exemplo - Distribuição altura</span>
 
-<img src="09-inferencia_pt2_files/figure-html/unnamed-chunk-14-1.png" width="720" style="display: block; margin: auto;" />
+```{r echo=FALSE, fig.align='center'}
+## histograma com densidades estimadas
+aux = seq(min(X),max(X),len=1000)
+hist(X, freq=F, main="Histograma da altura", ylim=c(0,0.05))
+lines(aux, dnorm(aux, mean=param[1], sd=param[2]), lwd=2, col=2, lty=2)
+lines(aux, mix1[1]*dnorm(aux,mix1[2],mix1[4]) + (1-mix1[1])*dnorm(aux,mix1[3],mix1[5]),
+      lwd=2, col=4)
+lines(density(X), lwd=2, lty=4)
+lines(aux, pM*dnorm(aux,paramM[1],paramM[2])+(1-pM)*dnorm(aux,paramF[1],paramF[2]), col="green3", lwd=2)
+legend("topright", leg=c("Normal","Mistura Normais","Kernel"), lwd=2, lty=c(2,1,4,1), col=c(2,4,1,"green3"), bty="n")
+
+```
 
 
 ## <span class="green3"> Exemplo - Distribuição altura</span>
@@ -297,34 +280,19 @@ onde $\varphi(y; \mu,\sigma^2)$ é a densidade da normal.
 
 - Podemos ajustar um **modelo de regressão linear** no R usando a função `lm()`.
 
+```{r echo=FALSE}
+## Regressão Linear - Exemplo
+Y = Davis$height
+X1 = Davis$sex
+X2 = Davis$weight
+df = data.frame(Y,X1,X2)
 
+```
 
-
-```r
+```{r}
 mod.lin = lm(Y~X1+X2)
 summary(mod.lin)
-```
 
-```
-## 
-## Call:
-## lm(formula = Y ~ X1 + X2)
-## 
-## Residuals:
-##      Min       1Q   Median       3Q      Max 
-## -14.4301  -3.0775   0.2414   3.3052  18.9547 
-## 
-## Coefficients:
-##              Estimate Std. Error t value Pr(>|t|)    
-## (Intercept) 145.86123    2.26947  64.271  < 2e-16 ***
-## X1M           6.99928    1.04305   6.710 2.01e-10 ***
-## X2            0.33138    0.03896   8.506 4.50e-15 ***
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-## 
-## Residual standard error: 5.157 on 197 degrees of freedom
-## Multiple R-squared:   0.67,	Adjusted R-squared:  0.6666 
-## F-statistic:   200 on 2 and 197 DF,  p-value: < 2.2e-16
 ```
 
 
@@ -332,15 +300,10 @@ summary(mod.lin)
 
 - **Predições**: e se quisermos estimar a altura de três pessoas com sexo M, M e F e peso 100kg, 70kg e 65kg, respectivamente?
 
-
-```r
+```{r}
 new.obs = data.frame(X1=c("M","M","F"),X2=c(100,70,65))
 predict(mod.lin, newdata=new.obs)
-```
 
-```
-##        1        2        3 
-## 185.9983 176.0570 167.4008
 ```
 
 
@@ -432,7 +395,15 @@ $$ \mathbb{P}(N_{t+h} - N_t = k) = \frac{1}{k!} e^{-\int_t^{t+h} \lambda_s \, ds
 
 [//]: # ##########################################################
 [//]: # Para gerar arquivo com apenas os comandos do R desta aula
-
+```{r include=FALSE, purl=FALSE}
+# gerar arquivo com comandos do R
+purl(input=paste0(file_name,".Rmd"),
+     output=paste0("../labs/",file_name,".R"),
+     documentation=0, encoding='UTF-8')
+# Saída: 'filename.R' com apenas o código extraído do arquivo original
+# Opções: documentation=1 inclui o texto no título dos chunks
+# Para excluir um chunk do arquivo final, incluir a opção purl=FALSE no cabeçalho do chunk
+```
 
 
 
