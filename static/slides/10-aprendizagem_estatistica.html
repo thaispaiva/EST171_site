@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '10 - Aprendizagem Estatística',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '10-aprendizagem_estatistica_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(10-aprendizagem_estatistica_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="10-aprendizagem_estatistica_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">16 de abril de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li><p>Aprendizagem Estatística</p>
+
+<ul>
+<li><p>o que é?</p></li>
+<li><p>por que vamos usar?</p></li>
+</ul></li>
+<li><p>Exemplo de <em>Análise de Crédito</em></p>
+
+<ul>
+<li><p>análise descritiva</p></li>
+<li><p>medidas de correlação</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Aprendizagem Estatística</h2></hgroup><article  id="aprendizagem-estatistica">
+
+</article></slide><slide class=""><hgroup><h2>Aprendizagem Estatística</h2></hgroup><article  id="aprendizagem-estatistica-1">
+
+<ul>
+<li><p>O que é <span class="blue3">
+<strong>Aprendizagem Estatística</strong></span>?</p>
+
+<ul>
+<li>Ação de aprender com os dados para fazer <em>predições</em> baseadas em algumas características. <br></li>
+</ul></li>
+</ul>
+
+<ul class = 'build'>
+<li>Como vamos fazer isso?</li>
+</ul>
+
+<ul class = 'build'>
+<li>Vamos usar um <em>banco de treinamento</em> para ajustar um modelo.</li>
+</ul>
+
+<ul class = 'build'>
+<li>Queremos um modelo que forneça predições precisas para a nossa <em>variável de interesse</em>.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Aprendizagem Estatística</h2></hgroup><article  id="aprendizagem-estatistica-2">
+
+<ul>
+<li><p>Esse é um procedimento comum para <span class="blue">
+Ciências Atuariais</span>:</p>
+
+<ul>
+<li><p>se um <strong>segurado</strong> vai contratar uma cobertura adicional;</p></li>
+<li><p>se um <strong>segurado</strong> será representado por um advogado no processo contra terceiros;</p></li>
+<li><p>se um <strong>segurado</strong> terá uma determinada doença;</p></li>
+<li><p>se um <strong>cliente</strong> irá pagar um empréstimo ou não.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Aprendizagem Estatística</h2></hgroup><article  id="aprendizagem-estatistica-3">
+
+<ul>
+<li><p>Vamos ver algumas técnicas aplicadas a um banco de dados para <span class="blue3">
+<strong>análise de crédito</strong></span>.</p></li>
+<li><p>A <em>variável resposta</em> de interesse nesse caso é binária, se o cliente vai pagar ou não o empréstimo.</p></li>
+<li><p>Podemos estender essas técnicas para prever outros tipos de variáveis.</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Banco de Dados - Análise de Crédito</h2></hgroup><article  id="banco-de-dados---analise-de-credito">
+
+</article></slide><slide class=""><hgroup><h2>Banco de Dados</h2></hgroup><article  id="banco-de-dados">
+
+<ul>
+<li>Dados de 1000 contratos de empréstimo na Alemanha. Banco: <code>credit</code> do pacote <code>CASdatasets</code>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>require(CASdatasets)
+data(credit)
+names(credit)</pre>
+
+<pre >##  [1] &quot;checking_status&quot;     &quot;duration&quot;            &quot;credit_history&quot;     
+##  [4] &quot;purpose&quot;             &quot;credit_amount&quot;       &quot;savings&quot;            
+##  [7] &quot;employment&quot;          &quot;installment_rate&quot;    &quot;personal_status&quot;    
+## [10] &quot;other_parties&quot;       &quot;residence_since&quot;     &quot;property_magnitude&quot; 
+## [13] &quot;age&quot;                 &quot;other_payment_plans&quot; &quot;housing&quot;            
+## [16] &quot;existing_credits&quot;    &quot;job&quot;                 &quot;num_dependents&quot;     
+## [19] &quot;telephone&quot;           &quot;foreign_worker&quot;      &quot;class&quot;</pre>
+
+</article></slide><slide class=""><hgroup><h2>Banco de Dados</h2></hgroup><article  id="banco-de-dados-1">
+
+<ul>
+<li>Clientes interessados em pegar um empréstimo poderão ser analisados de acordo com 20 variáveis:</li>
+</ul>
+
+<p><code>checking_status</code>: saldo da conta corrente (<em>categórica</em>: negativo, 0-200, &gt;200, não tem/desconhecido)</p>
+
+<p><code>duration</code>: duração do empréstimo (<em>numérica</em>)</p>
+
+<p><code>credit_history</code>: histórico em empréstimos (<em>categórica</em>: já atrasou pagamento, conta crítica, nunca pegou/pagou corretamente)</p>
+
+<p><code>purpose</code>: motivo do empréstimo (<em>categórica</em>: carro novo, carro usado, mobília/equipamento, rádio/TV, eletrodomésticos, reforma, educação, férias, treinamento, negócios, outros)</p>
+
+</article></slide><slide class=""><hgroup><h2>Banco de Dados</h2></hgroup><article  id="banco-de-dados-2">
+
+<p><code>credit_amount</code>: valor do empréstimo (<em>numérica</em>)</p>
+
+<p><code>savings</code>: saldo da poupança (<em>categórica</em>: &lt;100, 100-500, 500-1000, &gt;1000, não tem/desconhecido)</p>
+
+<p><code>employment</code>: empregado há quanto tempo (<em>categórica</em>: desempregado, menos de 1 ano, 1-4 anos, 4-7 anos, mais de 7 anos)</p>
+
+<p><code>installment_rate</code>: porcentagem da prestação em relação ao salário (<em>categórica</em>: &gt;35, 25-35, 20-25, &lt;20)</p>
+
+<p><code>personal_status</code>: estado civil e sexo (<em>categórica</em>: masc. e divorciado, fem. e divorciada ou casada, masc. solteiro, masc. casado ou viúvo, fem. solteira)</p>
+
+</article></slide><slide class=""><hgroup><h2>Banco de Dados</h2></hgroup><article  id="banco-de-dados-3">
+
+<p><code>other_parties</code>: outros devedores ou garantidores (<em>categórica</em>: nenhum, co-requerente, garantidor)</p>
+
+<p><code>residence_since</code>: tempo em que mora na atual residência (<em>categórica</em>: &lt;1 ano, 1-4 anos, 4-7 anos, &gt;7 anos)</p>
+
+<p><code>property_magnitude</code>: patrimônio (<em>categórica</em>: casa própria, previdência privada/seguro de vida, carro ou outros, não tem/desconhecido)</p>
+
+<p><code>age</code>: idade (<em>numérica</em>: em anos)</p>
+
+<p><code>other_payment_plans</code>: outros empréstimos (<em>categórica</em>: em outro banco, em lojas, nenhum)</p>
+
+</article></slide><slide class=""><hgroup><h2>Banco de Dados</h2></hgroup><article  id="banco-de-dados-4">
+
+<p><code>housing</code>: moradia (<em>categórica</em>: aluguel, casa própria, mora de &ldquo;favor&rdquo;)</p>
+
+<p><code>existing_credits</code>: número de empréstimos nesse banco incluindo este (<em>categórica</em>: 1, 2-3, 4-5, 6+)</p>
+
+<p><code>job</code>: tipo de emprego (<em>categórica</em>: desempregado/sem qualificação sem residência permanente, sem qualificação com residência permanente, qualificado/funcionário, autônomo/gerente)</p>
+
+<p><code>num_dependents</code>: número de dependentes (<em>categórica</em>: 0-2, 3+)</p>
+
+<p><code>telephone</code>: tem conta de telefone no seu nome (<em>categórica</em>: sim ou não)</p>
+
+<p><code>foreign_worker</code>: é estrangeiro (<em>categórica</em>: sim ou não) - <em>seguindo o livro, não vamos incluir essa variável na nossa análise.</em></p>
+
+</article></slide><slide class=""><hgroup><h2>Banco de Dados</h2></hgroup><article  id="banco-de-dados-5">
+
+<ul>
+<li><strong>Variável resposta</strong> <code>class</code>: indicadora se <em>bom</em> (0) ou <em>mau</em> (1) cliente.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>table(credit$class)</pre>
+
+<pre >## 
+##   0   1 
+## 700 300</pre>
+
+</article></slide><slide class=""><hgroup><h2>Banco de Dados</h2></hgroup><article  id="banco-de-dados-6">
+
+<ul>
+<li>Salve <em>sua versão</em> do script da aula de hoje, vamos editar o código durante a aula.</li>
+</ul>
+
+<p><span class="green">
+<strong>Exercício:</strong></span></p>
+
+<ol>
+<li><p>Carregue o banco de dados e execute os comandos até aqui.</p></li>
+<li><p>Verifique o tipo (<em>categórica</em> ou <em>numérica</em>) de cada variável.</p></li>
+</ol>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Análise Decritiva</h2></hgroup><article  id="analise-decritiva">
+
+</article></slide><slide class=""><hgroup><h2>Análise Descritiva - Correlação</h2></hgroup><article  id="analise-descritiva---correlacao">
+
+<ul>
+<li><p>A maioria das variáveis é <strong>categórica</strong>.</p></li>
+<li><p>Uma maneira de medir a correlação entre variáveis categóricas é a <a href='https://en.wikipedia.org/wiki/Cram%C3%A9r%27s_V' title=''>estatística V de Cramer</a>:</p></li>
+</ul>
+
+<p>\[V = \sqrt{\frac{\chi^2}{n(k-1)}} \]</p>
+
+<p>onde \(\chi^2=\sum _{i,j}{\frac {\left(n_{ij}-{\frac {n_{i.}n_{.j}}{n}}\right)^2}{\frac {n_{i.}n_{.j}}{n}}}\) é a estatística de Pearson para teste de independência, \(n\) é o número de observações e \(k\) é menor número de categorias entre as duas variáveis.</p>
+
+<ul>
+<li>O p-valor é o mesmo calculado para o teste \(\chi^2\) de Pearson.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Análise Descritiva - Correlação</h2></hgroup><article  id="analise-descritiva---correlacao-1">
+
+<ul>
+<li>Queremos analisar a correlação entre as <span class="blue">
+covariáveis</span> do banco e a <span class="blue">
+variável resposta</span> <code>class</code> (se é bom cliente ou não).</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Análise Descritiva - Correlação</h2></hgroup><article  id="analise-descritiva---correlacao-2">
+
+<ul>
+<li>Vamos discretizar as covariáveis <code>duration</code>, <code>credit_amount</code> e <code>age</code> para calcular a mesma correlação para todas as covariáveis.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## discretizando as covariáveis contínuas
+credit.f = credit
+credit.f$age = cut(credit.f$age,c(0,25,Inf))
+credit.f$credit_amount = cut(credit.f$credit_amount,c(0,4000,Inf))
+credit.f$duration = cut(credit.f$duration,c(0,15,36,Inf))</pre>
+
+</article></slide><slide class=""><hgroup><h2>Análise Descritiva - Correlação</h2></hgroup><article  id="analise-descritiva---correlacao-3">
+
+<p><span class="green">
+<strong>Exercício:</strong></span></p>
+
+<ol>
+<li><p>Verifique a distribuição das variáveis <code>duration</code>, <code>credit_amount</code> e <code>age</code> no banco original.</p></li>
+<li><p>Você acha que os intervalos escolhidos para a discretização estão bons?</p></li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Análise Descritiva - Correlação</h2></hgroup><article  id="analise-descritiva---correlacao-4">
+
+<ul>
+<li><p>Agora vamos calcular a estatística V de Cramer entre a <span class="blue">
+variável reposta</span> e todas as <span class="blue">
+covariáveis</span>.</p></li>
+<li><p>Primeiro, vamos criar uma função para calcular a <strong>estatística V de Cramer</strong> entre cada covariável e <code>class</code>:</p></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Estatística V de Cramer
+cramer = function(i)
+  sqrt(chisq.test(table(credit.f[,i],credit.f$class))$statistic/(length(credit.f[,i])))
+
+## p-valor
+pv = function(i) chisq.test(table(credit.f[,i],credit.f$class))$p.value</pre>
+
+</article></slide><slide class=""><hgroup><h2>Análise Descritiva - Correlação</h2></hgroup><article  id="analise-descritiva---correlacao-5">
+
+<pre class = 'prettyprint lang-r'>## Calculando V de Cramer para todas as covariáveis
+k = ncol(credit.f)-1
+CRAMER = data.frame( variable=names(credit)[1:k],
+                     cramerv = Vectorize(cramer)(1:k),
+                     p.value = Vectorize(pv)(1:k) )
+vCRAMER = CRAMER[order(CRAMER[,2], decreasing=TRUE),]</pre>
+
+<p><span class="green">
+<strong>Exercício:</strong></span></p>
+
+<ol>
+<li><p>Veja o que é o objeto <code>CRAMER</code> e o objeto <code>vCRAMER</code>.</p></li>
+<li><p>O que aconteceu com a 3ª coluna desse objeto depois de ordenar?</p></li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Análise Descritiva - Correlação</h2></hgroup><article  id="analise-descritiva---correlacao-6">
+
+<ul>
+<li>Vamos plotar os níveis de correlação com a <span class="blue">
+variável resposta</span>:</li>
+</ul>
+
+<p><img src="10-aprendizagem_estatistica_files/figure-html/unnamed-chunk-12-1.png" width="768" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Análise Descritiva - Distribuição de X dado Y</h2></hgroup><article  id="analise-descritiva---distribuicao-de-x-dado-y">
+
+<ul>
+<li>No caso de <span class="blue">
+covariável</span> contínua (e variável resposta discreta), podemos comparar a distribuição condicional de X dado Y:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## comparando a distribuição de idade e duração vs classificação do cliente
+aggregate(credit[,c(&quot;age&quot;,&quot;duration&quot;)], by=list(class=credit$class), mean)</pre>
+
+<pre >##   class      age duration
+## 1     0 36.22429 19.20714
+## 2     1 33.96333 24.86000</pre>
+
+</article></slide><slide class=""><hgroup><h2>Análise Descritiva - Distribuição de X dado Y</h2></hgroup><article  id="analise-descritiva---distribuicao-de-x-dado-y-1">
+
+<p><span class="green">
+<strong>Exercício:</strong></span></p>
+
+<ol>
+<li>Qual outra maneira poderíamos comparar as distribuições das variáveis contínuas para as diferentes classificações de clientes?</li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Análise Descritiva - Distribuição de Y dado X</h2></hgroup><article  id="analise-descritiva---distribuicao-de-y-dado-x">
+
+<ul>
+<li>Também podemos visualizar a probabilidade de \(Y=1\) para algum valor \(x\) de X, ou para alguma divisão da variável \(X\):</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## classificação de clientes por faixa etária
+Q = quantile(credit$age,seq(0,1,by=.1))
+Q[1] = Q[1]-1
+cut.age = cut(credit$age,Q)
+prop = prop.table(table(cut.age,credit$class),1)</pre>
+
+</article></slide><slide class=""><hgroup><h2>Análise Descritiva - Distribuição de Y dado X</h2></hgroup><article  id="analise-descritiva---distribuicao-de-y-dado-x-1">
+
+<p><span class="green">
+<strong>Exercício:</strong></span></p>
+
+<ol>
+<li><p>Verifique o que cada linha do código do slide anterior está fazendo.</p></li>
+<li><p>O que está armazenado no objeto <code>prop</code>?</p></li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Análise Descritiva - Distribuição de Y dado X</h2></hgroup><article  id="analise-descritiva---distribuicao-de-y-dado-x-2">
+
+<ul>
+<li><strong>Classificação de clientes bons por faixa etária:</strong></li>
+</ul>
+
+<p><img src="10-aprendizagem_estatistica_files/figure-html/unnamed-chunk-15-1.png" width="816" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Classificação</h2></hgroup><article  id="classificacao">
+
+</article></slide><slide class=""><hgroup><h2>Ferramentas para classificação</h2></hgroup><article  id="ferramentas-para-classificacao">
+
+<ul>
+<li><p>A <span class="blue">
+variável de interesse</span> \(Y\) é uma variável binária assumindo 0 ou 1.</p></li>
+<li><p>O nosso <strong>objetivo</strong> é usar variáveis explicativas \(\boldsymbol X\) para fazer <em>predição</em> de \(Y\), baseado em uma <em>função contínua de classificação</em> \(S(\boldsymbol X) \in [0,1]\).</p></li>
+<li><p>A <em>predição</em> então será:</p></li>
+</ul>
+
+<p>\[\hat{Y} = \begin{cases} 1 &amp; \mbox{ se } S(\boldsymbol X) \geq s \\
+                          0 &amp; \mbox{ se } S(\boldsymbol X) &lt; s \end{cases} \]</p>
+
+<p>para algum <em>limite</em> \(s \in (0,1)\).</p>
+
+<ul>
+<li>Depois, podemos comparar os valores <em>verdadeiros</em> com os <em>estimados</em> (teoria de decisão), e medir os erros cometidos.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Ferramentas para classificação</h2></hgroup><article  id="ferramentas-para-classificacao-1">
+
+<ul>
+<li>O <span class="blue">
+<strong>limite</strong></span> \(s\) será escolhido para minimizar os erros do tipo I e tipo II.</li>
+</ul>
+
+<p><img src="img/decision_errors.png" width="80%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Ferramentas para classificação</h2></hgroup><article  id="ferramentas-para-classificacao-2">
+
+<ul>
+<li><p>Uma ferramente tradicional para verificar modelos de classificação é a <a href='https://en.wikipedia.org/wiki/Receiver_operating_characteristic' title=''>curva ROC</a>:</p>
+
+<ul>
+<li>gráfico da <strong>taxa de verdadeiros positivos</strong> (<em>sensibilidade</em>) versus a <strong>taxa de falsos positivos</strong> (<em>1-especificidade</em>) para diferentes valores de \(s\). <br><br></li>
+</ul></li>
+<li><p><strong>Seção 4.1.3</strong>: Exemplo de modelo probit, curva ROC e como avaliar os classificadores.</p></li>
+</ul></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>

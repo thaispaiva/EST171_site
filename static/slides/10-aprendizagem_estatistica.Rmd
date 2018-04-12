@@ -1,0 +1,402 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "16 de abril de 2018"
+subtitle: "10 - Aprendizagem Estatística"
+
+output:
+  ioslides_presentation:
+    css: my.css
+    highlight: pygments
+    logo: img/logo_ufmg.png
+    widescreen: true
+    self_contained: false
+    lib_dir: libs
+  beamer_presentation:
+    highlight: pygments
+
+header-includes: \usepackage{amsmath, amsbsy}
+---
+
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
+
+```{r echo=FALSE}
+## EST171 - Métodos Computacionais para Análise de Risco
+## Código da aula 10 - Aprendizagem Estatística
+
+```
+
+```{r echo=FALSE, purl=FALSE}
+file_name = "10-aprendizagem_estatistica"
+```
+
+
+
+
+## Aula de Hoje
+
+- Aprendizagem Estatística
+
+  + o que é?
+  
+  + por que vamos usar?
+  
+  
+- Exemplo de *Análise de Crédito*
+
+  + análise descritiva
+  
+  + medidas de correlação
+
+
+# Aprendizagem Estatística
+
+
+## Aprendizagem Estatística
+
+- O que é <span class="blue3">**Aprendizagem Estatística**</span>?
+
+  + Ação de aprender com os dados para fazer *predições* baseadas em algumas características.
+<br>
+
+> - Como vamos fazer isso?
+
+>  + Vamos usar um *banco de treinamento* para ajustar um modelo.
+  
+>  + Queremos um modelo que forneça predições precisas para a nossa *variável de interesse*.
+  
+
+## Aprendizagem Estatística
+
+- Esse é um procedimento comum para <span class="blue">Ciências Atuariais</span>:
+
+  + se um **segurado** vai contratar uma cobertura adicional;
+  
+  + se um **segurado** será representado por um advogado no processo contra terceiros;
+  
+  + se um **segurado** terá uma determinada doença;
+  
+  + se um **cliente** irá pagar um empréstimo ou não.
+  
+
+## Aprendizagem Estatística
+
+- Vamos ver algumas técnicas aplicadas a um banco de dados para <span class="blue3">**análise de crédito**</span>.
+
+- A *variável resposta* de interesse nesse caso é binária, se o cliente vai pagar ou não o empréstimo.
+
+- Podemos estender essas técnicas para prever outros tipos de variáveis.
+
+
+# Banco de Dados - Análise de Crédito
+
+
+## Banco de Dados
+
+- Dados de 1000 contratos de empréstimo na Alemanha. Banco: `credit` do pacote `CASdatasets`.
+
+```{r warning=FALSE, message=FALSE}
+require(CASdatasets)
+data(credit)
+names(credit)
+
+```
+
+
+## Banco de Dados
+
+- Clientes interessados em pegar um empréstimo poderão ser analisados de acordo com 20 variáveis:
+
+`checking_status`: saldo da conta corrente (*categórica*: negativo, 0-200, >200, não tem/desconhecido)
+
+`duration`: duração do empréstimo (*numérica*)
+
+`credit_history`: histórico em empréstimos (*categórica*: já atrasou pagamento, conta crítica, nunca pegou/pagou corretamente)
+
+`purpose`: motivo do empréstimo (*categórica*: carro novo, carro usado, mobília/equipamento, rádio/TV, eletrodomésticos, reforma, educação, férias, treinamento, negócios, outros)
+
+
+## Banco de Dados
+
+`credit_amount`: valor do empréstimo (*numérica*)
+
+`savings`: saldo da poupança (*categórica*: <100, 100-500, 500-1000, >1000, não tem/desconhecido)
+
+`employment`: empregado há quanto tempo (*categórica*: desempregado, menos de 1 ano, 1-4 anos, 4-7 anos, mais de 7 anos)
+
+`installment_rate`: porcentagem da prestação em relação ao salário (*categórica*: >35, 25-35, 20-25, <20)
+
+`personal_status`: estado civil e sexo (*categórica*: masc. e divorciado, fem. e divorciada ou casada, masc. solteiro, masc. casado ou viúvo, fem. solteira)
+
+
+## Banco de Dados
+
+`other_parties`: outros devedores ou garantidores (*categórica*: nenhum, co-requerente, garantidor)
+
+`residence_since`: tempo em que mora na atual residência (*categórica*: <1 ano, 1-4 anos, 4-7 anos, >7 anos)
+
+`property_magnitude`: patrimônio (*categórica*: casa própria, previdência privada/seguro de vida, carro ou outros, não tem/desconhecido)
+
+`age`: idade (*numérica*: em anos)
+
+`other_payment_plans`: outros empréstimos (*categórica*: em outro banco, em lojas, nenhum)
+
+
+## Banco de Dados
+
+`housing`: moradia (*categórica*: aluguel, casa própria, mora de "favor")
+
+`existing_credits`: número de empréstimos nesse banco incluindo este (*categórica*: 1, 2-3, 4-5, 6+)
+
+`job`: tipo de emprego (*categórica*: desempregado/sem qualificação sem residência permanente, sem qualificação com residência permanente, qualificado/funcionário, autônomo/gerente)
+
+`num_dependents`: número de dependentes (*categórica*: 0-2, 3+)
+
+`telephone`: tem conta de telefone no seu nome (*categórica*: sim ou não)
+
+`foreign_worker`: é estrangeiro (*categórica*: sim ou não) - *seguindo o livro, não vamos incluir essa variável na nossa análise.*
+
+```{r echo=FALSE}
+credit = credit[,-which(names(credit) == "foreign_worker")]
+
+```
+
+
+
+## Banco de Dados
+
+- **Variável resposta** `class`: indicadora se *bom* (0) ou *mau* (1) cliente.
+
+```{r}
+table(credit$class)
+
+```
+
+
+## Banco de Dados
+
+- Salve *sua versão* do script da aula de hoje, vamos editar o código durante a aula.
+
+<span class="green">**Exercício:**</span>
+
+1) Carregue o banco de dados e execute os comandos até aqui.
+
+2) Verifique o tipo (*categórica* ou *numérica*) de cada variável.
+
+```{r echo=FALSE}
+## qual o tipo de cada variável?
+##
+
+```
+
+
+# Análise Decritiva
+
+
+## Análise Descritiva - Correlação
+
+- A maioria das variáveis é **categórica**. 
+
+- Uma maneira de medir a correlação entre variáveis categóricas é a [estatística V de Cramer](https://en.wikipedia.org/wiki/Cram%C3%A9r%27s_V):
+
+$$V = \sqrt{\frac{\chi^2}{n(k-1)}} $$
+
+onde $\chi^2=\sum _{i,j}{\frac {\left(n_{ij}-{\frac {n_{i.}n_{.j}}{n}}\right)^2}{\frac {n_{i.}n_{.j}}{n}}}$ é a estatística de Pearson para teste de independência, $n$ é o número de observações e $k$ é menor número de categorias entre as duas variáveis.
+
+- O p-valor é o mesmo calculado para o teste $\chi^2$ de Pearson.
+
+
+## Análise Descritiva - Correlação
+
+- Queremos analisar a correlação entre as <span class="blue">covariáveis</span> do banco e a <span class="blue">variável resposta</span> `class` (se é bom cliente ou não).
+
+
+## Análise Descritiva - Correlação
+
+- Vamos discretizar as covariáveis `duration`, `credit_amount` e `age` para calcular a mesma correlação para todas as covariáveis.
+
+```{r}
+## discretizando as covariáveis contínuas
+credit.f = credit
+credit.f$age = cut(credit.f$age,c(0,25,Inf))
+credit.f$credit_amount = cut(credit.f$credit_amount,c(0,4000,Inf))
+credit.f$duration = cut(credit.f$duration,c(0,15,36,Inf))
+
+```
+
+
+## Análise Descritiva - Correlação
+
+<span class="green">**Exercício:**</span>
+
+3) Verifique a distribuição das variáveis `duration`, `credit_amount` e `age` no banco original.
+
+4) Você acha que os intervalos escolhidos para a discretização estão bons?
+
+```{r echo=FALSE}
+## distribuição variáveis contínuas
+##
+
+```
+
+
+## Análise Descritiva - Correlação
+
+- Agora vamos calcular a estatística V de Cramer entre a <span class="blue">variável reposta</span> e todas as <span class="blue">covariáveis</span>.
+
+- Primeiro, vamos criar uma função para calcular a **estatística V de Cramer** entre cada covariável e `class`:
+
+```{r}
+## Estatística V de Cramer
+cramer = function(i)
+  sqrt(chisq.test(table(credit.f[,i],credit.f$class))$statistic/(length(credit.f[,i])))
+
+## p-valor
+pv = function(i) chisq.test(table(credit.f[,i],credit.f$class))$p.value
+
+```
+
+
+## Análise Descritiva - Correlação
+
+```{r warning=FALSE}
+## Calculando V de Cramer para todas as covariáveis
+k = ncol(credit.f)-1
+CRAMER = data.frame( variable=names(credit)[1:k],
+                     cramerv = Vectorize(cramer)(1:k),
+                     p.value = Vectorize(pv)(1:k) )
+vCRAMER = CRAMER[order(CRAMER[,2], decreasing=TRUE),]
+
+```
+
+<span class="green">**Exercício:**</span>
+
+5) Veja o que é o objeto `CRAMER` e o objeto `vCRAMER`.
+
+6) O que aconteceu com a 3ª coluna desse objeto depois de ordenar?
+
+
+## Análise Descritiva - Correlação
+
+- Vamos plotar os níveis de correlação com a <span class="blue">variável resposta</span>:
+
+```{r echo=FALSE, fig.align='center', fig.width=8}
+## Plotando os níveis de correlação
+par(mar=c(10,4,4,0))
+barplot(vCRAMER[,2],names.arg=vCRAMER[,1],las=3)
+
+```
+
+
+## Análise Descritiva - Distribuição de X dado Y
+
+- No caso de <span class="blue">covariável</span> contínua (e variável resposta discreta), podemos comparar a distribuição condicional de X dado Y:
+
+```{r}
+## comparando a distribuição de idade e duração vs classificação do cliente
+aggregate(credit[,c("age","duration")], by=list(class=credit$class), mean)
+
+```
+
+
+## Análise Descritiva - Distribuição de X dado Y
+
+<span class="green">**Exercício:**</span>
+
+7) Qual outra maneira poderíamos comparar as distribuições das variáveis contínuas para as diferentes classificações de clientes?
+
+
+## Análise Descritiva - Distribuição de Y dado X
+
+- Também podemos visualizar a probabilidade de $Y=1$ para algum valor $x$ de X, ou para alguma divisão da variável $X$:
+
+```{r}
+## classificação de clientes por faixa etária
+Q = quantile(credit$age,seq(0,1,by=.1))
+Q[1] = Q[1]-1
+cut.age = cut(credit$age,Q)
+prop = prop.table(table(cut.age,credit$class),1)
+
+```
+
+
+## Análise Descritiva - Distribuição de Y dado X
+
+<span class="green">**Exercício:**</span>
+
+8) Verifique o que cada linha do código do slide anterior está fazendo.
+
+9) O que está armazenado no objeto `prop`?
+
+
+## Análise Descritiva - Distribuição de Y dado X
+
+- **Classificação de clientes bons por faixa etária:**
+
+```{r echo=FALSE, fig.align='center', fig.width=8.5}
+## gráfico da classificação por idade
+barplot(t(prop))
+abline(h=mean(credit$class==0),lty=2)
+
+```
+
+
+# Classificação
+
+
+## Ferramentas para classificação
+
+- A <span class="blue">variável de interesse</span> $Y$ é uma variável binária assumindo 0 ou 1.
+
+- O nosso **objetivo** é usar variáveis explicativas $\boldsymbol X$ para fazer *predição* de $Y$, baseado em uma *função contínua de classificação* $S(\boldsymbol X) \in [0,1]$.
+
+- A *predição* então será:
+
+$$\hat{Y} = \begin{cases} 1 & \mbox{ se } S(\boldsymbol X) \geq s \\
+                          0 & \mbox{ se } S(\boldsymbol X) < s \end{cases} $$
+
+para algum *limite* $s \in (0,1)$.
+
+- Depois, podemos comparar os valores *verdadeiros* com os *estimados* (teoria de decisão), e medir os erros cometidos.
+
+
+## Ferramentas para classificação
+
+- O <span class="blue">**limite**</span> $s$ será escolhido para minimizar os erros do tipo I e tipo II.
+
+```{r fig.align='center', out.width = "80%", echo=FALSE, purl=FALSE}
+include_graphics("img/decision_errors.png") 
+```
+
+
+## Ferramentas para classificação
+
+- Uma ferramente tradicional para verificar modelos de classificação é a [curva ROC](https://en.wikipedia.org/wiki/Receiver_operating_characteristic):
+
+  + gráfico da **taxa de verdadeiros positivos** (*sensibilidade*) versus a **taxa de falsos positivos** (*1-especificidade*) para diferentes valores de $s$.
+<br><br>
+
+- **Seção 4.1.3**: Exemplo de modelo probit, curva ROC e como avaliar os classificadores.
+
+
+
+
+
+[//]: # ##########################################################
+[//]: # Para gerar arquivo com apenas os comandos do R desta aula
+```{r include=FALSE, purl=FALSE}
+# gerar arquivo com comandos do R
+purl(input=paste0(file_name,".Rmd"),
+     output=paste0("../labs/",file_name,".R"),
+     documentation=0, encoding='UTF-8')
+# Saída: 'filename.R' com apenas o código extraído do arquivo original
+# Opções: documentation=1 inclui o texto no título dos chunks
+# Para excluir um chunk do arquivo final, incluir a opção purl=FALSE no cabeçalho do chunk
+```
+
+
+
+
