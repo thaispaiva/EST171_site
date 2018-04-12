@@ -56,12 +56,12 @@ ignoreFiles = [ "hw/resolucao/.*",  "\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cac
   weight = 1
   identifier = "DEST"
   name = "DEST UFMG"
-  pre = "<i class=\"button-icon fas fa-signal\"></i>"
+  pre = "<i class=\"button-icon fa fa-2x fa-signal\"></i>"
   url = "http://est.ufmg.br"
 [[menu.footer]]
   weight = 2
-  name = "MinhaUFMG"
-  pre = "<i class=\"button-icon fas fa-edit\"></i>"
+  name = "Minha UFMG"
+  pre = "<i class=\"button-icon fa fa-2x fa-edit\"></i>"
   url = "https://minha.ufmg.br/"
 [[menu.footer]]
   weight = 3

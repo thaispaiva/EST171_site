@@ -1,0 +1,22 @@
+---
+title: "Lista de Exercícios 4"
+date: "Entrega: **22/04/2018** via Moodle (até as 23:55)"
+output: 
+  html_document: 
+    css: hw.css
+    theme: yeti
+    toc: true
+    toc_float: true
+    fig_caption: true
+---
+
+## 
+
+Você irá entregar essa lista de exercício no Moodle da disciplina. Você deverá submeter o **arquivo pdf gerado automaticamente pelo R** usando *markdown*. Não serão aceitos arquivos em outro formato!
+
+
+
+## Inferência
+
+
+1) 
