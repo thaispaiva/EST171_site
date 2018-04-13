@@ -19,4 +19,39 @@ Você irá entregar essa lista de exercício no Moodle da disciplina. Você deve
 ## Inferência
 
 
-1) 
+Considere os dados de indenizações por incêndio na Dinamarca, que estão no banco `danishuni` do pacote `CASdatasets`.
+
+
+1) Faça um histograma do log das indenizações e acrescente a curva da densidade empírica.
+
+
+2) Ajuste as distribuições Gama e Lognormal ao log das indenizações utilizando o método de máxima verossimilhança. Inclua o código utilizado no seu relatório.
+
+*Dica: para ajustar esses modelos, você pode precisar adicionar um número pequeno aos dados transformados (por exemplo 0,0001) caso tenha valores exatamente iguais a zero após aplicar o logaritmo.*
+
+
+3) Faça o histograma das indenizações e inclua as curvas de densidade empírica e ajustadas das duas distribuições. Lembre-se de incluir a legenda no seu gráfico.
+
+
+4) Inclua lado a lado o gráfico das funções de distribuição acumulada empírica e ajustadas, e o qq-plot das duas distribuições ajustadas. De acordo com esses gráficos, qual distribuição se adequa melhor aos dados?
+
+
+5) Obtenha o quantil observado e os quantis teóricos de 95% de acordo com as distribuições ajustadas. Comparando esses valores, qual distribuição se adequa melhor aos dados?
+
+
+## Aprendizagem Estatística
+
+Considere os dados de análise de crédito na Alemanha, no banco `credit` também no pacote `CASdatasets`.
+
+
+6) Faça uma análise descritiva da covariável `checking_status` (saldo da conta corrente), e analise se há diferença na distribuição de acordo com a classificação dos clientes (variável `class`).
+
+
+7) Faça uma análise descritiva da distribuição conjunta das variáveis `checking_status` e `credit_history`. De acordo com as suas análises, você acha que essas covariáveis estão correlacionadas?
+
+
+8) Analise a probabilidade de $Y=1$, ou seja, classificar um cliente como mau, dado a distribuição da duração do empréstimo (variável `duration`). Para isso, siga o exemplo feito em sala para a variável idade.
+
+
+
+

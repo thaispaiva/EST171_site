@@ -1548,8 +1548,25 @@ div.tocify {
 </div>
 <div id="inferencia" class="section level2">
 <h2>Inferência</h2>
+<p>Considere os dados de indenizações por incêndio na Dinamarca, que estão no banco <code>danishuni</code> do pacote <code>CASdatasets</code>.</p>
 <ol style="list-style-type: decimal">
-<li></li>
+<li><p>Faça um histograma do log das indenizações e acrescente a curva da densidade empírica.</p></li>
+<li><p>Ajuste as distribuições Gama e Lognormal ao log das indenizações utilizando o método de máxima verossimilhança. Inclua o código utilizado no seu relatório.</p></li>
+</ol>
+<p><em>Dica: para ajustar esses modelos, você pode precisar adicionar um número pequeno aos dados transformados (por exemplo 0,0001) caso tenha valores exatamente iguais a zero após aplicar o logaritmo.</em></p>
+<ol start="3" style="list-style-type: decimal">
+<li><p>Faça o histograma das indenizações e inclua as curvas de densidade empírica e ajustadas das duas distribuições. Lembre-se de incluir a legenda no seu gráfico.</p></li>
+<li><p>Inclua lado a lado o gráfico das funções de distribuição acumulada empírica e ajustadas, e o qq-plot das duas distribuições ajustadas. De acordo com esses gráficos, qual distribuição se adequa melhor aos dados?</p></li>
+<li><p>Obtenha o quantil observado e os quantis teóricos de 95% de acordo com as distribuições ajustadas. Comparando esses valores, qual distribuição se adequa melhor aos dados?</p></li>
+</ol>
+</div>
+<div id="aprendizagem-estatistica" class="section level2">
+<h2>Aprendizagem Estatística</h2>
+<p>Considere os dados de análise de crédito na Alemanha, no banco <code>credit</code> também no pacote <code>CASdatasets</code>.</p>
+<ol start="6" style="list-style-type: decimal">
+<li><p>Faça uma análise descritiva da covariável <code>checking_status</code> (saldo da conta corrente), e analise se há diferença na distribuição de acordo com a classificação dos clientes (variável <code>class</code>).</p></li>
+<li><p>Faça uma análise descritiva da distribuição conjunta das variáveis <code>checking_status</code> e <code>credit_history</code>. De acordo com as suas análises, você acha que essas covariáveis estão correlacionadas?</p></li>
+<li><p>Analise a probabilidade de <span class="math inline">\(Y=1\)</span>, ou seja, classificar um cliente como mau, dado a distribuição da duração do empréstimo (variável <code>duration</code>). Para isso, siga o exemplo feito em sala para a variável idade.</p></li>
 </ol>
 </div>
 
