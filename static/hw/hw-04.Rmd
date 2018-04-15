@@ -47,10 +47,7 @@ Considere os dados de análise de crédito na Alemanha, no banco `credit` també
 6) Faça uma análise descritiva da covariável `checking_status` (saldo da conta corrente), e analise se há diferença na distribuição de acordo com a classificação dos clientes (variável `class`).
 
 
-7) Faça uma análise descritiva da distribuição conjunta das variáveis `checking_status` e `credit_history`. De acordo com as suas análises, você acha que essas covariáveis estão correlacionadas?
-
-
-8) Analise a probabilidade de $Y=1$, ou seja, classificar um cliente como mau, dado a distribuição da duração do empréstimo (variável `duration`). Para isso, siga o exemplo feito em sala para a variável idade.
+7) Analise a probabilidade de $Y=1$, ou seja, classificar um cliente como mau, dado a distribuição da duração do empréstimo (variável `duration`). Para isso, siga o exemplo feito em sala para a variável idade. Sugestão: dividir a duração do empréstimo registrada em meses em intervalos de 0-6, 6-12, 12-18, 18-24, 24-36, 36+. 
 
 
 
