@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '11 - Aprendizagem Estatística',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '11-aprendizagem_estatistica_pt2_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(11-aprendizagem_estatistica_pt2_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="11-aprendizagem_estatistica_pt2_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">18 de abril de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li><p>Regressão Logística</p>
+
+<ul>
+<li><p>Definição</p></li>
+<li><p>Exemplo Análise de Crédito</p></li>
+</ul></li>
+<li><p>Seleção de Variáveis</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Regressão Logística</h2></hgroup><article  id="regressao-logistica">
+
+</article></slide><slide class=""><hgroup><h2>Regressão Logística</h2></hgroup><article  id="regressao-logistica-1">
+
+<ul>
+<li><p>É o modelo mais utilizado para <span class="blue3">
+análise de crédito</span>.</p></li>
+<li><p>É um tipo de <span class="black">
+<strong>Modelo Linear Generalizado</strong></span>, onde a distribuição da variável resposta é <em>binária</em>.</p></li>
+<li><p>Seja \(Y_i\) variável aleatória que assume valores \(y_i \in \{0,1\}\) com probabilidade \(1-\pi_i\) e \(\pi_i\), respectivamente.</p></li>
+</ul>
+
+<p>\[P(Y_i = y_i) = \pi_i^{y_i}(1-\pi_i)^{(1-y_i)} = \begin{cases} \pi_i &amp; \mbox{se } y_i=1 \\ 1-\pi_i &amp; \mbox{se } y_i=0  \end{cases} \] com \(\pi_i\in[0,1]\).</p>
+
+</article></slide><slide class=""><hgroup><h2>Inferência para Dados Binários</h2></hgroup><article  id="inferencia-para-dados-binarios">
+
+<ul>
+<li><strong>Dados binários</strong>: se assumirmos que \(\pi_i=\pi\) para todo \(i\), e que as observações \(Y_i\) são independentes, podemos encontrar o EMV para \(\pi\) como:</li>
+</ul>
+
+<p>\[\mathcal{L}(\pi; \boldsymbol y) = \prod_{i=1}^n P(Y_i=y_i) = \prod_{i=1}^n \pi^{y_i}(1-\pi)^{(1-y_i)} \] \[\hat{\pi} = \frac{\sum_{i=1}^n y_i}{n} \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Inferência para Dados Binários</h2></hgroup><article  id="inferencia-para-dados-binarios-1">
+
+<ul>
+<li><p>No entanto, vamos assumir que:</p>
+
+<ul>
+<li><p>cada \(\pi_i\) é <span class="red3">
+diferente</span>;</p></li>
+<li><p>e \(\pi_i\) é uma <span class="red3">
+função de covariáveis</span> \(\boldsymbol{X}_i\), tal que:</p></li>
+</ul>
+
+<p>\[\pi_i = E(Y_i | \boldsymbol X_i) \]</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Logística</h2></hgroup><article  id="regressao-logistica-2">
+
+<ul>
+<li><p>Um <em>modelo linear</em> (\(E(Y_i|\boldsymbol X_i)=\boldsymbol X_i&#39;\boldsymbol\beta\)) não vai funcionar porque \(\boldsymbol X_i&#39;\boldsymbol\beta\) pode assumir qualquer valor!</p></li>
+<li><p>Uma maneira de modelar as probabilidades é considerar o logaritmo da <span class="blue3">
+chance</span>:</p></li>
+</ul>
+
+<p>\[ \mbox{logit}(\pi_i) = \log \left( \frac{\pi_i}{1-\pi_i}\right) = \boldsymbol X_i&#39;\boldsymbol\beta \]</p>
+
+<p>\[\pi_i = \mbox{logit}^{-1}(\boldsymbol X_i&#39;\boldsymbol\beta) = \frac{\exp(\boldsymbol X_i&#39;\boldsymbol\beta)}{1+\exp(\boldsymbol X_i&#39;\boldsymbol\beta)} \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Logística</h2></hgroup><article  id="regressao-logistica-3">
+
+<ul>
+<li><p>Podemos escrever a log-verossimilhança considerando \(\pi_i(\boldsymbol \beta)\).</p></li>
+<li><p>Depois, podemos encontrar <em>numericamente</em> o EMV para \(\boldsymbol \beta\).</p></li>
+<li><p>As propriedades do EMV garantem que teremos uma <em>distribuição assintótica</em> para \(\hat{\boldsymbol \beta}\). Essa distribuição assintótica é <strong>normal</strong>, e nos fornece uma estimativa para a variância de \(\hat{\boldsymbol \beta}\).</p></li>
+<li><p>Com isso, podemos fazer o <span class="black">
+teste de significância</span> para \(\hat{\boldsymbol \beta}\) (teste de hipóteses com \(H_0: \beta=0\)).</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Logística</h2></hgroup><article  id="regressao-logistica-4">
+
+<ul>
+<li><p>Vamos continuar com o <span class="green3">
+<strong>Exemplo</strong></span> de Análise de Crédito da aula passada.</p></li>
+<li><p>Antes de ajustar o modelo de regressão, vamos:</p>
+
+<ul>
+<li><p>recodificar algumas variáveis categóricas para facilitar a interpretação dos modelos;</p></li>
+<li><p>separar os dados em <strong>banco de treinamento</strong> e <strong>banco de teste</strong>.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo">
+
+<p><span class="black">
+1) <strong>Recodificando as variáveis</strong>:</span></p>
+
+<ul>
+<li><p>Execute os comandos da primeira parte da aula de hoje.</p></li>
+<li><p>Quais variáveis estão sendo recodificadas?</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-1">
+
+<p>Agora vamos separar o <strong>banco de treinamento</strong> e o <strong>banco de teste</strong>.</p>
+
+<ul>
+<li>Vamos sortear 644 observações para o <strong>banco de treinamento</strong>, e as 356 restantes formarão o <strong>banco de teste</strong>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Separando Banco de Treinamento
+set.seed(123)
+index = sort(sample(nrow(credit), 644, replace=F))
+table(credit$class[index])</pre>
+
+<pre >## 
+##   0   1 
+## 447 197</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-2">
+
+<p>Agora vamos separar o <strong>banco de treinamento</strong> e o <strong>banco de teste</strong>.</p>
+
+<pre class = 'prettyprint lang-r'>train.db &lt;- credit.rcd[index,]
+valid.db &lt;- credit.rcd[-index,]</pre>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Regressão Logística - Exemplo</h2></hgroup><article  id="regressao-logistica---exemplo">
+
+</article></slide><slide class=""><hgroup><h2>Regressão Logística</h2></hgroup><article  id="regressao-logistica-5">
+
+<p>Voltando para a Regressão Logística…</p>
+
+<ul>
+<li>Vamos ajustar um <span class="black">
+<strong>modelo logístico</strong></span> para a classificação dos clientes (\(Y\)), usando como covariáveis <span class="blue3">
+Idade</span> e <span class="blue3">
+Duração do empréstimo</span> (contínuas), no <strong>banco de treinamento</strong>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Ajustando modelo de regressão logística com Idade e Duração
+reg &lt;- glm(class ~ age + duration, data=credit[index,], family=binomial(link=&quot;logit&quot;))
+
+summary(reg)</pre>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Logística</h2></hgroup><article  id="regressao-logistica-6">
+
+<ul>
+<li><p>Mais detalhes sobre a estimação desse modelo: Seção 4.2.1</p></li>
+<li><p><span class="black">
+<strong>Interpretação dos coeficientes</strong>:</span> por causa do formato da função de ligação do modelo logístico, temos que \(\exp(\boldsymbol \beta)\) é o <span class="red3">
+<em>efeito multiplicativo</em></span> na razão da chance \(\frac{\pi_i}{1-\pi_i}\).</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Logística com Variáveis Categóricas</h2></hgroup><article  id="regressao-logistica-com-variaveis-categoricas">
+
+<ul>
+<li>Vamos considerar agora um modelo para a <span class="blue3">
+<strong>classificação dos clientes</strong></span> incluindo como covariável <span class="blue3">
+Histórico</span> (categórica) <code>credit_history</code>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Ajustando modelo de regressão logística com Histórico
+reg &lt;- glm(class ~ credit_history, data=credit, family=binomial(link=&quot;logit&quot;))
+
+summary(reg)</pre>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Logística com Variáveis Categóricas</h2></hgroup><article  id="regressao-logistica-com-variaveis-categoricas-1">
+
+<pre class = 'prettyprint lang-r'>## valor previsto por categoria de Histórico
+cbind( prop.table(table(credit$credit_history,credit$class),1),
+       logit=predict(reg,
+                     newdata=data.frame(credit_history=levels(credit$credit_history)),
+                     type=&quot;response&quot;))</pre>
+
+<pre >##             0         1     logit
+## A30 0.3750000 0.6250000 0.6250000
+## A31 0.4285714 0.5714286 0.5714286
+## A32 0.6811321 0.3188679 0.3188679
+## A33 0.6818182 0.3181818 0.3181818
+## A34 0.8293515 0.1706485 0.1706485</pre>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Logística com Variáveis Categóricas</h2></hgroup><article  id="regressao-logistica-com-variaveis-categoricas-2">
+
+<ul>
+<li>Vamos ajustar agora com duas variáveis categóricas:
+
+<ul>
+<li><span class="blue3">
+Histórico</span> (<code>credit_history</code>);</li>
+<li><span class="blue3">
+Motivo do empréstimo</span> (<code>purpose</code>).</li>
+</ul></li>
+<li>Para isso, vamos usar o banco recodificado (com menos categorias) <code>credit.rcd</code>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Ajustando modelo de regressão logística com Histórico e Motivo
+reg &lt;- glm(class ~ credit_history*purpose,data=credit.rcd,family=binomial(link=&quot;logit&quot;))</pre>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Logística com Variáveis Categóricas</h2></hgroup><article  id="regressao-logistica-com-variaveis-categoricas-3">
+
+<pre class = 'prettyprint lang-r'>## Valores estimados por categoria
+attach(credit.rcd)
+p.class = matrix( predict(reg, newdata = data.frame(
+    credit_history = rep(levels(credit_history),each=length(levels(purpose))),
+    purpose = rep(levels(purpose),length(levels(credit_history))) ),
+  type=&quot;response&quot;), ncol=length(levels(credit_history)), nrow=length(levels(purpose)) )
+rownames(p.class) &lt;- levels(purpose)
+colnames(p.class) &lt;- levels(credit_history)</pre>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Logística com Variáveis Categóricas</h2></hgroup><article  id="regressao-logistica-com-variaveis-categoricas-4">
+
+<pre class = 'prettyprint lang-r'>p.class</pre>
+
+<pre >##                    all credits paid back duly critical account
+## Car (new)                           0.2435897        0.7368421
+## Car (used)                          0.1111111        0.3750000
+## Domestic equipment                  0.1313869        0.5161290
+## Else                                0.3333333        0.9999995
+## Studies-Business                    0.2051282        0.6071429
+##                    existing credits paid back duly till now
+## Car (new)                                         0.4087591
+## Car (used)                                        0.1694915
+## Domestic equipment                                0.2996942
+## Else                                              0.1666667
+## Studies-Business                                  0.3595506</pre>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Logística com Variáveis Categóricas</h2></hgroup><article  id="regressao-logistica-com-variaveis-categoricas-5">
+
+<pre class = 'prettyprint lang-r'>## Razão das chances
+p.class/(1-p.class)</pre>
+
+<pre >##                    all credits paid back duly critical account
+## Car (new)                           0.3220339     2.800000e+00
+## Car (used)                          0.1250000     6.000000e-01
+## Domestic equipment                  0.1512605     1.066667e+00
+## Else                                0.5000000     2.118180e+06
+## Studies-Business                    0.2580645     1.545455e+00
+##                    existing credits paid back duly till now
+## Car (new)                                         0.6913580
+## Car (used)                                        0.2040816
+## Domestic equipment                                0.4279476
+## Else                                              0.2000000
+## Studies-Business                                  0.5614035</pre>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Logística com Variáveis Categóricas</h2></hgroup><article  id="regressao-logistica-com-variaveis-categoricas-6">
+
+<ul>
+<li><p>\(Y_i=1\): mau cliente e \(Y_i=0\): bom cliente</p></li>
+<li><p><strong>Razão de chances:</strong></p></li>
+</ul>
+
+<p>\[\frac{\pi_i}{1-\pi_i} = \frac{P(Y_i=1)}{P(Y_i=0)}\]</p>
+
+<p>é a razão entre a probabilidade de classificar como &ldquo;mau&rdquo; cliente e a probabilidade de classificar como &ldquo;bom&rdquo; cliente.</p>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Seleção de Variáveis</h2></hgroup><article  id="selecao-de-variaveis">
+
+</article></slide><slide class=""><hgroup><h2>Seleção de Variáveis</h2></hgroup><article  id="selecao-de-variaveis-1">
+
+<p>Como selecionar quais variáveis incluir no modelo?</p>
+
+<ul>
+<li><p>Todas as Regressões Possíveis (<em>All Regressions</em>)</p></li>
+<li><p>Inclusão Passo a Frente (<em>Forward Selection</em>)</p></li>
+<li><p>Eliminação Passo Atrás (<em>Backward Selection</em>)</p></li>
+<li><p>Seleção Passo-a-Passo (<em>Stepwise Selection</em>)</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Seleção de Variáveis</h2></hgroup><article  id="selecao-de-variaveis-2">
+
+<p>Como selecionar quais variáveis incluir no modelo?</p>
+
+<ul>
+<li><p>Em todos esses métodos, vamos comparar o ajuste de modelos com diferentes conjuntos de <strong>covariáveis</strong>.</p></li>
+<li><p>Os modelos serão comparados de acordo com algum <span class="red3">
+critério</span>.</p>
+
+<ul>
+<li>AIC (\(k=2\)) e BIC (\(k=\log(n)\)):</li>
+</ul>
+
+<p>\[-\log \mathcal{L} + k \cdot p \] onde \(\mathcal{L}\) é a log-verossimilhança, \(p\) é o número de parâmetros, e \(k\) é o termo de penalização.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Seleção de Variáveis</h2></hgroup><article  id="selecao-de-variaveis-3">
+
+<ul>
+<li><p><strong>Todas as Regressões Possíveis</strong>:</p>
+
+<ul>
+<li><p>Testa de maneira iterativa todos os subconjuntos possíveis de variáveis explicativas.</p></li>
+<li><p>O número de modelos possíveis (~ \(2^p\)) pode ser muito grande e tornar a avaliação de todos os modelos inviável.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Seleção de Variáveis</h2></hgroup><article  id="selecao-de-variaveis-4">
+
+<ul>
+<li><p><strong>Inclusão Passo a Frente</strong> (<em>Forward Selection</em>):</p>
+
+<ul>
+<li><p>começa com o modelo nulo (sem nenhuma covariável);</p></li>
+<li><p>depois a inclusão de cada covariável é testada (baseada no <span class="red3">
+critério</span> que escolher);</p></li>
+<li><p>incluímos a variável que mais melhora (se houver) o ajuste do modelo;</p></li>
+<li><p>repetimos esse processo até que não haja mais melhora no modelo ao incluir variáveis.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Seleção de Variáveis</h2></hgroup><article  id="selecao-de-variaveis-5">
+
+<ul>
+<li><p><strong>Eliminação Passo Atrás</strong> (<em>Backward Selection</em>):</p>
+
+<ul>
+<li><p>começa com o modelo cheio (com todas as covariáveis);</p></li>
+<li><p>depois a exclusão de cada covariável é testada (baseada no <span class="red3">
+critério</span> que escolher);</p></li>
+<li><p>excluímos a variável que mais afeta (se houver) o ajuste do modelo;</p></li>
+<li><p>repetimos esse processo até que não haja mais melhora no modelo ao excluir variáveis.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Seleção de Variáveis</h2></hgroup><article  id="selecao-de-variaveis-6">
+
+<ul>
+<li><p><strong>Seleção Passo-a-Passo</strong> (<em>Stepwise Selection</em>):</p>
+
+<ul>
+<li><p>é uma mistura de <em>forward</em> e <em>backward</em>;</p></li>
+<li><p>faz um passo de <em>forward</em> testando a inclusão de variáveis, e depois um passo <em>backward</em> testando a exclusão;</p></li>
+<li><p>isso é feito até chegar em um modelo que já tenha sido testado antes, e que não haja mais melhora no ajuste do modelo.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Seleção de Variáveis - Exemplo</h2></hgroup><article  id="selecao-de-variaveis---exemplo">
+
+<ul>
+<li><strong>Inclusão Passo a Frente</strong> (<em>Forward Selection</em>):</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>predictors &lt;- names(credit.rcd) [-grep(&#39;class&#39;, names(credit.rcd))]
+formula &lt;- as.formula(paste(&quot;y ~ &quot;, paste(names(credit.rcd[,predictors]), collapse=&quot;+&quot;)))
+logit &lt;- glm(class ~ 1, data=train.db, family=binomial)
+
+for.sel &lt;- step(logit,direction=&#39;forward&#39;, trace=FALSE, # mudar para trace=TRUE
+                k=log(nrow(train.db)), scope=list(upper=formula))</pre>
+
+</article></slide><slide class=""><hgroup><h2>Seleção de Variáveis - Exemplo</h2></hgroup><article  id="selecao-de-variaveis---exemplo-1">
+
+<ul>
+<li><strong>Eliminação Passo Atrás</strong> (<em>Backward Selection</em>):</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>logit &lt;- glm(class ~ ., data=train.db[,c(&quot;class&quot;,predictors)], family=binomial)
+
+back.sel &lt;- step(logit,direction=&#39;backward&#39;,trace=FALSE, # mudar para trace=TRUE
+                 k=log(nrow(train.db)))</pre>
+
+</article></slide><slide class=""><hgroup><h2>Seleção de Variáveis - Exemplo</h2></hgroup><article  id="selecao-de-variaveis---exemplo-2">
+
+<p><span class="green3">
+<strong>Exercício</strong></span>:</p>
+
+<ul>
+<li><p>Compare os modelos selecionados pelos dois métodos.</p></li>
+<li><p>Ajustar <em>Stepwise Selection</em>: <code>direction=&quot;both&quot;</code></p></li>
+</ul></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>

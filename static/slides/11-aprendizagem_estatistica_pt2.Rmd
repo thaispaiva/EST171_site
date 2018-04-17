@@ -1,0 +1,452 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "18 de abril de 2018"
+subtitle: "11 - Aprendizagem Estatística"
+
+output:
+  ioslides_presentation:
+    css: my.css
+    highlight: pygments
+    logo: img/logo_ufmg.png
+    widescreen: true
+    self_contained: false
+    lib_dir: libs
+  beamer_presentation:
+    highlight: pygments
+
+header-includes: \usepackage{amsmath, amsbsy}
+---
+
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
+
+```{r echo=FALSE}
+## EST171 - Métodos Computacionais para Análise de Risco
+## Código da aula 11 - Aprendizagem Estatística
+
+```
+
+```{r echo=FALSE, purl=FALSE}
+file_name = "11-aprendizagem_estatistica_pt2"
+```
+
+
+
+
+## Aula de Hoje
+
+- Regressão Logística
+
+  + Definição
+  
+  + Exemplo Análise de Crédito
+
+- Seleção de Variáveis
+
+
+# Regressão Logística
+
+
+## Regressão Logística
+
+- É o modelo mais utilizado para <span class="blue3">análise de crédito</span>.
+
+- É um tipo de <span class="black">**Modelo Linear Generalizado**</span>, onde a distribuição da variável resposta é *binária*.
+
+- Seja $Y_i$ variável aleatória que assume valores $y_i \in \{0,1\}$ com probabilidade $1-\pi_i$ e $\pi_i$, respectivamente.
+
+$$P(Y_i = y_i) = \pi_i^{y_i}(1-\pi_i)^{(1-y_i)} = \begin{cases} \pi_i & \mbox{se } y_i=1 \\ 1-\pi_i & \mbox{se } y_i=0  \end{cases} $$
+com $\pi_i\in[0,1]$.
+
+
+## Inferência para Dados Binários
+
+- **Dados binários**: se assumirmos que $\pi_i=\pi$ para todo $i$, e que as observações $Y_i$ são independentes, podemos encontrar o EMV para $\pi$ como:
+
+$$\mathcal{L}(\pi; \boldsymbol y) = \prod_{i=1}^n P(Y_i=y_i) = \prod_{i=1}^n \pi^{y_i}(1-\pi)^{(1-y_i)} $$
+$$\hat{\pi} = \frac{\sum_{i=1}^n y_i}{n} $$
+
+
+## Inferência para Dados Binários
+
+- No entanto, vamos assumir que:
+
+  + cada $\pi_i$ é <span class="red3">diferente</span>;
+  
+  + e $\pi_i$ é uma <span class="red3">função de covariáveis</span> $\boldsymbol{X}_i$, tal que:
+  
+  $$\pi_i = E(Y_i | \boldsymbol X_i) $$
+  
+
+## Regressão Logística
+
+- Um *modelo linear* ($E(Y_i|\boldsymbol X_i)=\boldsymbol X_i'\boldsymbol\beta$) não vai funcionar porque $\boldsymbol X_i'\boldsymbol\beta$ pode assumir qualquer valor!
+
+- Uma maneira de modelar as probabilidades é considerar o logaritmo da <span class="blue3">chance</span>:
+
+$$ \mbox{logit}(\pi_i) = \log \left( \frac{\pi_i}{1-\pi_i}\right) = \boldsymbol X_i'\boldsymbol\beta $$
+
+$$\pi_i = \mbox{logit}^{-1}(\boldsymbol X_i'\boldsymbol\beta) = \frac{\exp(\boldsymbol X_i'\boldsymbol\beta)}{1+\exp(\boldsymbol X_i'\boldsymbol\beta)} $$
+
+
+## Regressão Logística
+
+- Podemos escrever a log-verossimilhança considerando $\pi_i(\boldsymbol \beta)$.
+
+- Depois, podemos encontrar *numericamente* o EMV para $\boldsymbol \beta$.
+
+- As propriedades do EMV garantem que teremos uma *distribuição assintótica* para $\hat{\boldsymbol \beta}$. Essa distribuição assintótica é **normal**, e nos fornece uma estimativa para a variância de $\hat{\boldsymbol \beta}$.
+
+- Com isso, podemos fazer o <span class="black">teste de significância</span> para $\hat{\boldsymbol \beta}$ (teste de hipóteses com $H_0: \beta=0$).
+
+
+## Regressão Logística
+
+- Vamos continuar com o <span class="green3">**Exemplo**</span> de Análise de Crédito da aula passada.
+
+- Antes de ajustar o modelo de regressão, vamos:
+
+  + recodificar algumas variáveis categóricas para facilitar a interpretação dos modelos;
+  
+  + separar os dados em **banco de treinamento** e **banco de teste**.
+  
+  
+## <span class="green3">**Exemplo**</span>
+
+<span class="black">1) **Recodificando as variáveis**:</span>
+
+- Execute os comandos da primeira parte da aula de hoje.
+
+- Quais variáveis estão sendo recodificadas?
+
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+## Pacotes
+# install.packages("car")
+require(CASdatasets)
+require(car)
+
+## carregando os dados
+data(credit)
+credit = credit[,-which(names(credit) == "foreign_worker")] # removendo variável
+
+## discretizando as covariáveis contínuas
+credit.f = credit
+credit.f$age = cut(credit.f$age,c(0,25,Inf))
+credit.f$credit_amount = cut(credit.f$credit_amount,c(0,4000,Inf))
+credit.f$duration = cut(credit.f$duration,c(0,15,36,Inf))
+
+```
+
+```{r echo=FALSE}
+## recodificando algumas variáveis
+
+credit.rcd <- credit.f
+
+credit.rcd$checking_status <- recode(credit.rcd$checking_status, "'A14'='No checking account'; 'A11'='CA < 0 euros'; 'A12'='CA in [0-200 euros['; 'A13'='CA > 200 euros' ")
+
+credit.rcd$credit_history <- recode(credit.rcd$credit_history, "c('A30','A31')='critical account'; c('A32','A33')='existing credits paid back duly till now'; 'A34'='all credits paid back duly'")
+
+credit.rcd$purpose <- recode(credit.rcd$purpose, "'A40'='Car (new)'; 'A41'='Car (used)'; c('A42','A43','A44','A45')='Domestic equipment'; c('A46','A48','A49')='Studies-Business'; 'A47'='Holidays'; else='Else'")
+
+credit.rcd$savings <- recode(credit.rcd$savings, "c('A65','A63','A64')='No savings or > 500 euros'; c('A62','A61')='< 500 euros'")
+
+credit.rcd$employment <- recode(credit.rcd$employment, "c('A71','A72')='unemployed or < 1 year'; 'A73'= 'E [1-4[ years'; c('A74','A75')='> 4 years'")
+
+credit.rcd$personal_status <- recode(credit.rcd$personal_status, "'A91'='male divorced/separated'; 'A92'='female divorced/separated/married'; c('A93','A94')='male single/married/widowed'; 'A95'='female : single'")
+
+credit.rcd$other_parties <- recode(credit.rcd$other_parties, "'A103'='guarantor'; else='none'")
+
+credit.rcd$property_magnitude <- recode(credit.rcd$property_magnitude, "'A121'='Real estate'; 'A124'='No property'; else='Else'")
+
+credit.rcd$other_payment_plans <- recode(credit.rcd$other_payment_plans, "'A143'='None'; else='Banks-Stores'")
+
+credit.rcd$housing <- recode(credit.rcd$housing, "'A152'='Owner';else='Else'")
+
+```
+
+
+## <span class="green3">**Exemplo**</span>
+
+Agora vamos separar o **banco de treinamento** e o **banco de teste**.
+
+- Vamos sortear 644 observações para o **banco de treinamento**, e as 356 restantes formarão o **banco de teste**.
+
+```{r}
+## Separando Banco de Treinamento
+set.seed(123)
+index = sort(sample(nrow(credit), 644, replace=F))
+table(credit$class[index])
+
+```
+
+
+## <span class="green3">**Exemplo**</span>
+
+Agora vamos separar o **banco de treinamento** e o **banco de teste**.
+
+```{r}
+train.db <- credit.rcd[index,]
+valid.db <- credit.rcd[-index,]
+
+
+```
+
+
+# Regressão Logística - Exemplo
+
+
+## Regressão Logística
+
+Voltando para a Regressão Logística...
+
+- Vamos ajustar um <span class="black">**modelo logístico**</span> para a classificação dos clientes ($Y$), usando como covariáveis <span class="blue3">Idade</span> e <span class="blue3">Duração do empréstimo</span> (contínuas), no **banco de treinamento**.
+
+
+```{r results='hide'}
+## Ajustando modelo de regressão logística com Idade e Duração
+reg <- glm(class ~ age + duration, data=credit[index,], family=binomial(link="logit"))
+
+summary(reg)
+
+```
+
+
+## Regressão Logística
+
+- Mais detalhes sobre a estimação desse modelo: Seção 4.2.1
+
+- <span class="black">**Interpretação dos coeficientes**:</span> por causa do formato da função de ligação do modelo logístico, temos que $\exp(\boldsymbol \beta)$ é o <span class="red3">*efeito multiplicativo*</span> na razão da chance $\frac{\pi_i}{1-\pi_i}$.
+
+
+## Regressão Logística com Variáveis Categóricas
+
+- Vamos considerar agora um modelo para a <span class="blue3">**classificação dos clientes**</span> incluindo como covariável <span class="blue3">Histórico</span> (categórica) `credit_history`.
+
+```{r results='hide'}
+## Ajustando modelo de regressão logística com Histórico
+reg <- glm(class ~ credit_history, data=credit, family=binomial(link="logit"))
+
+summary(reg)
+
+```
+
+
+## Regressão Logística com Variáveis Categóricas
+
+```{r}
+## valor previsto por categoria de Histórico
+cbind( prop.table(table(credit$credit_history,credit$class),1),
+       logit=predict(reg,
+                     newdata=data.frame(credit_history=levels(credit$credit_history)),
+                     type="response"))
+
+```
+
+
+## Regressão Logística com Variáveis Categóricas
+
+- Vamos ajustar agora com duas variáveis categóricas: 
+  + <span class="blue3">Histórico</span> (`credit_history`);
+  + <span class="blue3">Motivo do empréstimo</span> (`purpose`).
+
+- Para isso, vamos usar o banco recodificado (com menos categorias) `credit.rcd`.
+
+```{r}
+## Ajustando modelo de regressão logística com Histórico e Motivo
+reg <- glm(class ~ credit_history*purpose,data=credit.rcd,family=binomial(link="logit"))
+
+```
+
+
+## Regressão Logística com Variáveis Categóricas
+
+```{r}
+## Valores estimados por categoria
+attach(credit.rcd)
+p.class = matrix( predict(reg, newdata = data.frame(
+    credit_history = rep(levels(credit_history),each=length(levels(purpose))),
+    purpose = rep(levels(purpose),length(levels(credit_history))) ),
+  type="response"), ncol=length(levels(credit_history)), nrow=length(levels(purpose)) )
+rownames(p.class) <- levels(purpose)
+colnames(p.class) <- levels(credit_history)
+
+```
+
+
+## Regressão Logística com Variáveis Categóricas
+
+```{r}
+p.class
+
+```
+
+
+## Regressão Logística com Variáveis Categóricas
+
+```{r}
+## Razão das chances
+p.class/(1-p.class)
+
+```
+
+
+## Regressão Logística com Variáveis Categóricas
+
+- $Y_i=1$: mau cliente e $Y_i=0$: bom cliente
+
+- **Razão de chances:**
+
+$$\frac{\pi_i}{1-\pi_i} = \frac{P(Y_i=1)}{P(Y_i=0)}$$
+
+é a razão entre a probabilidade de classificar como "mau" cliente e a probabilidade de classificar como "bom" cliente.
+
+
+# Seleção de Variáveis
+
+
+## Seleção de Variáveis
+
+Como selecionar quais variáveis incluir no modelo?
+
+- Todas as Regressões Possíveis (*All Regressions*)
+
+- Inclusão Passo a Frente (*Forward Selection*)
+
+- Eliminação Passo Atrás (*Backward Selection*)
+
+- Seleção Passo-a-Passo (*Stepwise Selection*)
+
+
+## Seleção de Variáveis
+
+Como selecionar quais variáveis incluir no modelo?
+
+- Em todos esses métodos, vamos comparar o ajuste de modelos com diferentes conjuntos de **covariáveis**.
+
+- Os modelos serão comparados de acordo com algum <span class="red3">critério</span>.
+
+  + AIC ($k=2$) e BIC ($k=\log(n)$):
+  
+  $$-\log \mathcal{L} + k \cdot p $$
+  onde $\mathcal{L}$ é a log-verossimilhança, $p$ é o número de parâmetros, e $k$ é o termo de penalização.
+  
+
+## Seleção de Variáveis
+
+- **Todas as Regressões Possíveis**: 
+
+  + Testa de maneira iterativa todos os subconjuntos possíveis de variáveis explicativas.
+
+  + O número de modelos possíveis (~ $2^p$) pode ser muito grande e tornar a avaliação de todos os modelos inviável.
+
+
+## Seleção de Variáveis
+
+- **Inclusão Passo a Frente** (*Forward Selection*): 
+
+  + começa com o modelo nulo (sem nenhuma covariável);
+  
+  + depois a inclusão de cada covariável é testada (baseada no <span class="red3">critério</span> que escolher);
+  
+  + incluímos a variável que mais melhora (se houver) o ajuste do modelo;
+  
+  + repetimos esse processo até que não haja mais melhora no modelo ao incluir variáveis.
+
+
+## Seleção de Variáveis
+
+- **Eliminação Passo Atrás** (*Backward Selection*): 
+
+  + começa com o modelo cheio (com todas as covariáveis);
+  
+  + depois a exclusão de cada covariável é testada (baseada no <span class="red3">critério</span> que escolher);
+  
+  + excluímos a variável que mais afeta (se houver) o ajuste do modelo;
+  
+  + repetimos esse processo até que não haja mais melhora no modelo ao excluir variáveis.
+ 
+
+## Seleção de Variáveis
+
+- **Seleção Passo-a-Passo** (*Stepwise Selection*):
+
+  + é uma mistura de *forward* e *backward*;
+  
+  + faz um passo de *forward* testando a inclusão de variáveis, e depois um passo *backward* testando a exclusão;
+  
+  + isso é feito até chegar em um modelo que já tenha sido testado antes, e que não haja mais melhora no ajuste do modelo.
+  
+  
+## Seleção de Variáveis - Exemplo
+
+- **Inclusão Passo a Frente** (*Forward Selection*): 
+
+```{r echo=FALSE}
+## Seleção de Variáveis
+
+## Forward Selection
+```
+
+```{r}
+predictors <- names(credit.rcd) [-grep('class', names(credit.rcd))]
+formula <- as.formula(paste("y ~ ", paste(names(credit.rcd[,predictors]), collapse="+")))
+logit <- glm(class ~ 1, data=train.db, family=binomial)
+
+for.sel <- step(logit,direction='forward', trace=FALSE, # mudar para trace=TRUE
+                k=log(nrow(train.db)), scope=list(upper=formula))
+
+```
+
+
+## Seleção de Variáveis - Exemplo
+
+- **Eliminação Passo Atrás** (*Backward Selection*): 
+
+```{r echo=FALSE}
+## Backward Selection
+
+```
+
+```{r}
+logit <- glm(class ~ ., data=train.db[,c("class",predictors)], family=binomial)
+
+back.sel <- step(logit,direction='backward',trace=FALSE, # mudar para trace=TRUE
+                 k=log(nrow(train.db)))
+
+```
+
+
+## Seleção de Variáveis - Exemplo
+
+<span class="green3">**Exercício**</span>:
+
+- Compare os modelos selecionados pelos dois métodos.
+
+- Ajustar *Stepwise Selection*: `direction="both"`
+
+
+
+
+
+
+
+
+[//]: # ##########################################################
+[//]: # Para gerar arquivo com apenas os comandos do R desta aula
+```{r include=FALSE, purl=FALSE}
+# gerar arquivo com comandos do R
+purl(input=paste0(file_name,".Rmd"),
+     output=paste0("../labs/",file_name,".R"),
+     documentation=0, encoding='UTF-8')
+# Saída: 'filename.R' com apenas o código extraído do arquivo original
+# Opções: documentation=1 inclui o texto no título dos chunks
+# Para excluir um chunk do arquivo final, incluir a opção purl=FALSE no cabeçalho do chunk
+```
+
+
+
+
