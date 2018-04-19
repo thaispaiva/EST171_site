@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '12 - Revisão de Matemática Financeira',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '12-matematica_financeira_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(12-matematica_financeira_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="12-matematica_financeira_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">23 de abril de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li><p>Matemática Financeira</p>
+
+<ul>
+<li><p>taxa de juros e taxa de desconto</p></li>
+<li><p>taxa efetiva e nominal</p></li>
+<li><p>fluxo de pagamentos e anuidade certas</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Matemática Financeira</h2></hgroup><article  id="matematica-financeira">
+
+<ul>
+<li><p>A <span class="black">
+Matemática Financeira</span> lida com o valor do dinheiro no tempo.</p></li>
+<li><p>Vamos ver uma revisão de algumas quantidades e conceitos básicos que precisaremos para avaliar pagamentos futuros.</p></li>
+<li><p>Muitas dessas funções estão implementadas no R no pacote <code>lifecontingencies</code>.</p></li>
+</ul>
+
+<div class="centered">
+<img src='https://media.giphy.com/media/ADgfsbHcS62Jy/giphy.gif' title=''/></div>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Taxa de Juros e Taxa de Desconto</h2></hgroup><article  id="taxa-de-juros-e-taxa-de-desconto">
+
+</article></slide><slide class=""><hgroup><h2>Taxa de Juros</h2></hgroup><article  id="taxa-de-juros">
+
+<ul>
+<li><p>Um capital \(X\) irá valer \(A(t) = X \cdot (1+i)^t\) depois de \(t\) anos, se seguir a lei de <em>juros compostos</em>.</p></li>
+<li><p>\(i\) é a <span class="blue3">
+<strong>taxa de juros</strong></span> efetiva anual, isto é, a quantidade que um investimento irá render após um ano, com juros pagos no final do ano.</p></li>
+<li><p>\((1+i)^n\) é chamado de <span class="blue3">
+fator de acumulação</span>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Taxa de Desconto</h2></hgroup><article  id="taxa-de-desconto">
+
+<ul>
+<li><p>E se o pagamento dos juros fosse feito <span class="blue3">
+<strong>antecipadamente</strong></span> (no começo do período)? Os juros recebidos seriam reinvestidos, gerando mais juros, que também seriam investidos… e assim sucessivamente.</p></li>
+<li><p>Vamos chamar de <em>taxa de juros antecipados</em> ou <span class="blue3">
+<strong>taxa de desconto</strong></span> \(d\).</p></li>
+<li><p>No final do período, o montante seria \(X + d. X + d^2.X + ... = X \left(\frac{1}{1-d}\right)\) (progressão geométrica).</p></li>
+<li><p>A <span class="blue3">
+<strong>taxa de desconto</strong></span> que leva ao mesmo capital obtido com uma <span class="blue3">
+<strong>taxa de juros</strong></span> \(i\) é dada por:</p></li>
+</ul>
+
+<p>\[ X \cdot (1+i) = X \cdot \left( \frac{1}{1-d} \right) \qquad\Rightarrow \qquad   d = \frac{i}{1+i} \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Taxa de Desconto</h2></hgroup><article  id="taxa-de-desconto-1">
+
+<ul>
+<li>Por exemplo, qual deve ser a taxa de juros antecipada (ou taxa de desconto) que leva ao mesmo fator de acumulação de uma taxa de juros de 5%?</li>
+</ul>
+
+<p>No R:</p>
+
+<pre class = 'prettyprint lang-r'>0.05/(1+0.05)</pre>
+
+<pre >## [1] 0.04761905</pre>
+
+<pre class = 'prettyprint lang-r'>interest2Discount(i=0.05)</pre>
+
+<pre >## [1] 0.04761905</pre>
+
+</article></slide><slide class=""><hgroup><h2>Taxa de Desconto</h2></hgroup><article  id="taxa-de-desconto-2">
+
+<ul>
+<li>Também podemos ver a <strong>taxa de desconto</strong> como o valor descontado dos juros \(i\) a serem pagos no final do ano.</li>
+</ul>
+
+<p>\[ d = \frac{i}{1+i} = i \, . \frac{1}{1+i} = i\,.(1-d)\]</p>
+
+<p>Considere um capital investido de 1 unidade. O valor do <em>juros antecipado</em> \(d\) a ser pago é igual ao que renderia de <em>juros postecipado</em> \(i\) aplicado ao capital de \(1-d\).</p>
+
+<p>Equivalentemente, o valor do <em>juros postecipado</em> \(i\) é igual ao que receberia de <em>juros antecipado</em> \(d\) aplicado ao capital de \(1+i\).</p>
+
+<p>\[ i = \frac{d}{1-d} = d \, .(1+i)  \qquad \Rightarrow \qquad (1-d) = \frac{1}{1+i} \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Taxa nominal e efetiva</h2></hgroup><article  id="taxa-nominal-e-efetiva">
+
+<ul>
+<li><p>Juros pode ser pago em frequências maiores do que uma vez por período de tempo.</p></li>
+<li><p>Essas frações do período em que os juros são pagos são chamadas de <span class="blue3">
+<strong>período de conversão</strong></span>.</p></li>
+<li><p>Quando o <em>período de conversão</em> é igual à unidade de tempo básica, a taxa de juros (e a de desconto) recebe o nome de <span class="black">
+<strong>taxa efetiva</strong></span>.</p></li>
+<li><p>Quando o <em>período de conversão</em> é diferente da unidade de tempo básica, a taxa de juros (e a de desconto) é chamada de <span class="black">
+<strong>taxa nominal</strong></span>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Taxa nominal e efetiva</h2></hgroup><article  id="taxa-nominal-e-efetiva-1">
+
+<ul>
+<li><p>Seja \(i\) a <span class="black">
+<strong>taxa de juros efetiva</strong></span> anual.</p></li>
+<li><p>Seja \(i^{(m)}\) a <span class="black">
+<strong>taxa de juros nominal</strong></span> anual, convertida em \(m\) vezes por ano.</p></li>
+</ul>
+
+<p>Logo,</p>
+
+<p>\[ \left( 1 + \frac{i^{(m)}}{m}\right)^m = (1+i) \]</p>
+
+<p>\[ i^{(m)} = m . \left[ (1+i)^{1/m} - 1\right] \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Taxa nominal e efetiva</h2></hgroup><article  id="taxa-nominal-e-efetiva-2">
+
+<pre class = 'prettyprint lang-r'>## Taxa Nominal e Efetiva
+nominal2Real(i=0.06, k=12)</pre>
+
+<pre >## [1] 0.06167781</pre>
+
+<pre class = 'prettyprint lang-r'>real2Nominal(i=0.06, k=12)</pre>
+
+<pre >## [1] 0.05841061</pre>
+
+<pre class = 'prettyprint lang-r'># converter taxa de desconto efetiva para nominal
+real2Nominal(i=0.04, k=12, type=&quot;discount&quot;) </pre>
+
+<pre >## [1] 0.04075264</pre>
+
+</article></slide><slide class=""><hgroup><h2>Relações úteis</h2></hgroup><article  id="relacoes-uteis">
+
+<ul>
+<li>Valor do montante de 1 unidade acumulado pelo tempo \(t\):</li>
+</ul>
+
+<p>\[A(t) = (1+i)^t = \left( 1 + \frac{i^{(m)}}{m} \right)^t = \left(1 - \frac{d^{(m)}}{m} \right)^{-t} = (1-d)^{-t} = v^{-t} \]</p>
+
+<p>onde \(i\) e \(d\) são as taxas de juros e desconto efetivas, e \(i^{(m)})\) e \(d^{(m)}\) são as taxas nominais.</p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 1</strong></span></h2></hgroup><article  class="build" id="exercicio-1">
+
+<p>Encontre o valor presente de $1.000 a ser pago no final de 6 anos com juros de 6% ao ano, pago antecipadamente e convertido semestralmente.</p>
+
+<pre >## [1] 693.8424</pre>
+
+<pre >## [1] 693.8424</pre>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Fluxo de Pagamentos</h2></hgroup><article  id="fluxo-de-pagamentos">
+
+</article></slide><slide class=""><hgroup><h2>Fluxo de Pagamentos</h2></hgroup><article  id="fluxo-de-pagamentos-1">
+
+<ul>
+<li><p>Muitas vezes precisamos considerar mais de um pagamento ou pagamentos que são feitos periodicamente.</p></li>
+<li><p><span class="black">
+<strong>Valor Presente</strong></span>: capital em valor atual correspondente a uma série de pagamentos feitos em diferentes tempos.</p></li>
+<li><p>Permite comparar em uma <em>mesma base</em> diferentes fluxos de pagamentos. Isso é, podemos avaliar o retorno de diferentes investimentos.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Fluxo de Pagamentos</h2></hgroup><article  id="fluxo-de-pagamentos-2">
+
+<p>\[VP = \sum_{j=1}^K P_j \,(1+i_j)^{-t_j} \]</p>
+
+<p>onde \(P_j\) é o valor do pagamento e \(i_j\) é a taxa de juros correspondentes ao tempo \(t_j\).</p>
+
+<ul>
+<li>O pacote <code>lifecontingencies</code> também tem funções para calcular <strong>Valor Presente</strong> de fluxos de pagamentos <em>determinísticos</em>.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 2:</strong></span></h2></hgroup><article  id="exercicio-2">
+
+<p>Usando a função <code>presentValue</code>, verifique qual investimento é melhor (com \(i=5\%\)):</p>
+
+<ol>
+<li><p>Pagar $500 agora e receber $100, $200, $300, $250 no final dos próximos quatro anos;</p></li>
+<li><p>Pagar $700 agora e receber $1000 no final do segundo ano.</p></li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício:</strong></span></h2></hgroup><article  id="exercicio">
+
+<pre >## [1] 241.4709</pre>
+
+<pre >## [1] 207.0295</pre>
+
+</article></slide><slide class=""><hgroup><h2>Anuidades</h2></hgroup><article  id="anuidades">
+
+<p><span class="black">
+<strong>Anuidades</strong></span> são fluxos de pagamentos feitos em intervalos regulares de tempo.</p>
+
+<ul>
+<li><p>Se os pagamentos são feitos <em>garantidamente</em> durante um tempo, chamamos de <span class="black">
+anuidades certas</span>.</p></li>
+<li><p>Se os pagamentos são feitos no <em>final de cada período</em>, chamamos de <span class="black">
+anuidades postecipadas</span> (&ldquo;<em>annuity-immediate</em>&rdquo;).</p></li>
+<li><p>Se os pagamentos são feitos no <em>começo de cada período</em>, chamamos de <span class="black">
+anuidades antecipadas</span> (&ldquo;<em>annuity-due</em>&rdquo;).</p></li>
+<li><p>Anuidades também podem ser pagas em <em>pagamentos fracionários</em> dentro de cada período, ou <em>indefinidamente</em> (Bowers et al., 1997; Dickson et al., 2009).</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Anuidades</h2></hgroup><article  id="anuidades-1">
+
+<ul>
+<li>Anuidade certa postecipada por \(n\) anos:</li>
+</ul>
+
+<p><img src="img/anuidade.png" height="5%" style="display: block; margin: auto;" /></p>
+
+<ul>
+<li>Anuidade certa antecipada por \(n\) anos:</li>
+</ul>
+
+<p><img src="img/anuidade2.png" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Perpetuidades</h2></hgroup><article  id="perpetuidades">
+
+<ul>
+<li>Perpetuidades (anuidade infinita) antecipada e postecipada:</li>
+</ul>
+
+<p><img src="img/anuidade3.png" style="display: block; margin: auto;" /></p>
+
+<p><img src="img/anuidade4.png" style="display: block; margin: auto;" /></p>
+
+<p>Podemos calcular com a função <code>annuity</code>.</p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 3:</strong></span></h2></hgroup><article  id="exercicio-3">
+
+<ol>
+<li><p>Encontre o valor presente de uma anuidade postecipada de $100 paga anualmente por 5 anos, com juros de 9%. <br><br></p></li>
+<li><p>Suponha que uma empresa emita um contrato de dividendo de ações que paga $10 no final do ano indefinidamente, com juros de 6%. Qual o valor presente deste contrato? <br><br></p></li>
+<li><p>Qual o valor que você deve investir hoje, com juros compostos anuais de 6%, para sacar $5000 no começo de cada ano nos próximos 5 anos?</p></li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício:</strong></span></h2></hgroup><article  id="exercicio-4">
+
+<pre >## [1] 388.9651</pre>
+
+<pre >## [1] 388.9651</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício:</strong></span></h2></hgroup><article  id="exercicio-5">
+
+<pre >## [1] 166.6667</pre>
+
+<pre >## [1] 166.6667</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício:</strong></span></h2></hgroup><article  id="exercicio-6">
+
+<pre >## [1] 22325.53</pre>
+
+<pre >## [1] 22325.53</pre>
+
+</article></slide><slide class=""><hgroup><h2>Valor Acumulado</h2></hgroup><article  id="valor-acumulado">
+
+<ul>
+<li>Também podemos definir o <span class="black">
+<strong>valor acumulado</strong></span> ou valor futuro de uma série de pagamentos.</li>
+</ul>
+
+<p><img src="img/valor_futuro.png" style="display: block; margin: auto;" /></p>
+
+<p>Podemos calcular com a função <code>accumulatedValue</code>.</p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 4:</strong></span></h2></hgroup><article  class="build" id="exercicio-4-1">
+
+<ol>
+<li>Qual será o valor acumulado se depositarmos $5000 no começo de cada ano pelos próximos 5 anos? Considere juros compostos de 6%.</li>
+</ol>
+
+<pre >## [1] 29876.59</pre>
+
+<pre >## [1] 29876.59</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 5:</strong></span></h2></hgroup><article  class="build" id="exercicio-5-1">
+
+<p>Um homem quer economizar $100.000 para pagar a faculdade de seu filho daqui a 10 anos. Um fundo de educação exige que o investidor faça depósitos fixos no final de cada ano, com uma taxa de juros garantida de 5%. Quanto o homem precisa depositar a cada ano para atingir sua meta?</p>
+
+<pre >## [1] 7950.457</pre>
+
+</article></slide><slide class=""><hgroup><h2>Fluxos de pagamentos</h2></hgroup><article  id="fluxos-de-pagamentos">
+
+<ul>
+<li><p>Também podemos querer encontrar o <strong>valor presente</strong> ou <strong>valor acumulado</strong> de uma série de pagamentos <em>não constantes</em>.</p></li>
+<li><p>Todos os casos podem ser avaliados com a fórmula do VP que vimos no começo da aula.</p></li>
+<li><p>Mas vamos encontrar expressões para alguns casos específicos, como <span class="black">
+<strong>anuidades aritmeticamente crescentes</strong></span> \((IA)_n\) e <span class="black">
+<strong>anuidades aritmeticamente decrescentes</strong></span> \((DA)_n\).</p></li>
+<li><p>No R: <code>increasingAnnuity</code> e <code>decreasingAnnuity</code>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 6:</strong></span></h2></hgroup><article  id="exercicio-6-1">
+
+<ul>
+<li><p>Os seguintes pagamentos serão recebidos:</p>
+
+<ul>
+<li>$500 no final do primeiro ano, $520 no final do segundo ano, $540 no final do terceiro ano, e assim por diante, até o pagamento final de $800.</li>
+</ul></li>
+<li><p>Considerando uma taxa de juros anual de 2%, encontre o valor presente desses pagamentos no \(t=0\).</p></li>
+<li><p>Encontre o valor acumulado desses pagamentos no momento do último pagamento.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 6:</strong></span></h2></hgroup><article  id="exercicio-6-2">
+
+<p>Podemos considerar uma anuidade fixa de $480 mais uma anuidade crescente de $20:</p>
+
+<pre >## [1] 8711.431</pre>
+
+<p>Valor acumulado:</p>
+
+<pre >## [1] 11958.93</pre>
+
+</article></slide><slide class=""><hgroup><h2>Anuidade diferida</h2></hgroup><article  id="anuidade-diferida">
+
+<ul>
+<li><p>Dizemos que uma <strong>anuidade certa</strong> é diferida se o momento de início dos pagamentos é diferente do momento em que estamos avaliando o fluxo de pagamentos.</p></li>
+<li><p>Isto é, a sequência de pagamentos só começará daqui a um determinado tempo (chamado de <strong>período de diferimento</strong>).</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 7:</strong></span></h2></hgroup><article  id="exercicio-7">
+
+<ul>
+<li>Encontre o valor presente de uma anuidade antecipada que paga $1200 anualmente por 12 anos, com o primeiro pagamento daqui a dois anos. Considere i=6%.</li>
+</ul>
+
+<pre >## [1] 9491.144</pre>
+
+<pre >## [1] 9491.144</pre></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
