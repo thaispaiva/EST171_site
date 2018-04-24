@@ -63,6 +63,8 @@ lessons:
     lab: "12-matematica_financeira.R"
   - date: "25/04/18"
     title: "Seguros (tabelas de vida)"
+    slides: "13-tabelas.html"
+    lab: "13-tabelas.R"
   - date: "30/04/18"
     title: "Recesso (Dia do Trabalho)"
   - date: "02/05/18"

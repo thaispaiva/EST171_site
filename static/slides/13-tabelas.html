@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '13 - Tabelas de Vida',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '13-tabelas_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(13-tabelas_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="13-tabelas_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">25 de abril de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li><p>Fluxos de pagamentos determinísticos</p></li>
+<li><p>Tabela de Vida</p>
+
+<ul>
+<li><p>criando e manipulando tabelas de vida no R</p></li>
+<li><p>avaliando probabilidades, esperanças de vida</p></li>
+</ul></li>
+<li><p>Suposições para idades fracionárias</p></li>
+<li><p>Múltiplas Vidas</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Fluxos de pagamentos</h2></hgroup><article  id="fluxos-de-pagamentos">
+
+<ul>
+<li><p>Na aula passada, consideramos fluxos de pagamentos <span class="black">
+<strong>determinísticos</strong></span>, isto é, os pagamentos periódicos são feitos com probabilidade 1.</p></li>
+<li><p>No entanto, nas <strong>Ciências Atuariais</strong>, muitas vezes teremos que avaliar fluxos de pagamentos <span class="black">
+<strong>probabilísticos</strong></span>.</p></li>
+<li><p>Pagamentos podem depender da <em>sobrevivência</em> ou <em>morte</em> de um indivíduo (ou grupo de indivíduos).</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Fluxos de pagamentos</h2></hgroup><article  id="fluxos-de-pagamentos-1">
+
+<ul>
+<li><p>Para comparar pagamentos ou fluxos de pagamentos em <em>tempos diferentes</em> \(\Rightarrow\) <span class="black">
+valor presente</span>.</p></li>
+<li><p>Para comparar pagamentos ou fluxos de pagamentos <em>probabilísticos</em> \(\Rightarrow\) <span class="black">
+esperança</span>.</p></li>
+<li><p>Vamos denominar o valor presente desses fluxos de pagamentos como VPA - <strong>Valor Presente Atuarial</strong>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Fluxos de pagamentos</h2></hgroup><article  id="fluxos-de-pagamentos-2">
+
+<ul>
+<li><p>O Valor Presente do fluxo de pagamentos <em>probabilístico</em> será uma variável aleatória, vai depender de quando os pagamentos são feitos.</p></li>
+<li><p>Se os pagamentos dependem da <em>sobrevivência</em> ou <em>morte</em> de um indivíduo, vamos precisar determinar a variável aleatória \(T(x)\): tempo de vida futura de um indivíduo de idade \(x\).</p></li>
+<li><p>O Valor Presente será uma função de \(T(x)\).</p></li>
+<li><p>Assim, precisamos encontrar a <span class="black">
+distribuição de probabilidade</span> de \(T(x)\).</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Tabela de Vida</h2></hgroup><article  id="tabela-de-vida">
+
+</article></slide><slide class=""><hgroup><h2>Tabela de Vida</h2></hgroup><article  id="tabela-de-vida-1">
+
+<ul>
+<li><p>Uma <span class="black">
+tabela de vida</span> é uma sequência não-crescente de \(l_x\), para as idades \(x=0,1,\dots,\omega\) com a idade terminal \(\omega\).</p></li>
+<li><p>Cada quantia \(l_x\) representa o número de indivíduos vivos à idade \(x\).</p></li>
+<li><p>O número \(l_0\) de indivíduos vivos no tempo 0 é a <strong>raiz da tabela</strong>.</p></li>
+<li><p>Como a tabela contém o número de sobreviventes, podemos usar os valores de \(l_x\) para calcular as <strong>probabilidades de sobrevivência</strong>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Tabela de Vida</h2></hgroup><article  id="tabela-de-vida-2">
+
+<ul>
+<li>Probabilidade de \((x)\) sobreviver à idade \(x+t\):</li>
+</ul>
+
+<p>\[{}_{t}p_x = P(T(x)&gt;t) = \frac{l_{x+t}}{l_x} \]</p>
+
+<ul>
+<li>Probabilidade de \((x)\) não atingir a idade \(x+t\):</li>
+</ul>
+
+<p>\[{}_{t}q_x = 1 - {}_{t}p_x = P(T(x) \leq t) = \frac{l_x - l_{x+t}}{l_x} \]</p>
+
+<ul>
+<li>Notação: a probabilidade \({}_{1}p_x\) será denotada por \(p_x\).</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Tabela de Vida</h2></hgroup><article  id="tabela-de-vida-3">
+
+<ul>
+<li>Podemos criar uma <strong>tabela de vida</strong> no R usando o pacote <code>lifecontingencies</code> de algumas maneiras diferentes:</li>
+</ul>
+
+<ol>
+<li>imputar diretamente \(x\) e \(l_x\):</li>
+</ol>
+
+<pre class = 'prettyprint lang-r'>tab1 = new(&quot;lifetable&quot;, x=seq(0,10,1),
+           lx=seq(from=1000,to=0,by=-100),name=&quot;Sample life table 1&quot;)</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 1</strong></span></h2></hgroup><article  id="exercicio-1">
+
+<ul>
+<li><p>Verifique o que é o objeto <code>tab1</code>? Quais quantidades foram passadas (<em>input</em>) e quais foram criadas (<em>output</em>)?</p></li>
+<li><p>Qual a classe desse objeto? Verifique o help da classe para ver os detalhes sobre esse tipo de objeto.</p></li>
+<li><p>O que a função <code>summary(tab1)</code> faz? E a função <code>plot(tab1)</code>? Veja quais outros métodos estão implementados para essa classe.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Tabela de Vida</h2></hgroup><article  id="tabela-de-vida-4">
+
+<ul>
+<li>Podemos criar uma <strong>tabela de vida</strong> no R usando o pacote <code>lifecontingencies</code> de algumas maneiras diferentes:</li>
+</ul>
+
+<ol>
+<li>a partir das probabilidades \(p_x\) ou \(q_x\):</li>
+</ol>
+
+<pre class = 'prettyprint lang-r'>tab2 = probs2lifetable(probs=seq(from=0.1,to=1,by=0.1),
+                       radix=100000,type=&quot;qx&quot;,name=&quot;Sample life table 2&quot;)</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 2</strong></span></h2></hgroup><article  id="exercicio-2">
+
+<ul>
+<li><p>O que a função <code>head(tab2)</code> faz? E a função <code>tail(tab2)</code>?</p></li>
+<li><p>Verifique o que é o objeto <code>tab2</code>? Quais quantidades foram passadas (<em>input</em>) e quais foram criadas (<em>output</em>)?</p></li>
+</ul>
+
+<p>Obs: Podemos exportar um objeto <code>lifetable</code> para um objeto <code>data.frame</code> usando o comando:</p>
+
+<pre class = 'prettyprint lang-r'>## exportando para data.frame
+tab2.df = as(tab2, &quot;data.frame&quot;)
+class(tab2.df)</pre>
+
+<pre >## [1] &quot;data.frame&quot;</pre>
+
+</article></slide><slide class=""><hgroup><h2>Tabela de Vida</h2></hgroup><article  id="tabela-de-vida-5">
+
+<ul>
+<li><p>Podemos fazer várias análises demográficas usando as funções do pacote.</p></li>
+<li><p>As principais probabilidades que vamos avaliar são:</p>
+
+<ul>
+<li>a probabilidade de um indivíduo de idade \(x\) sobreviva à idade \(x+t\):</li>
+</ul>
+
+<p>\[{}_{t}p_x\]</p>
+
+<ul>
+<li>a probabilidade de um indivíduo de idade \(x\) morrer em \(t\) anos:</li>
+</ul>
+
+<p>\[{}_{t}q_x = 1 - {}_{t}p_x\]</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 3</strong></span></h2></hgroup><article  id="exercicio-3">
+
+<ul>
+<li><p>Usando a <strong>Tabela Ilustrativa do SOA</strong> (<em>Society of Actuaries</em>) usada no Bowers, calcule:</p>
+
+<ul>
+<li><p>a probabilidade de um indivíduo de idade 65 morrer antes de completar 85 anos;</p></li>
+<li><p>a probabilidade de um indivíduo de idade 25 sobreviver até os 65 anos.</p></li>
+</ul></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## carregando a tabela de vida ilustrativa do SOA
+data(&quot;soa08&quot;)</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 3</strong></span></h2></hgroup><article  id="exercicio-3-1">
+
+<p>Obs: Os objetos da classe <code>lifetable</code> são do tipo <code>S4</code>, um tipo de objeto mais recente do R para organizar várias informações. Note que a tabela <code>soa08</code> contém alguns &ldquo;<em>slots</em>&rdquo;. Você pode acessar os <em>slots</em> com os comandos:</p>
+
+<pre class = 'prettyprint lang-r'>slotNames(soa08)</pre>
+
+<pre >## [1] &quot;x&quot;    &quot;lx&quot;   &quot;name&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>head(soa08@lx)</pre>
+
+<pre >## [1] 100000.00  97957.83  97826.26  97706.55  97596.74  97495.03</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 3</strong></span></h2></hgroup><article  class="build" id="exercicio-3-2">
+
+<p>Vamos calcular:</p>
+
+<ul>
+<li>a probabilidade de um indivíduo de idade 65 morrer antes de completar 85 anos;</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## prob de (65) morrer em 20 anos
+(soa08@lx[soa08@x==65]-soa08@lx[soa08@x==85])/soa08@lx[soa08@x==65]</pre>
+
+<pre >## [1] 0.6869847</pre>
+
+<pre class = 'prettyprint lang-r'>qxt(soa08, 65,20)</pre>
+
+<pre >## [1] 0.6869847</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 3</strong></span></h2></hgroup><article  class="build" id="exercicio-3-3">
+
+<p>Vamos calcular:</p>
+
+<ul>
+<li>a probabilidade de um indivíduo de idade 25 sobreviver até os 65 anos.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## prob de (25) sobreviver 65 anos
+##</pre>
+
+<pre >## [1] 0.7876582</pre>
+
+</article></slide><slide class=""><hgroup><h2>Esperança de vida</h2></hgroup><article  id="esperanca-de-vida">
+
+<ul>
+<li>Esperança de vida em anos completos:</li>
+</ul>
+
+<p><img src="img/ex.png" style="display: block; margin: auto;" /></p>
+
+<ul>
+<li>Esperança de vida em anos completos entre as idades \(x\) e \(x+n\):</li>
+</ul>
+
+<p><img src="img/exn.png" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 4</strong></span></h2></hgroup><article  class="build" id="exercicio-4">
+
+<p>Usando a Tabela Ilustrativa do SOA, calcule:</p>
+
+<ul>
+<li><p>a esperança de vida em anos completos ao nascer;</p></li>
+<li><p>a esperança de vida em anos completos entre as idades 50 e 60.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 4</strong></span></h2></hgroup><article  class="build" id="exercicio-4-1">
+
+<ul>
+<li>Para a esperança de vida em anos completos ao nascer, só precisamos somar todos os \({}_{t}p_0\)’s. Isso é equivalente a somar todos os valores de \(l_x\), exceto o primeiro, e dividir por \(l_0\).</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>sum(soa08@lx[soa08@x%in%(1:110)]/soa08@lx[soa08@x==0])</pre>
+
+<pre >## [1] 71.30788</pre>
+
+<pre class = 'prettyprint lang-r'>sum(soa08@lx/soa08@lx[soa08@x==0])-1</pre>
+
+<pre >## [1] 71.30789</pre>
+
+<pre class = 'prettyprint lang-r'>exn(object=soa08)</pre>
+
+<pre >## [1] 71.30789</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 4</strong></span></h2></hgroup><article  class="build" id="exercicio-4-2">
+
+<ul>
+<li>Para a esperança de vida em anos completos entre as idades 50 e 60, também podemos somar os valores de \(l_x\):</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>sum(soa08@lx[soa08@x%in%(51:60)]/soa08@lx[soa08@x==50])</pre>
+
+<pre >## [1] 9.583979</pre>
+
+<pre class = 'prettyprint lang-r'>exn(object=soa08, x=50, n=10, type=&quot;curtate&quot;)</pre>
+
+<pre >## [1] 9.583979</pre>
+
+</article></slide><slide class=""><hgroup><h2>Esperança de vida</h2></hgroup><article  id="esperanca-de-vida-1">
+
+<ul>
+<li>Esperança de vida completa:</li>
+</ul>
+
+<p><img src="img/e0x.png" style="display: block; margin: auto;" /></p>
+
+<ul>
+<li>Esperança de vida completa entre as idades \(x\) e \(x+n\):</li>
+</ul>
+
+<p><img src="img/e0xn.png" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 5</strong></span></h2></hgroup><article  class="build" id="exercicio-5">
+
+<ul>
+<li>Calcule a esperança completa de vida entre as idades 80 e 90.</li>
+</ul>
+
+<p><img src="img/e0_80_10.png" style="display: block; margin: auto;" /></p>
+
+<ul>
+<li><p>Como vamos calcular essa esperança? Só temos \({}_{t}p_x\) para idades inteiras!</p></li>
+<li><p>Precisamos assumir que as mortes ocorrem no meio do ano.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 5</strong></span></h2></hgroup><article  class="build" id="exercicio-5-1">
+
+<p>\[\frac 1 2 \cdot \left( \frac{l_{81}+l_{82}+\dots+l_{90}}{l_{80}} + \frac{l_{80}+l_{81}+\dots+l_{89}}{l_{80}} \right)\]</p>
+
+<pre class = 'prettyprint lang-r'>(sum(soa08@lx[soa08@x%in%(81:90)]/soa08@lx[soa08@x==80])+
+   sum(soa08@lx[soa08@x%in%(80:89)]/soa08@lx[soa08@x==80]))/2</pre>
+
+<pre >## [1] 6.136299</pre>
+
+<pre class = 'prettyprint lang-r'>exn(soa08,80,10,&quot;complete&quot;)</pre>
+
+<pre >## [1] 6.136299</pre>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Suposições para idades fracionárias</h2></hgroup><article  id="suposicoes-para-idades-fracionarias">
+
+</article></slide><slide class=""><hgroup><h2>Suposições para idades fracionárias</h2></hgroup><article  id="suposicoes-para-idades-fracionarias-1">
+
+<p>Vamos relembrar as suposições sobre a mortalidade em idades fracionárias: <br><br></p>
+
+<ul>
+<li><span class="black">
+Distribuição uniforme</span> ou <span class="black">
+interpolação linear</span>:</li>
+</ul>
+
+<p>Seja $h 0 $ o tempo fracionário, e \(\lfloor h \rfloor\) sua a parte inteira. A interpolação linear entre \({}_{\lfloor h \rfloor}p_x\) e \({}_{\lfloor h \rfloor +1}p_x\) é dada por:</p>
+
+<p>\[{}_{h}\tilde{p}_x = \left( 1 - h + \lfloor h \rfloor \right).\,{}_{\lfloor h \rfloor}p_x + \left( h - \lfloor h \rfloor \right).\,{}_{\lfloor h \rfloor +1}p_x \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Suposições para idades fracionárias</h2></hgroup><article  id="suposicoes-para-idades-fracionarias-2">
+
+<ul>
+<li><p><span class="black">
+Força de mortalidade constante</span>: <br><br> Sabemos que \({}_{h}p_x = \exp\left( - \int_0^h \mu_{x+s} \,ds\right)\), onde \(\mu_x\) é a força de mortalidade. Assuma que \(h \in [0,1)\) e que \(\mu_{x+s}\) é constante em \([0,1)\). Então</p>
+
+<p>\[{}_{h}\tilde{p}_x = \exp\left( - \int_0^h \mu_{x+s} \,ds\right) = \exp(-\mu_x \cdot h) = (p_x)^h \]</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 6</strong></span></h2></hgroup><article  class="build" id="exercicio-6">
+
+<ul>
+<li><p>Avalie a probabilidade de uma vida de idade 80 1/4 morrer no próximo semestre, assumindo:</p>
+
+<ol>
+<li><p>interpolação linear da mortalidade;</p></li>
+<li><p>força de mortalidade constante.</p></li>
+</ol></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>pxt(object=soa08, x=80.25, t=0.5, fractional=&quot;linear&quot;)</pre>
+
+<pre >## [1] 0.959027</pre>
+
+<pre class = 'prettyprint lang-r'>pxt(object=soa08, x=80.25, t=0.5, fractional=&quot;constant force&quot;)</pre>
+
+<pre >## [1] 0.959027</pre>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Múltiplas Vidas</h2></hgroup><article  id="multiplas-vidas">
+
+</article></slide><slide class=""><hgroup><h2>Múltiplas Vidas</h2></hgroup><article  id="multiplas-vidas-1">
+
+<p>O pacote <code>lifecontingencies</code> também tem funções de múltiplas vidas implementadas.</p>
+
+<ul>
+<li><span class="black">
+Status de vida conjunta</span>: tempo até a primeira morte</li>
+</ul>
+
+<p>\[T_{xy} = \min(T_x, T_y) \] \[{}_{t}p_{xy} = P(T_{xy}&gt;t) = P(T_x &gt; t \,\cap\, T_y &gt; t) \]</p>
+
+<ul>
+<li><span class="black">
+Status do último sobrevivente</span>: tempo até a última morte</li>
+</ul>
+
+<p>\[T_{\overline{xy}} = \max(T_x, T_y) \] \[{}_{t}p_{\overline{xy}} = P(T_{\overline{xy}}&gt;t) = P(T_x &gt; t \,\cup\, T_y &gt; t) \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Múltiplas Vidas</h2></hgroup><article  id="multiplas-vidas-2">
+
+<ul>
+<li>Assumindo <strong>vidas independentes</strong>, temos que:</li>
+</ul>
+
+<p>\[{}_{t}p_{xy} = {}_{t}p_x \,\cdot {}_{t}p_y \]</p>
+
+<p>\[{}_{t}p_{\overline{xy}} = {}_{t}p_x + {}_{t}p_y - {}_{t}p_{xy} \]</p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 7</strong></span></h2></hgroup><article  id="exercicio-7">
+
+<p>Assuma que a Tabela Ilustrativa do SOA se aplica a duas vidas independentes de idade 65 e 60.</p>
+
+<p>Calcule:</p>
+
+<ol>
+<li><p>a probabilidade que ambos estarão vivos após 20 anos;</p></li>
+<li><p>a probabilidade que pelo menos um estará vivo após 20 anos;</p></li>
+<li><p>a esperança de vida conjunta.</p></li>
+</ol>
+
+<p>Dica: veja as funções <code>pxt</code>, <code>pxyzt</code> e <code>exyzt</code>.</p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 7</strong></span></h2></hgroup><article  id="exercicio-7-1">
+
+<pre class = 'prettyprint lang-r'>## a) prob. ambos vivos em 20 anos
+pxt(soa08, x=65, t=20)*pxt(soa08, x=60, t=20)</pre>
+
+<pre >## [1] 0.1496391</pre>
+
+<pre class = 'prettyprint lang-r'>pxyzt(list(soa08,soa08), x=c(65,60), t=20, status=&quot;joint&quot;)</pre>
+
+<pre >## [1] 0.1496391</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício 7</strong></span></h2></hgroup><article  id="exercicio-7-2">
+
+<pre class = 'prettyprint lang-r'>## b) prob. pelo menos um vivo em 20 anos
+1 - qxt(soa08, x=65, t=20)*qxt(soa08, x=60, t=20)</pre>
+
+<pre >## [1] 0.641433</pre>
+
+<pre class = 'prettyprint lang-r'>pxyzt(list(soa08,soa08), x=c(65,60), t=20, status=&quot;last&quot;)</pre>
+
+<pre >## [1] 0.641433</pre>
+
+<pre class = 'prettyprint lang-r'>## c) esperança de vida conjunta
+exyzt(list(soa08,soa08), x=c(65,60), t=20, status=&quot;joint&quot;)</pre>
+
+<pre >## [1] 11.08887</pre></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>

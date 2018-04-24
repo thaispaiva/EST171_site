@@ -1,0 +1,521 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "25 de abril de 2018"
+subtitle: "13 - Tabelas de Vida"
+
+output:
+  ioslides_presentation:
+    css: my.css
+    highlight: pygments
+    logo: img/logo_ufmg.png
+    widescreen: true
+    self_contained: false
+    lib_dir: libs
+  beamer_presentation:
+    highlight: pygments
+
+header-includes:
+- \usepackage{amsmath, amsbsy, relsize}
+- \usepackage{lifecon.sty}
+---
+
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
+
+```{r echo=FALSE}
+## EST171 - Métodos Computacionais para Análise de Risco
+## Código da aula 13 - Tabelas de Vida
+
+```
+
+```{r echo=FALSE, purl=FALSE}
+file_name = "13-tabelas"
+```
+
+
+
+
+## Aula de Hoje
+
+- Fluxos de pagamentos determinísticos
+
+- Tabela de Vida
+
+  + criando e manipulando tabelas de vida no R
+  
+  + avaliando probabilidades, esperanças de vida
+  
+- Suposições para idades fracionárias
+
+- Múltiplas Vidas
+
+
+## Fluxos de pagamentos
+
+- Na aula passada, consideramos fluxos de pagamentos <span class="black">**determinísticos**</span>, isto é, os pagamentos periódicos são feitos com probabilidade 1.
+
+- No entanto, nas **Ciências Atuariais**, muitas vezes teremos que avaliar fluxos de pagamentos <span class="black">**probabilísticos**</span>.
+
+- Pagamentos podem depender da *sobrevivência* ou *morte* de um indivíduo (ou grupo de indivíduos).
+
+
+## Fluxos de pagamentos
+
+- Para comparar pagamentos ou fluxos de pagamentos em *tempos diferentes* $\Rightarrow$ <span class="black">valor presente</span>.
+
+- Para comparar pagamentos ou fluxos de pagamentos *probabilísticos*  $\Rightarrow$ <span class="black">esperança</span>.
+
+- Vamos denominar o valor presente desses fluxos de pagamentos como VPA - **Valor Presente Atuarial**.
+
+
+## Fluxos de pagamentos
+
+- O Valor Presente do fluxo de pagamentos *probabilístico* será uma variável aleatória, vai depender de quando os pagamentos são feitos.
+
+- Se os pagamentos dependem da *sobrevivência* ou *morte* de um indivíduo, vamos precisar determinar a variável aleatória $T(x)$: tempo de vida futura de um indivíduo de idade $x$.
+
+- O Valor Presente será uma função de $T(x)$.
+
+- Assim, precisamos encontrar a <span class="black">distribuição de probabilidade</span> de $T(x)$.
+
+
+# Tabela de Vida
+
+
+## Tabela de Vida
+
+- Uma <span class="black">tabela de vida</span> é uma sequência não-crescente de $l_x$, para as idades $x=0,1,\dots,\omega$ com a idade terminal $\omega$.
+
+- Cada quantia $l_x$ representa o número de indivíduos vivos à idade $x$.
+
+- O número $l_0$ de indivíduos vivos no tempo 0 é a **raiz da tabela**.
+
+- Como a tabela contém o número de sobreviventes, podemos usar os valores de $l_x$ para calcular as **probabilidades de sobrevivência**.
+
+
+## Tabela de Vida
+
+- Probabilidade de $(x)$ sobreviver à idade $x+t$:
+
+$${}_{t}p_x = P(T(x)>t) = \frac{l_{x+t}}{l_x} $$
+
+- Probabilidade de $(x)$ não atingir a idade $x+t$:
+
+$${}_{t}q_x = 1 - {}_{t}p_x = P(T(x) \leq t) = \frac{l_x - l_{x+t}}{l_x} $$
+
+- Notação: a probabilidade ${}_{1}p_x$ será denotada por $p_x$.
+
+
+## Tabela de Vida
+
+- Podemos criar uma **tabela de vida** no R usando o pacote `lifecontingencies` de algumas maneiras diferentes:
+
+1. imputar diretamente $x$ e $l_x$:
+
+```{r echo=FALSE, message=FALSE}
+require(lifecontingencies)
+
+## Exercício 1
+
+## criando tabela de vida - 1
+
+```
+
+  
+```{r}
+tab1 = new("lifetable", x=seq(0,10,1),
+           lx=seq(from=1000,to=0,by=-100),name="Sample life table 1")
+
+```
+
+```{r echo=FALSE, results='hide', message=FALSE, fig.show='hide'}
+print(tab1)
+
+class(tab1)
+?`lifetable-class`
+
+summary(tab1)
+plot(tab1)
+
+```
+
+
+## <span class="green3">**Exercício 1**</span>
+
+- Verifique o que é o objeto `tab1`? Quais quantidades foram passadas (*input*) e quais foram criadas (*output*)?
+
+- Qual a classe desse objeto? Verifique o help da classe para ver os detalhes sobre esse tipo de objeto.
+
+- O que a função `summary(tab1)` faz? E a função `plot(tab1)`? Veja quais outros métodos estão implementados para essa classe.
+
+
+## Tabela de Vida
+
+- Podemos criar uma **tabela de vida** no R usando o pacote `lifecontingencies` de algumas maneiras diferentes:
+
+2. a partir das probabilidades $p_x$ ou $q_x$:
+  
+```{r echo=FALSE, message=FALSE}
+## Exercício 2
+## criando tabela de vida - 2
+
+```
+
+```{r}
+tab2 = probs2lifetable(probs=seq(from=0.1,to=1,by=0.1),
+                       radix=100000,type="qx",name="Sample life table 2")
+
+```
+
+
+## <span class="green3">**Exercício 2**</span>
+
+- O que a função `head(tab2)` faz? E a função `tail(tab2)`?
+
+- Verifique o que é o objeto `tab2`? Quais quantidades foram passadas (*input*) e quais foram criadas (*output*)?
+
+```{r echo=FALSE, results='hide'}
+head(tab2)
+tail(tab2)
+
+```
+
+Obs: Podemos exportar um objeto `lifetable` para um objeto `data.frame` usando o comando:
+```{r}
+## exportando para data.frame
+tab2.df = as(tab2, "data.frame")
+class(tab2.df)
+
+```
+
+
+## Tabela de Vida
+
+- Podemos fazer várias análises demográficas usando as funções do pacote.
+
+- As principais probabilidades que vamos avaliar são:
+
+  + a probabilidade de um indivíduo de idade $x$ sobreviva à idade $x+t$:
+  
+  $${}_{t}p_x$$
+  
+  + a probabilidade de um indivíduo de idade $x$ morrer em $t$ anos:
+  
+  $${}_{t}q_x = 1 - {}_{t}p_x$$
+
+
+## <span class="green3">**Exercício 3**</span>
+
+- Usando a **Tabela Ilustrativa do SOA** (*Society of Actuaries*) usada no Bowers, calcule:
+
+  + a probabilidade de um indivíduo de idade 65 morrer antes de completar 85 anos;
+  
+  + a probabilidade de um indivíduo de idade 25 sobreviver até os 65 anos.
+
+```{r echo=FALSE}
+
+## Exercício 3
+
+```
+
+```{r}
+## carregando a tabela de vida ilustrativa do SOA
+data("soa08")
+
+```
+
+
+## <span class="green3">**Exercício 3**</span>
+
+Obs: Os objetos da classe `lifetable` são do tipo `S4`, um tipo de objeto mais recente do R para organizar várias informações. Note que a tabela `soa08` contém alguns "*slots*". Você pode acessar os *slots* com os comandos:
+
+```{r}
+slotNames(soa08)
+head(soa08@lx)
+
+```
+
+
+## <span class="green3">**Exercício 3**</span> {.build}
+
+Vamos calcular:
+
+  + a probabilidade de um indivíduo de idade 65 morrer antes de completar 85 anos;
+
+```{r}
+## prob de (65) morrer em 20 anos
+(soa08@lx[soa08@x==65]-soa08@lx[soa08@x==85])/soa08@lx[soa08@x==65]
+
+qxt(soa08, 65,20)
+
+```
+
+
+## <span class="green3">**Exercício 3**</span> {.build}
+
+Vamos calcular:
+
+  + a probabilidade de um indivíduo de idade 25 sobreviver até os 65 anos.
+
+```{r}
+## prob de (25) sobreviver 65 anos
+##
+
+```
+
+```{r echo=FALSE, purl=FALSE}
+pxt(soa08, 25,40)
+```
+
+
+## Esperança de vida
+
+- Esperança de vida em anos completos: 
+
+```{r fig.align='center', echo=FALSE, purl=FALSE}
+include_graphics("img/ex.png")
+```
+
+- Esperança de vida em anos completos entre as idades $x$ e $x+n$:
+
+```{r fig.align='center', echo=FALSE, purl=FALSE}
+include_graphics("img/exn.png")
+```
+
+
+## <span class="green3">**Exercício 4**</span> {.build}
+
+Usando a Tabela Ilustrativa do SOA, calcule:
+
+  + a esperança de vida em anos completos ao nascer;
+  
+  + a esperança de vida em anos completos entre as idades 50 e 60.
+  
+
+## <span class="green3">**Exercício 4**</span> {.build}
+
+- Para a esperança de vida em anos completos ao nascer, só precisamos somar todos os ${}_{t}p_0$'s. Isso é equivalente a somar todos os valores de $l_x$, exceto o primeiro, e dividir por $l_0$.
+
+```{r echo=FALSE}
+
+## Exercício 4
+
+## esperança de vida em anos completos ao nascer
+```
+
+```{r}
+sum(soa08@lx[soa08@x%in%(1:110)]/soa08@lx[soa08@x==0])
+
+sum(soa08@lx/soa08@lx[soa08@x==0])-1
+
+exn(object=soa08)
+
+```
+
+
+## <span class="green3">**Exercício 4**</span> {.build}
+
+- Para a esperança de vida em anos completos entre as idades 50 e 60, também podemos somar os valores de $l_x$:
+
+```{r echo=FALSE}
+
+## esperança de vida em anos completos entre as idades 50 e 60
+
+```
+
+```{r}
+sum(soa08@lx[soa08@x%in%(51:60)]/soa08@lx[soa08@x==50])
+
+exn(object=soa08, x=50, n=10, type="curtate")
+
+```
+
+
+## Esperança de vida
+
+- Esperança de vida completa: 
+
+```{r fig.align='center', echo=FALSE, purl=FALSE}
+include_graphics("img/e0x.png")
+```
+
+- Esperança de vida completa entre as idades $x$ e $x+n$:
+
+```{r fig.align='center', echo=FALSE, purl=FALSE}
+include_graphics("img/e0xn.png")
+```
+
+
+## <span class="green3">**Exercício 5**</span> {.build}
+
+- Calcule a esperança completa de vida entre as idades 80 e 90.
+
+```{r fig.align='center', echo=FALSE, purl=FALSE}
+include_graphics("img/e0_80_10.png")
+```
+
+- Como vamos calcular essa esperança? Só temos ${}_{t}p_x$ para idades inteiras!
+
+- Precisamos assumir que as mortes ocorrem no meio do ano.
+
+
+## <span class="green3">**Exercício 5**</span> {.build}
+
+```{r echo=FALSE}
+
+## Exercício 5
+
+```
+
+$$\frac 1 2 \cdot \left( \frac{l_{81}+l_{82}+\dots+l_{90}}{l_{80}} + \frac{l_{80}+l_{81}+\dots+l_{89}}{l_{80}} \right)$$
+
+```{r}
+(sum(soa08@lx[soa08@x%in%(81:90)]/soa08@lx[soa08@x==80])+
+   sum(soa08@lx[soa08@x%in%(80:89)]/soa08@lx[soa08@x==80]))/2
+
+exn(soa08,80,10,"complete")
+
+```
+
+
+# Suposições para idades fracionárias
+
+
+## Suposições para idades fracionárias
+
+Vamos relembrar as suposições sobre a mortalidade em idades fracionárias:
+<br><br>
+
+- <span class="black">Distribuição uniforme</span> ou <span class="black">interpolação linear</span>:
+
+
+Seja $h \geq 0 $ o tempo fracionário, e $\lfloor h \rfloor$ sua a parte inteira. A interpolação linear entre ${}_{\lfloor h \rfloor}p_x$ e ${}_{\lfloor h \rfloor +1}p_x$ é dada por:
+  
+  $${}_{h}\tilde{p}_x = \left( 1 - h + \lfloor h \rfloor \right).\,{}_{\lfloor h \rfloor}p_x + \left( h - \lfloor h \rfloor \right).\,{}_{\lfloor h \rfloor +1}p_x $$
+
+
+## Suposições para idades fracionárias
+
+- <span class="black">Força de mortalidade constante</span>:
+<br><br>
+Sabemos que ${}_{h}p_x = \exp\left( - \int_0^h \mu_{x+s} \,ds\right)$, onde $\mu_x$ é a força de mortalidade. Assuma que $h \in [0,1)$ e que $\mu_{x+s}$ é constante em $[0,1)$. Então
+  
+  $${}_{h}\tilde{p}_x = \exp\left( - \int_0^h \mu_{x+s} \,ds\right) = \exp(-\mu_x \cdot h) = (p_x)^h $$
+
+
+## <span class="green3">**Exercício 6**</span> {.build}
+
+- Avalie a probabilidade de uma vida de idade 80 1/4 morrer no próximo semestre, assumindo:
+
+  a) interpolação linear da mortalidade;
+  
+  b) força de mortalidade constante.
+
+```{r echo=FALSE}
+
+## Exercício 6
+
+## probabilidades para idades fracionárias
+
+```
+
+```{r}
+pxt(object=soa08, x=80.25, t=0.5, fractional="linear")
+
+pxt(object=soa08, x=80.25, t=0.5, fractional="constant force")
+
+```
+
+
+# Múltiplas Vidas
+
+
+## Múltiplas Vidas
+
+O pacote `lifecontingencies` também tem funções de múltiplas vidas implementadas.
+
+- <span class="black">Status de vida conjunta</span>: tempo até a primeira morte
+
+$$T_{xy} = \min(T_x, T_y) $$
+$${}_{t}p_{xy} = P(T_{xy}>t) = P(T_x > t \,\cap\, T_y > t) $$
+
+
+- <span class="black">Status do último sobrevivente</span>: tempo até a última morte
+
+$$T_{\overline{xy}} = \max(T_x, T_y) $$
+$${}_{t}p_{\overline{xy}} = P(T_{\overline{xy}}>t) = P(T_x > t \,\cup\, T_y > t) $$
+
+
+## Múltiplas Vidas
+
+- Assumindo **vidas independentes**, temos que:
+
+$${}_{t}p_{xy} = {}_{t}p_x \,\cdot {}_{t}p_y $$
+
+$${}_{t}p_{\overline{xy}} = {}_{t}p_x + {}_{t}p_y - {}_{t}p_{xy} $$
+
+
+## <span class="green3">**Exercício 7**</span> 
+
+Assuma que a Tabela Ilustrativa do SOA se aplica a duas vidas independentes de idade 65 e 60. 
+
+Calcule:
+
+a) a probabilidade que ambos estarão vivos após 20 anos;
+
+b) a probabilidade que pelo menos um estará vivo após 20 anos;
+
+c) a esperança de vida conjunta.
+
+Dica: veja as funções `pxt`, `pxyzt` e `exyzt`.
+
+
+## <span class="green3">**Exercício 7**</span> 
+
+```{r echo=FALSE}
+
+## Exercício 7
+##
+
+```
+
+```{r purl=FALSE}
+## a) prob. ambos vivos em 20 anos
+pxt(soa08, x=65, t=20)*pxt(soa08, x=60, t=20)
+pxyzt(list(soa08,soa08), x=c(65,60), t=20, status="joint")
+
+```
+
+## <span class="green3">**Exercício 7**</span> 
+
+```{r purl=FALSE}
+## b) prob. pelo menos um vivo em 20 anos
+1 - qxt(soa08, x=65, t=20)*qxt(soa08, x=60, t=20)
+pxyzt(list(soa08,soa08), x=c(65,60), t=20, status="last")
+
+```
+
+```{r purl=FALSE}
+## c) esperança de vida conjunta
+exyzt(list(soa08,soa08), x=c(65,60), t=20, status="joint")
+
+```
+
+[//]: # ##########################################################
+[//]: # Para gerar arquivo com apenas os comandos do R desta aula
+```{r include=FALSE, purl=FALSE}
+# gerar arquivo com comandos do R
+purl(input=paste0(file_name,".Rmd"),
+     output=paste0("../labs/",file_name,".R"),
+     documentation=0, encoding='UTF-8')
+# Saída: 'filename.R' com apenas o código extraído do arquivo original
+# Opções: documentation=1 inclui o texto no título dos chunks
+# Para excluir um chunk do arquivo final, incluir a opção purl=FALSE no cabeçalho do chunk
+```
+
+
+
+
