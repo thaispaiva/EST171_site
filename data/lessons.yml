@@ -69,6 +69,8 @@ lessons:
     title: "Recesso (Dia do Trabalho)"
   - date: "02/05/18"
     title: "Seguros (matemática atuarial)"
+    slides: "14-precificacao.html"
+    lab: "14-precificacao.R"
   - date: "07/05/18"
     title: "Seguros (matemática atuarial)"
   - date: "09/05/18"

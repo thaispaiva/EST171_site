@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '14 - Precificação de Seguros',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '14-precificacao_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(14-precificacao_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="14-precificacao_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">02 de maio de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li><p>Seguros de Vida</p>
+
+<ul>
+<li>VPA de diferentes seguros</li>
+<li>Fórmulas de Comutação</li>
+<li>Seguros com Benefícios Crescentes</li>
+<li>Seguros em m partes no ano</li>
+</ul></li>
+<li><p>Anuidades de Vida</p>
+
+<ul>
+<li>VPA de diferentes anuidades</li>
+<li>Fórmulas de Comutação</li>
+</ul></li>
+<li><p>Prêmios</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Seguros e Anuidades de Vida</h2></hgroup><article  class="build" id="seguros-e-anuidades-de-vida">
+
+<ul>
+<li><p><strong>Seguros de vida</strong> ou <strong>anuidades de vida</strong> são contratos que prometem <em>um ou mais</em> pagamentos de acordo com a ocorrência de eventos relacionados à sobrevivência/mortalidade de indivíduos (<em>life-contingent events</em>).</p></li>
+<li><p>Por exemplo:</p>
+
+<ul>
+<li><p><span class="blue3">
+seguro de vida</span> que promete o pagamento de uma indenização caso o seguro morra durante o período definido no contrato;</p></li>
+<li><p>contrato de <span class="blue3">
+anuidade</span> que paga uma quantia no começo (ou final) de cada período, até o final do contrato ou até a morte do segurado, o que ocorrer primeiro;</p></li>
+<li><p><span class="blue3">
+seguros dotais</span> que pagam uma indenização no menor entre o tempo até a morte do segurado e o final do contrato.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Precificação de Seguros</h2></hgroup><article  id="precificacao-de-seguros">
+
+<p>Etapas para calcular o <strong>prêmio</strong> de um seguro (preço a ser cobrado pelo contrato):</p>
+
+<ol class = 'build'>
+<li>Determinar as <span class="blue3">
+<strong>hipóteses financeiras e demográficas</strong></span> que serão usadas. Isto é, a <span class="blue3">
+taxa de juros</span> para descontar os pagamentos futuros, e a <span class="blue3">
+tabela de vida</span> com as probabilidades de sobrevivência.</li>
+</ol>
+
+<ol class = 'build'>
+<li>Calcular o <span class="blue3">
+<strong>Valor Presente Atuarial</strong></span> dos fluxos de caixa dependentes de sobrevivência/mortalidade do indivíduo, ou seja, o valor esperado dos benefícios prometidos no contrato e as despesas associadas.</li>
+</ol>
+
+<ol class = 'build'>
+<li>Calcular o <span class="blue3">
+<strong>prêmio</strong></span>, levando em conta que pode ser pago em uma única parcela (prêmio único) ou em parcelas periódicas.</li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Notação</h2></hgroup><article  id="notacao">
+
+<p>Seja:</p>
+
+<ul>
+<li><p>\(x\) a idade do segurado no início do contrato;</p></li>
+<li><p>\(n\) a duração do contrato;</p></li>
+<li><p>\(m\) o período de diferimento, isto é, o período até que a cobertura do contrato se inicie;</p></li>
+<li><p>\(i\) a taxa de juros;</p></li>
+<li><p>\(k\) a frequência de pagamentos a cada ano.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Hipóteses assumidas</h2></hgroup><article  id="hipoteses-assumidas">
+
+<ul>
+<li><p>Para os exemplos dessa aula, vamos considerar:</p>
+
+<ul>
+<li><p>Tabela de vida Ilustrativa do SOA;</p></li>
+<li><p>taxa de juros de 6%.</p></li>
+</ul></li>
+<li><p>Também vamos assumir que os benefícios são pagos no final de cada período.</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Seguros de Vida</h2></hgroup><article  id="seguros-de-vida">
+
+</article></slide><slide class=""><hgroup><h2>Seguros de Vida</h2></hgroup><article  id="seguros-de-vida-1">
+
+<ul>
+<li><p>O contrato padrão que vamos utilizar será o de <span class="blue3">
+seguro de vida temporário</span> por \(n\) anos, que paga $1 no final do ano de morte de \((x)\) se ocorrer antes de \(n\) anos.</p></li>
+<li><p>VPA:</p></li>
+</ul>
+
+<p><img src="img/Axn.png" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Seguros de Vida</h2></hgroup><article  id="seguros-de-vida-2">
+
+<ul>
+<li><p>No caso do <span class="blue3">
+seguro de vida inteira</span>, o VPA é obtido quando \(n = \omega\).</p></li>
+<li><p>Para <span class="blue3">
+seguro diferido</span>, basta alterar os limites do somatório para \(k=m\) até \(n+m-1\).</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Funções de Comutação</h2></hgroup><article  id="funcoes-de-comutacao">
+
+<ul>
+<li><p>Antes da popularização dos computadores, o cálculo de seguros era feito com tabelas atuariais, tabelas prontas com funções da idade dos segurados.</p></li>
+<li><p>As <span class="black">
+<strong>funções de comutação</strong></span> são funções de \(l_x\) e da taxa de juros \(i\). <br><br></p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Funções de Comutação</h2></hgroup><article  id="funcoes-de-comutacao-1">
+
+<p><img src="img/comut1.png" width="90%" style="display: block; margin: auto;" /> <br><br></p>
+
+<p><img src="img/comut2.png" width="60%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Funções de Comutação - Seguros</h2></hgroup><article  id="funcoes-de-comutacao---seguros">
+
+<ul>
+<li>VPA de Seguro de vida inteira:</li>
+</ul>
+
+<p><img src="img/Ax.png" style="display: block; margin: auto;" /></p>
+
+<ul>
+<li>Seguro Dotal Puro:</li>
+</ul>
+
+<p><img src="img/nEx.png" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Funções de Comutação - Seguros</h2></hgroup><article  id="funcoes-de-comutacao---seguros-1">
+
+<ul>
+<li>VPA de Seguro de vida diferido:</li>
+</ul>
+
+<p><img src="img/nAx.png" style="display: block; margin: auto;" /></p>
+
+<ul>
+<li>VPA de Seguro de vida temporário:</li>
+</ul>
+
+<p><img src="img/seg_temp.png" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Tabela Atuarial</h2></hgroup><article  id="tabela-atuarial">
+
+<ul>
+<li>O pacote <code>lifecontingencies</code> contém funções para criar <strong>tabelas atuariais</strong> com <span class="red3">
+funções de comutação</span> a partir de uma tabela de vida.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio">
+
+<ul>
+<li>A partir da tabela de vida ilustrativa do SOA:</li>
+</ul>
+
+<ol>
+<li><p>Construa uma <em>tabela atuarial</em> com juros de 6%;</p></li>
+<li><p>Exporte essa tabela para um objeto <code>data.frame</code> com as funções de comutação.</p></li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-1">
+
+<pre class = 'prettyprint lang-r'>## carregar valores de l_x
+data(&quot;soaLt&quot;)
+
+## criar tabela atuarial
+soaAct = new(&quot;actuarialtable&quot;, x=soaLt$x, lx=soaLt$Ix, interest=0.06)</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-2">
+
+<pre class = 'prettyprint lang-r'>## convertendo para data.frame
+soaAct.df = as(soaAct, &quot;data.frame&quot;)
+head(soaAct.df)</pre>
+
+<pre >##   x       lx       Dx        Nx        Cx       Mx       Rx
+## 1 0 10000000 10000000 168358017 47263.585 470300.9 12487975
+## 2 1  9949901  9386699 158358017 44588.288 423037.4 12017674
+## 3 2  9899801  8810788 148971318 42064.422 378449.1 11594637
+## 4 3  9849702  8270000 140160530 39683.417 336384.6 11216188
+## 5 4  9799602  7762203 131890531 37437.186 296701.2 10879803
+## 6 5  9749503  7285396 124128328  6191.668 259264.0 10583102</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-3">
+
+<ul>
+<li>Vamos usar essa tabela de vida para encontrar o valor do prêmio único de um <strong>seguro temporário</strong> por 3 anos, para um segurado de 36 anos e soma segurada de $100.000.</li>
+</ul>
+
+<ul class = 'build'>
+<li>VPA desse seguro:</li>
+</ul>
+
+<p><img src="img/vpa.png" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-4">
+
+<pre class = 'prettyprint lang-r'>## Exemplo - Seguro temporário
+
+## 1) usando somatório
+## probabilidades
+prob.morte = -diff(soaAct.df$lx)[soaAct.df$x%in%36:38]/soaAct.df$lx[soaAct.df$x==36]
+prob.morte</pre>
+
+<pre >## [1] 0.002140254 0.002274272 0.002420523</pre>
+
+<pre class = 'prettyprint lang-r'>## fatores de desconto
+disc = (1+0.06)^(-(1:3))
+disc</pre>
+
+<pre >## [1] 0.9433962 0.8899964 0.8396193</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-5">
+
+<pre class = 'prettyprint lang-r'>## valor presente atuarial
+p1 = 100000*sum(disc*prob.morte)</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-6">
+
+<ul>
+<li>Usando funções de comutação:</li>
+</ul>
+
+<p><img src="img/vpa2.png" style="display: block; margin: auto;" /></p>
+
+<pre class = 'prettyprint lang-r'>## 2) usando funções de comutação
+p2 = 100000*with(soaAct.df, (Mx[37]-Mx[40])/Dx[37])</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-7">
+
+<pre class = 'prettyprint lang-r'>## 3) usando função seguro temporário
+p3 = 100000*Axn(actuarialtable = soaAct, x=36, n=3)</pre>
+
+<pre class = 'prettyprint lang-r'>cbind(p1,p2,p3)</pre>
+
+<pre >##            p1       p2       p3
+## [1,] 607.5519 607.5519 607.5519</pre>
+
+</article></slide><slide class=""><hgroup><h2>Seguros com benefícios crescentes</h2></hgroup><article  id="seguros-com-beneficios-crescentes">
+
+<ul>
+<li><p>Outro tipo de contrato consiste em seguros com benefícios <em>crescentes</em> ou <em>decrescentes</em>, pagos no final do ano de morte.</p></li>
+<li><p>Por exemplo, conside um seguro temporário por \(n\) anos que paga \(k+1\) se \(x\) completou \(k\) anos desde o início do contrato, ou seja, se \(K_x = k\) para \(k=0,1,\dots,n-1\).</p></li>
+</ul>
+
+<p><img src="img/IAx.PNG" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Seguros com benefícios crescentes</h2></hgroup><article  id="seguros-com-beneficios-crescentes-1">
+
+<ul>
+<li>Seguros <em>temporários</em>, <em>crescentes</em> e <em>decrescentes</em> estão relacionados através da equação:</li>
+</ul>
+
+<p><img src="img/seg_cresc.png" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Seguros com benefícios crescentes</h2></hgroup><article  id="seguros-com-beneficios-crescentes-2">
+
+<pre class = 'prettyprint lang-r'>## seguros com benefícios crescentes
+
+(10+1)*Axn(soaAct, 60, 10)</pre>
+
+<pre >## [1] 1.504674</pre>
+
+<pre class = 'prettyprint lang-r'>IAxn(soaAct, 60, 10) + DAxn(soaAct, 60, 10)</pre>
+
+<pre >## [1] 1.504674</pre>
+
+</article></slide><slide class=""><hgroup><h2>Seguros em m partes no ano</h2></hgroup><article  id="seguros-em-m-partes-no-ano">
+
+<ul>
+<li>Também podemos considerar seguros <em>pagos em m partes no ano</em>. Assim, estamos dividindo o ano em \(m\) subperíodos, e os benefícios serão pagos no final da parte em que ocorrer a morte.</li>
+</ul>
+
+<p><img src="img/Ax_mpartes.png" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Seguros em m partes no ano</h2></hgroup><article  id="seguros-em-m-partes-no-ano-1">
+
+<ul>
+<li>Vamos verificar <strong>numericamente</strong> que</li>
+</ul>
+
+<p><img src="img/Axn_Axn_mpartes.png" style="display: block; margin: auto;" /></p>
+
+<p>(sob suposição de distribuição uniforme de mortes - Seção 4.5 do Dickson)</p>
+
+</article></slide><slide class=""><hgroup><h2>Seguros em m partes no ano</h2></hgroup><article  id="seguros-em-m-partes-no-ano-2">
+
+<pre class = 'prettyprint lang-r'>## relação entre seguros anuais e em m partes
+Axn(actuarialtable=soaAct,x=30,k=12)</pre>
+
+<pre >## [1] 0.1052722</pre>
+
+<pre class = 'prettyprint lang-r'>0.06/real2Nominal(0.06,12)*Axn(actuarialtable=soaAct,x=30)</pre>
+
+<pre >## [1] 0.1052722</pre>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Anuidades de Vida</h2></hgroup><article  id="anuidades-de-vida">
+
+</article></slide><slide class=""><hgroup><h2>Anuidades de Vida</h2></hgroup><article  id="anuidades-de-vida-1">
+
+<ul>
+<li><p>Uma <strong>anuidade de vida</strong> é uma série de pagamentos feitos no começo (ou final) do ano enquanto o segurado estiver vivo.</p></li>
+<li><p>VPA de uma <span class="blue3">
+anuidade de vida inteira <em>antecipada</em></span>:</p></li>
+</ul>
+
+<p>\[\ddot{a}_x = \sum_{k=0}^\infty v^k . {}_{k}p_x \]</p>
+
+<ul>
+<li>VPA de uma <span class="blue3">
+anuidade de vida inteira <em>postecipada</em></span>:</li>
+</ul>
+
+<p>\[a_x = \sum_{k=1}^\infty v^k . {}_{k}p_x = \ddot{a}_x - 1 = {}_{1|}\ddot{a}_x\]</p>
+
+</article></slide><slide class=""><hgroup><h2>Funções de Comutação - Anuidades</h2></hgroup><article  id="funcoes-de-comutacao---anuidades">
+
+<ul>
+<li>VPA de Anuidade de vida inteira <em>antecipada</em>:</li>
+</ul>
+
+<p><img src="img/anndue.PNG" style="display: block; margin: auto;" /></p>
+
+<ul>
+<li>VPA de Anuidade de vida inteira <em>postecipada</em>:</li>
+</ul>
+
+<p><img src="img/annimmed.PNG" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Funções de Comutação - Anuidades</h2></hgroup><article  id="funcoes-de-comutacao---anuidades-1">
+
+<ul>
+<li>VPA de Anuidade de vida inteira <em>antecipada</em> e <em>diferida</em>:</li>
+</ul>
+
+<p><img src="img/anndue_diferida.png" style="display: block; margin: auto;" /></p>
+
+<ul>
+<li>VPA de Anuidade de vida <em>antecipada</em> e <em>temporária</em>:</li>
+</ul>
+
+<p><img src="img/anndue_temporaria.png" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  class="build" id="exercicio-8">
+
+<ul>
+<li>Vamos encontrar o VPA de uma série de pagamentos de $1, feitos no começo de cada ano, para um segurado de 65 anos vitaliciamente.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## 1) usando somatório
+sum( (soaAct.df$lx)[soaAct.df$x%in%65:111]/soaAct.df$lx[soaAct.df$x==65]*1.06^(-(0:45)) )</pre>
+
+<pre >## [1] 9.896928</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  class="build" id="exercicio-9">
+
+<pre class = 'prettyprint lang-r'>## 2) usando funções de comutação
+with(soaAct.df, (Nx[66]/Dx[66]))</pre>
+
+<pre >## [1] 9.896928</pre>
+
+<pre class = 'prettyprint lang-r'>## 3) usando funções de comutação
+axn(actuarialtable=soaAct,x=65)</pre>
+
+<pre >## [1] 9.896928</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-10">
+
+<ul>
+<li>Refaça os cálculos anteriores para <span class="blue3">
+anuidade postecipada</span>.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Exercício
+## anuidade postecipada
+##</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-11">
+
+<ul>
+<li>Encontre o VPA de uma série de pagamentos de $1000 feitos por um segurado entre as idades 25 e 45, no começo de cada ano enquanto estiver vivo.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Exercício
+## VPA anuidade temporária
+##</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-12">
+
+<ul>
+<li>Encontre o VPA de uma série de pagamentos <em>postecipados</em> de $150 feitos <em>mensalmente</em> e <em>vitaliciamente</em> por um segurado de 20 anos, <em>diferidos</em> por 10 anos</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Exercício
+## VPA anuidade diferida postecipada e mensal
+##</pre>
+
+<p>(Para anuidade postecipada: <code>type=&quot;arrears&quot;</code>)</p>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Prêmios</h2></hgroup><article  id="premios">
+
+</article></slide><slide class=""><hgroup><h2>Prêmios</h2></hgroup><article  id="premios-1">
+
+<ul>
+<li><p>Até agora, calculamos o VPA dos benefícios (de contratos de seguros ou anuidades) assumindo um <span class="blue3">
+prêmio único</span>.</p></li>
+<li><p>Nesse caso, o segurado seria cobrado apenas o VPA dos benefícios.</p></li>
+<li><p>Mas, normalmente, os prêmios são pagos em uma <strong>série de pagamentos</strong>.</p></li>
+<li><p>Princípio da Equivalência:</p></li>
+</ul>
+
+<p>\[VPA(\mbox{benefícios}) = VPA(\mbox{prêmios}) \]</p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  class="build" id="exercicio-13">
+
+<ul>
+<li><p>Encontre o <strong>prêmio</strong> de um seguro de vida inteira de $100.000 para um segurado de 25 anos, com prêmios pagos no começo dos próximos 10 anos enquanto estiver vivo.</p></li>
+<li><p>VPA benefícios:</p></li>
+</ul>
+
+<p>\[A_{25} \]</p>
+
+<ul>
+<li>VPA prêmios:</li>
+</ul>
+
+<p><img src="img/premio.png" width="15%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-14">
+
+<pre class = 'prettyprint lang-r'>## Exercício - Prêmio 1
+##</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-15">
+
+<ul>
+<li>Calcule o <strong>prêmio</strong> anual vitalício de um seguro de vida inteira de $100.000 diferido por 20 anos para um segurado de 50 anos.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Exercício - Prêmio 2
+##</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-16">
+
+<ul>
+<li><p>Considere uma apólice de seguro de vida inteira de $100.000, diferido por 5 anos, para um segurado de 40 anos.</p></li>
+<li><p>Os prêmios são pagos durante o período de diferimento.</p></li>
+<li><p>Caso o segurado morra durante o período de diferimento, o seu beneficiário irá receber os prêmios pagos sem juros.</p></li>
+<li><p>Calcule o <span class="blue3">
+prêmio</span> para esse contrato.</p></li>
+</ul></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>

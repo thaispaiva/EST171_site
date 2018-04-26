@@ -16,7 +16,7 @@
 \renewcommand{\familydefault}{\rmdefault}
 \renewcommand*\rmdefault{ppl}
 
-\title{\normalsize \bfseries Principais Fórmulas}
+\title{\bfseries Principais Fórmulas}
 \date{\vspace{-2cm}}
 
 \begin{document}
@@ -25,6 +25,9 @@
 
 
 % Aula 12 - Matemática Financeira
+
+\section{Aula 12 - Matemática Financeira}
+
 
 $$a_{\lcroof{n}} = \frac{1-(1+i)^{-n}}{i} = \frac{1-v^n}{i} $$
 
@@ -38,6 +41,8 @@ $$s_{\lcroof{n}} = (1+i)^n .\, a_{\lcroof{n}} = \frac{(1+i)^n - 1}{i} $$
 
 
 % Aula 13 - Tabelas de Vida
+
+\section{Aula 13 - Tabelas de Vida}
 
 {\color{black!60}
 $$e_x = \sum_{t=1}^\infty {}_{t}p_x $$ }
@@ -55,8 +60,70 @@ $$\mathring{e}_{x:\lcroof{n}} = \int_{0}^n {}_{t}p_x \, dt$$ }
 $$\mathring{e}_{80:\lcroof{10}} = \int_{0}^{10} {}_{t}p_{80} \, dt$$ }
 
 
+% Aula 14 - Precificação de Seguros
 
+\section{Aula 14 - Precificação de Seguros}
 
+{\color{black!60}
+$$ \termins{x}{n} = \sum_{k=1}^n v^k .\, P(T_x \in [k-1, k)) = \sum_{k=1}^n v^k .\, {}_{k-1}p_x .\, q_{x+k-1} $$ }
+
+$$D_x = l_x .\, v^x \hspace{2cm}  d_x = l_x - l_{x+1} \hspace{2cm} C_x = d_x .\, v^{x+1}$$
+
+\begin{eqnarray*}
+N_x &= \displaystyle \sum_{k=0}^{\omega-x} D_{x+k} \qquad \qquad S_x = \sum_{k=0}^{\omega-x} N_{x+k} \\[.5cm]
+M_x &= \displaystyle \sum_{k=0}^{\omega-x} C_{x+k} \qquad \qquad R_x = \sum_{k=0}^{\omega-x}M_{x+k}
+\end{eqnarray*}
+
+{\color{black!60}
+$$A_x = \frac{M_x}{D_x} $$ }
+
+{\color{black!60}
+$${}_{n}E_x = \frac{D_{x+n}}{D_x} $$ }
+
+{\color{black!60}
+$${}_{n|}A_x = {}_{n}E_x \cdot A_{x+n} = \frac{M_{x+n}}{D_x} $$ }
+
+{\color{black!60}
+$$ \termins{x}{n} = \frac{M_x - M_{x+n}}{D_x} $$ }
+
+{\color{black!60}
+$$ \termins{x}{n} = \frac{M_x - M_{x+n}}{D_x} $$ }
+
+{\color{black!60}
+\begin{eqnarray*}
+VPA &=& 100.000 \times \termins{36}{3}  \\
+	&=& 100.000 \times \sum_{k=1}^3 v^k .\, {}_{k-1}p_x .\, q_{x+k-1}
+\end{eqnarray*} } 
+
+{\color{black!60}
+$$ \termins{36}{3} = \frac{M_{36}-M_{36+3}}{D_{36}} $$ }
+
+{\color{black!60}
+$$ (IA)_{x} = \sum_{k=0}^\infty (k+1) .\, v^{k+1} .\, {}_{k|}q_x  $$ }
+
+{\color{black!60}
+$$ (n+1) \termins{x}{n} = \lcterm{(DA)}{x}{n} + \lcterm{(IA)}{x}{n} $$ }
+
+{\color{black!60}
+$$ A_x^{(m)} = \sum_{k=0}^\infty v^{\frac{k+1}{m}} {}_{\frac k m | \frac 1 m }q_x $$ }
+
+{\color{black!60}
+$$ {\termins{x}{n}}^{(m)} = \frac{i}{i^{(m)}} \termins{x}{n} $$ }
+
+{\color{black!60}
+$$ \ddot{a}_x = \frac{N_x}{D_x} $$ }
+
+{\color{black!60}
+$$a_x = \frac{N_{x+1}}{D_x} $$ }
+
+{\color{black!60}
+$${}_{n|}\ddot{a}_x = \frac{N_{x+n}}{D_x} = \ddot{a}_{x+n} .\, \frac{D_{x+n}}{D_x} $$ }
+
+{\color{black!60}
+$$\anndue{x}{n} = \frac{N_x - N_{x+n}}{D_x} = \ddot{a}_x - {}_{n|}\ddot{a}_x$$ }
+
+{\color{black!60}
+$$P \times \anndue{25}{10}$$ }
 
 
 \end{document}
