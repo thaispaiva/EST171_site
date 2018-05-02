@@ -59,7 +59,7 @@ lessons:
   - title: "PARTE III: Seguros de Vida"
   - date: "23/04/18"
     title: "Seguros (matemática financeira)"
-    slides: "12-matematica_financeira.html"
+    slides: "12-matematica_financeiraFULL.html"
     lab: "12-matematica_financeira.R"
   - date: "25/04/18"
     title: "Seguros (tabelas de vida)"

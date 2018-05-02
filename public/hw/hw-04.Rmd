@@ -50,5 +50,14 @@ Considere os dados de análise de crédito na Alemanha, no banco `credit` també
 7) Analise a probabilidade de $Y=1$, ou seja, classificar um cliente como mau, dado a distribuição da duração do empréstimo (variável `duration`). Para isso, siga o exemplo feito em sala para a variável idade. Sugestão: dividir a duração do empréstimo registrada em meses em intervalos de 0-6, 6-12, 12-18, 18-24, 24-36, 36+. 
 
 
+## Resolução
+
+Sugestão de respostas: 
+
+- [Resolução Lista 4](./resolucao/lista-04-resolucao.html)
+
+- [Arquivo .Rmd](./resolucao/lista-04-resolucao.Rmd)
+                        
+- [Resolução em pdf](./resolucao/lista-04-resolucao.pdf)
 
 

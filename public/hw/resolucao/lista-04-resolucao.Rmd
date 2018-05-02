@@ -1,0 +1,167 @@
+---
+title: "Lista de Exercícios 4"
+author: "Thaís Paiva"
+date: "22/04/2018"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+
+## Inferência
+
+
+### Exercício 1
+
+No gráfico abaixo, vemos a distribuição do logaritmo das indenizações por incêndio na Dinamarca. Mesmo após aplicar o logaritmo, vemos que a distribuição dos dados ainda é bastante assimétrica.
+
+
+```{r warning=FALSE, message=FALSE, echo=FALSE, fig.align='center', fig.height=3, fig.width=4}
+require(CASdatasets)
+require(fitdistrplus)
+require(xtable)
+require(knitr)
+
+## carregando dados de perdas 
+data("danishuni")
+x = log(danishuni$Loss)   # aplicando o log
+
+## histograma do log das indenizações
+hist(x, freq=FALSE, main="Histograma e densidade empírica",
+     xlab="Log das indenizações", cex=0.7, cex.main=0.9)
+lines(density(x), lty=5, lwd=2, col=4)
+```
+
+
+### Exercício 2
+
+As distribuições Gama e Lognormal podem ser ajustadas aos dados de indenizações usando a função `fitdist` do pacote `fitdistrplus`, que encontra os estimadores de máxima verossimilhança para as distribuições especificadas. Os valores dos estimadores estão na Tabela 1.
+
+```{r}
+## ajustando gama e lognormal
+x = x + 0.0001  # adicionando constante para evitar zeros
+fgam = fitdist(x, "gamma", lower=0) # gama
+flnorm = fitdist(x, "lnorm")        # lognormal
+```
+
+```{r echo=FALSE, results='asis'}
+## imprimindo tabela com EMV
+aux = data.frame(names(fgam$estimate), Gama=as.numeric(fgam$estimate),
+                 names(flnorm$estimate), Lognormal=as.numeric(flnorm$estimate))
+names(aux)[c(1,3)] = "params."
+kable(aux)
+
+```
+
+
+### Exercício 3
+
+No gráfico abaixo, vemos o histograma dos valores transformados das indenizações, juntamente com as curvas das distribuições Gama e Lognormal ajustadas, e a curva da densidade empírica. De acordo com as densidades, vemos que a densidade da Gama está mais próxima da densidade observada nos dados.
+
+```{r fig.align='center', fig.width=4, fig.height=3}
+## comparativo das densidades ajustadas
+denscomp(list(fgam, flnorm), legendtext=c("Gama","Lognormal"), demp=T,
+         main="Histograma e densidades ajustadas")
+```
+
+
+### Exercício 4
+
+```{r fig.align='center', fig.width=9}
+## comparativo das funções de distribuição e qq-plot
+par(mfrow=c(1,2))
+cdfcomp(list(fgam, flnorm), datacol="grey", lwd=2, 
+        legendtext=c("Gama","Lognormal"), main="Funções de distribuição ajustadas")
+qqcomp(list(fgam, flnorm), main="QQ-plot Dados de Incêndio",
+       legendtext=c("Gama","Lognormal"), fitpch=c(4,20))
+```
+
+De acordo com os gráficos das funções de distribuição acumulada ajustadas e dos quantis teóricos e empíricos, vemos que a distribuição gama tem um ajuste mais próximo da distribuição observada nos dados.
+
+
+### Exercício 5
+
+```{r}
+## quantil observado
+qemp = quantile(x, prob=.95)
+
+## quantis teóricos
+qgam = qgamma(.95, shape=fgam$estimate[1], rate=fgam$estimate[2])
+qlnorm = qlnorm(.95, meanlog=flnorm$estimate[1], sdlog=flnorm$estimate[2])
+```
+
+```{r echo=FALSE, results='asis'}
+## imprimindo tabela quantis
+aux = cbind(Emp=qemp, Gama=qgam, Lognormal=qlnorm)
+kable(aux)
+
+```
+
+
+Novamente, pela comparação entre os quantis de 95% empírico e teóricos, vemos que a distribuição gama apresentou um ajuste mais próximo aos dados observados.
+
+
+## Aprendizagem Estatística
+
+
+### Exercício 6
+
+No gráfico abaixo, vemos a distribuição marginal da variável `checking_status` que mostra o saldo da conta corrente em marcos alemães dos clientes do banco de dados de análise de crédito. Vemos que as categorias com saldo negativo e saldo até 200 marcos contém 27% dos dados cada, enquanto a categoria com saldo acima de 200 marcos concentra apenas 6% dos clientes. A categoria com maior frequência, com quase 40% dos dados, é a de clientes sem conta corrente ou que não se sabe.
+
+```{r echo=FALSE, fig.align='center',fig.width=5, fig.height=4}
+## dados análise de crédito
+data(credit)
+
+## análise descritiva saldo conta corrente
+x = credit$checking_status
+n = dim(credit)[1]
+prop.cc = table(x)/n
+
+barplot(prop.cc, names.arg=c("<0","0-200",">200","não tem"), col=heat.colors(4,0.5),
+        xlab="saldo conta corrente", ylim=c(0,0.45))
+text(c(.75,1.9,3.1,4.25),prop.cc,labels=prop.cc,pos=3)
+```
+
+Para analisar se há diferença na distribuição dessa variável `checking_status` com relação à classificação dos clientes, vemos abaixo a proporção de clientes classificados como bons (`class`=0) ou ruins (`class`=1) em cada categoria de saldo da conta corrente. Vemos que nas duas primeiras categorias (saldo negativo e saldo até 200 marcos alemães), a proporção de bons e maus clientes é parecida, em torno de 50% e 60% respectivamente. Já na categoria de saldo maior que 200 marcos, 77% dos clientes foram classificados como bons. Para clientes sem conta corrente ou conta desconhecida, essa proporção aumenta para 88%. Essas proporções podem ser visualizadas para as quatro categorias de conta corrente no gráfico abaixo, com a proporção geral destacada na linha pontilhada.
+
+```{r echo=FALSE, results='asis'}
+## análise descritiva saldo conta corrente versus classificação cliente
+y = credit$class
+prop = prop.table(table(x,y),1)
+row.names(prop) = c("<0","0-200",">200","não tem")
+kable(prop, digits=3, caption="Classificação dos clientes de acordo com o saldo em conta corrente")
+
+```
+
+```{r echo=FALSE, fig.align='center', fig.width=5, fig.height=4}
+barplot(t(prop), xlab="saldo conta corrente",
+        main="Proporção de bons clientes por saldo da conta corrente")
+abline(h=mean(credit$class==0),lty=2)
+```
+
+
+### Exercício 7
+
+Na tabela e no gráfico abaixo, vemos a proporção de clientes classificados como bons de acordo com a duração do empréstimo. Para empréstimos com menos de 6 meses, quase 90% dos clientes são classificados como bons. Podemos ver que essa proporção diminui a medida em que a duração do empréstimo aumenta, chegado a 48% para empréstimos com mais de 3 anos.
+
+```{r echo=FALSE, results='asis'}
+## classificação de clientes por duração do empréstimo
+Q = c(0,6,12,18,24,36,73)
+cut.dur = cut(credit$duration,Q)
+prop = prop.table(table(cut.dur,credit$class),1)
+row.names(prop) = c("0-6","6-12","12-18","18-24","24-36","36+")
+kable(prop, digits=3, caption="Classificação dos clientes de acordo com a duração do empréstimo em meses")
+```
+
+```{r echo=FALSE, fig.align='center', fig.width=5, fig.height=4}
+## gráfico da classificação por duração
+barplot(t(prop), xlab="Duração do empréstimo em meses",
+        main="Proporção de bons clientes por duração do empréstimo")
+abline(h=mean(credit$class==0),lty=2)
+```
+
+
+
+
+
