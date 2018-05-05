@@ -136,7 +136,7 @@
 <li><p>Prêmios</p></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Seguros e Anuidades de Vida</h2></hgroup><article  class="build" id="seguros-e-anuidades-de-vida">
+</article></slide><slide class=""><hgroup><h2>Seguros e Anuidades de Vida</h2></hgroup><article  id="seguros-e-anuidades-de-vida" class="build">
 
 <ul>
 <li><p><strong>Seguros de vida</strong> ou <strong>anuidades de vida</strong> são contratos que prometem <em>um ou mais</em> pagamentos de acordo com a ocorrência de eventos relacionados à sobrevivência/mortalidade de indivíduos (<em>life-contingent events</em>).</p></li>
@@ -307,11 +307,8 @@ head(soaAct.df)</pre>
 <strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-3">
 
 <ul>
-<li>Vamos usar essa tabela de vida para encontrar o valor do prêmio único de um <strong>seguro temporário</strong> por 3 anos, para um segurado de 36 anos e soma segurada de $100.000.</li>
-</ul>
-
-<ul class = 'build'>
-<li>VPA desse seguro:</li>
+<li><p>Vamos usar essa tabela de vida para encontrar o valor do prêmio único de um <strong>seguro temporário</strong> por 3 anos, para um segurado de 36 anos e soma segurada de $100.000.</p></li>
+<li><p>VPA desse seguro:</p></li>
 </ul>
 
 <p><img src="img/vpa.png" style="display: block; margin: auto;" /></p>
@@ -370,7 +367,7 @@ p3 = 100000*Axn(actuarialtable = soaAct, x=36, n=3)</pre>
 <li><p>Por exemplo, conside um seguro temporário por \(n\) anos que paga \(k+1\) se \(x\) completou \(k\) anos desde o início do contrato, ou seja, se \(K_x = k\) para \(k=0,1,\dots,n-1\).</p></li>
 </ul>
 
-<p><img src="img/IAx.PNG" style="display: block; margin: auto;" /></p>
+<p><img src="img/IAx.png" style="display: block; margin: auto;" /></p>
 
 </article></slide><slide class=""><hgroup><h2>Seguros com benefícios crescentes</h2></hgroup><article  id="seguros-com-beneficios-crescentes-1">
 
@@ -446,13 +443,13 @@ anuidade de vida inteira <em>postecipada</em></span>:</li>
 <li>VPA de Anuidade de vida inteira <em>antecipada</em>:</li>
 </ul>
 
-<p><img src="img/anndue.PNG" style="display: block; margin: auto;" /></p>
+<p><img src="img/anndue.png" style="display: block; margin: auto;" /></p>
 
 <ul>
 <li>VPA de Anuidade de vida inteira <em>postecipada</em>:</li>
 </ul>
 
-<p><img src="img/annimmed.PNG" style="display: block; margin: auto;" /></p>
+<p><img src="img/annimmed.png" style="display: block; margin: auto;" /></p>
 
 </article></slide><slide class=""><hgroup><h2>Funções de Comutação - Anuidades</h2></hgroup><article  id="funcoes-de-comutacao---anuidades-1">
 
@@ -469,7 +466,7 @@ anuidade de vida inteira <em>postecipada</em></span>:</li>
 <p><img src="img/anndue_temporaria.png" style="display: block; margin: auto;" /></p>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exercício</strong></span></h2></hgroup><article  class="build" id="exercicio-8">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-8" class="build">
 
 <ul>
 <li>Vamos encontrar o VPA de uma série de pagamentos de $1, feitos no começo de cada ano, para um segurado de 65 anos vitaliciamente.</li>
@@ -481,7 +478,7 @@ sum( (soaAct.df$lx)[soaAct.df$x%in%65:111]/soaAct.df$lx[soaAct.df$x==65]*1.06^(-
 <pre >## [1] 9.896928</pre>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exercício</strong></span></h2></hgroup><article  class="build" id="exercicio-9">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-9" class="build">
 
 <pre class = 'prettyprint lang-r'>## 2) usando funções de comutação
 with(soaAct.df, (Nx[66]/Dx[66]))</pre>
@@ -544,7 +541,7 @@ prêmio único</span>.</p></li>
 <p>\[VPA(\mbox{benefícios}) = VPA(\mbox{prêmios}) \]</p>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exercício</strong></span></h2></hgroup><article  class="build" id="exercicio-13">
+<strong>Exercício</strong></span></h2></hgroup><article  id="exercicio-13" class="build">
 
 <ul>
 <li><p>Encontre o <strong>prêmio</strong> de um seguro de vida inteira de $100.000 para um segurado de 25 anos, com prêmios pagos no começo dos próximos 10 anos enquanto estiver vivo.</p></li>

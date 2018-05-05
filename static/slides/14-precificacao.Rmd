@@ -228,7 +228,7 @@ head(soaAct.df)
 
 - Vamos usar essa tabela de vida para encontrar o valor do prêmio único de um **seguro temporário** por 3 anos, para um segurado de 36 anos e soma segurada de \$100.000.
 
-> - VPA desse seguro:
+- VPA desse seguro:
 
 ```{r fig.align='center', echo=FALSE, purl=FALSE}
 include_graphics("img/vpa.png")

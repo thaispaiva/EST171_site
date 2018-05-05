@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '15 - Reservas',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '15-reservas_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(15-reservas_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="15-reservas_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">07 de maio de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li><p>Definição de Reservas</p></li>
+<li>Fórmulas de cálculo
+
+<ul>
+<li>método retrospectivo</li>
+<li><strong>método prospectivo</strong></li>
+<li><strong>fórmula recursiva</strong></li>
+</ul></li>
+<li><p>Exemplos</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Reservas</h2></hgroup><article  id="reservas">
+
+<ul>
+<li><p>A <span class="black">
+<strong>reserva</strong></span> de uma apólice consiste no valor que a seguradora precisa ter em um determinado momento para, juntamente com os prêmios futuros que venha a receber, consiga honrar com seus pagamentos futuros de indenizações.</p></li>
+<li><p>Para o cálculo da reserva no tempo \(t\), assumimos que o segurado está vivo.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Cálculo de Reservas</h2></hgroup><article  id="calculo-de-reservas">
+
+<p>Reservas podem ser calculadas através de dois métodos:</p>
+
+<ul>
+<li><span class="black">
+<strong>Prospectivo:</strong></span> a reserva é calculada como a diferença entre os valores presentes atuarias dos benefícios futuros e dos prêmios futuros.</li>
+</ul>
+
+<p>\[{}_{t}V = VPA(\mbox{benefícios futuros}) - VPA(\mbox{prêmios futuros}) \]</p>
+
+<ul>
+<li><span class="black">
+<strong>Retrospectivo:</strong></span> a reserva é calculada como a diferença entre os valores acumulados dos benefícios pagos e os prêmios recebidos.</li>
+</ul>
+
+<p>Para os exemplos dessa aula, vamos considerar a <em>reserva prospectiva</em> e os seguros discretos.</p>
+
+</article></slide><slide class=""><hgroup><h2>Reserva Prospectiva</h2></hgroup><article  id="reserva-prospectiva">
+
+<ul>
+<li>Reserva Prospectiva no tempo \(t\) para um seguro de vida inteira para um indivíduo de idade \(x\):</li>
+</ul>
+
+<p>\[{}_{t}V_x = A_{x+t} - P \,\cdot \ddot{a}_{x+t} \]</p>
+
+<p>onde \(P=\frac{A_x}{\ddot{a}_x}\) é o prêmio anual calculado no tempo \(t=0\).</p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo" class="build">
+
+<ul>
+<li>Calcule a reserva em \(t=10\) para um <strong>seguro de vida inteira</strong> para um indivíduo de 60 anos pago com prêmios anuais.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## prêmio
+P = Axn(soa08Act,60)/axn(soa08Act,60)</pre>
+
+<pre class = 'prettyprint lang-r'>## reserva t=10
+(V = Axn(soa08Act,60+10)-P*axn(soa08Act,60+10))</pre>
+
+<pre >## [1] 0.2311368</pre>
+
+</article></slide><slide class=""><hgroup><h2>Reserva Prospectiva</h2></hgroup><article  id="reserva-prospectiva-1">
+
+<ul>
+<li>Reserva Prospectiva no tempo \(t\) para um seguro de vida temporário por \(n\) anos para um indivíduo de idade \(x\):</li>
+</ul>
+
+<p><img src="img/reserva_temp.png" width="60%" style="display: block; margin: auto;" /></p>
+
+<p>onde \(P\) é o prêmio anual calculado no tempo \(t=0\).</p>
+
+<p><img src="img/p_temp.png" width="15%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-1" class="build">
+
+<ul>
+<li>Calcule a reserva em \(t=10\) para um <strong>seguro de vida temporário</strong> por 30 anos para um indivíduo de 60 anos pago com prêmios anuais.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## prêmio
+P = Axn(soa08Act,60,30)/axn(soa08Act,60,30)</pre>
+
+<pre class = 'prettyprint lang-r'>## reserva t=10
+(V = Axn(soa08Act,60+10,30-10)-P*axn(soa08Act,60+10,30-10))</pre>
+
+<pre >## [1] 0.209061</pre>
+
+</article></slide><slide class=""><hgroup><h2>Reserva em função do tempo</h2></hgroup><article  id="reserva-em-funcao-do-tempo">
+
+<ul>
+<li><p>Vamos visualizar a evolução da reserva com o tempo.</p></li>
+<li><p>Para isso, vamos considerar o <strong>seguro temporário</strong> por 30 anos para um segurado de 60 anos.</p></li>
+<li><p>Para \(t=0,1,\dots,30\), a reserva é dada por:</p></li>
+</ul>
+
+<p><img src="img/reserva_ex.png" width="60%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Reserva em função do tempo</h2></hgroup><article  id="reserva-em-funcao-do-tempo-1">
+
+<p><img src="15-reservas_files/figure-html/unnamed-chunk-14-1.png" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-2" class="build">
+
+<p>E se a duração de pagamento dos prêmios é <em>menor</em> do que a duração do seguro? <br><br></p>
+
+<ul>
+<li><p>Considere um seguro de vida temporário por 40 anos para um indivíduo de 25 anos. Os prêmios são pagos antecipadamente e anualmente, por no máximo 5 anos.</p></li>
+<li><p>Calcule a reserva prospectiva nos tempos \(t=3\) e \(t=10\).</p></li>
+</ul>
+
+<pre >## [1] 0.03237485</pre>
+
+<pre >## [1] 0.06748179</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-3" class="build">
+
+<ul>
+<li>Calcule a reserva prospectiva no tempo \(t=10\) para um <strong>seguro dotal misto</strong> com duração de 20 anos para um segurado de 60 anos.</li>
+</ul>
+
+<pre >## [1] 0.355253</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-4" class="build">
+
+<ul>
+<li><p>Considere um contrato de <strong>anuidade vitalícia diferida</strong> por 20 anos para um segurado de 55 anos. Os pagamentos da anuidade são antecipados, e os prêmios são pagos anualmente durante o período de diferimento.</p></li>
+<li><p>Calcule a reserva prospectiva no tempo \(t=10\) e \(t=30\).</p></li>
+</ul>
+
+<pre >## [1] 1.980102</pre>
+
+<pre >## [1] 4.698033</pre>
+
+</article></slide><slide class=""><hgroup><h2>Fórmula Recursiva</h2></hgroup><article  id="formula-recursiva">
+
+<ul>
+<li>Podemos encontrar o valor das reservas de maneira iterativa.</li>
+</ul>
+
+<p>\[{}_{t}V = {}_{t+1}V + VPA(\mbox{benefícios em } (t,t+1) ) - VPA(\mbox{prêmios em } (t,t+1)) \]</p>
+
+<ul>
+<li>Assim, é possível determinar reservas usando fórmulas recursivas, já que no tempo \(t=0\) a reserva deve ser zero.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Fórmula Recursiva Geral</h2></hgroup><article  id="formula-recursiva-geral">
+
+<ul>
+<li>Considere uma sequência \(\boldsymbol u = (u_n)\) satisfazendo a equação:</li>
+</ul>
+
+<p>\[u_n = a_n + b_n .\, u_{n+1} \]</p>
+
+<p>para todo \(n=1,2,\dots,m\) tal que \(u_{m+1}\) é conhecido, assim como \(\boldsymbol a = (a_n)\) e \(\boldsymbol b = (b_n)\).</p>
+
+<ul>
+<li>A fórmula recursiva para a reserva se encaixa nessa fórmula geral, assim como muitas funções atuariais como \(A_x\), \(\ddot{a}_x\) e até \(e_x\).</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Fórmula Recursiva Geral</h2></hgroup><article  id="formula-recursiva-geral-1">
+
+<ul>
+<li>A solução geral para essa fórmula é dada por:</li>
+</ul>
+
+<p>\[ u_n = \frac{u_{m+1} \prod_{i=1}^m b_i + \sum_{j=n}^m a_j \prod_{i=0}^{j-1} b_i}{\prod_{i=0}^{n-1} b_i} \]</p>
+
+<p>onde \(b_0=1\).</p>
+
+<pre class = 'prettyprint lang-r'>## função para encontrar solução para fórmula recursiva
+recurrent = function(a,b,ufinal){
+  s &lt;- rev(cumprod(c(1, b)))
+  return( ( rev(cumsum(s[-1]*rev(a))) + s[1]*ufinal )/rev(s[-1]) )
+}</pre>
+
+</article></slide><slide class=""><hgroup><h2>Fórmula Recursiva - Reservas</h2></hgroup><article  id="formula-recursiva---reservas">
+
+<ul>
+<li><p>Vamos considerar o exemplo anterior de <strong>seguro de vida temporário</strong> por 30 anos para um indivíduo de 60 anos.</p></li>
+<li><p>Fórmula recursiva:</p></li>
+</ul>
+
+<p><img src="img/reserva_recursiva.png" width="60%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Fórmula Recursiva - Reservas</h2></hgroup><article  id="formula-recursiva---reservas-1">
+
+<ul>
+<li><p>De acordo com a equação recursiva geral, temos que \(m=n\), \(u_{m+1}=0\).</p></li>
+<li><p>Logo, os termos da fórmula recursiva para a reserva \({}_{t}V\) são:</p></li>
+</ul>
+
+<p><img src="img/at_bt.png" width="60%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Fórmula Recursiva - Reservas</h2></hgroup><article  id="formula-recursiva---reservas-2">
+
+<ul>
+<li>Assim, podemos encontrar o valor das reservas para \(t=0,\dots,30\) usando a solução iterativa:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Exemplo - seguro temporário
+## encontrando a reserva usando a fórmula recursiva
+
+## prêmio
+P = Axn(soa08Act,60,30)/axn(soa08Act,60,30)
+
+## Sequências de a e b
+Vecta = Vectorize(function(t) Axn(soa08Act,t,1))(60+0:29) - P
+Vectb = Vectorize(function(t) pxt(soa08Act,t,1))(60+0:29)/1.06
+
+## Sequência da reserva com a fórmula recursiva
+Vectv = c(recurrent(a=Vecta,b=Vectb,ufinal=0),0)</pre>
+
+</article></slide><slide class=""><hgroup><h2>Fórmula Recursiva - Reservas</h2></hgroup><article  id="formula-recursiva---reservas-3">
+
+<p><img src="15-reservas_files/figure-html/unnamed-chunk-26-1.png" width="720" style="display: block; margin: auto;" /></p></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
