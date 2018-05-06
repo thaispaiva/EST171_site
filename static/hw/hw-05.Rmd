@@ -1,0 +1,61 @@
+---
+title: "Lista de Exercícios 5"
+date: "Entrega: **13/05/2018** via Moodle (até as 23:55)"
+output: 
+  html_document: 
+    css: hw.css
+    theme: yeti
+    toc: true
+    toc_float: true
+    fig_caption: true
+---
+
+## 
+
+Você irá entregar essa lista de exercício no Moodle da disciplina. Você deverá submeter o **arquivo pdf gerado automaticamente pelo R** usando *markdown*. Não serão aceitos arquivos em outro formato!
+
+
+
+## Matemática Financeira
+
+1) Em troca de um pagamento de \$1.000 no final dos próximos 10 anos, um indivíduo concorda em pagar \$200 imediatamente, \$500 no final de 6 anos, e um último pagamento no final de 15 anos. Encontre o valor do último pagamento se a taxa de juros nominal é 5% convertida semestralmente.
+
+2) Encontre a [taxa interna de retorno](https://pt.wikipedia.org/wiki/Taxa_interna_de_retorno) de um investimento em que se aplica \$1.000 por 5 anos, e recebe um retorno de \$500 nos próximos 15 anos.
+
+3) Quanto você estaria disposto a pagar para receber uma perpetuidade de \$37 por ano começando agora com uma taxa de juros anual de 8%?
+
+
+## Tabelas de Vida
+
+4) Carregue os dados `demoChina` do pacote `lifecontingencies` que contém algumas tábuas de mortalidade anuais para idades entre 0 e 105. Construa um objeto do tipo `lifetable` a partir das taxas CL1 ( [descrição](https://mort.soa.org/ViewTable.aspx?&TableIdentity=50001) ). Inclua no seu relatório o `summary` dessa tabela de vida.
+
+Utilizando essa tabela, calcule:
+
+5) A probabilidade de uma vida de 2 anos sobreviver até os 4 anos.
+
+6) O número de mortes entre as idades 35e 45.
+
+7) A probabilidade de três irmãos de idades 14, 15 e 16 estarem todos vivos após 60 anos.
+
+
+## Seguros de Vida
+
+Para os exercícios a seguir, utilize a mesma tabela de vida da seção anterior. (ou soa08Act?)
+
+
+8) Quanto um segurado de 25 anos deve pagar para receber \$100.000 quando ele completar 65 anos?
+
+
+9) Quanto um segurado de 25 anos deve pagar para receber \$100.000 quando ele morrer ou completar 65 anos?
+
+
+10) Calcule o VPA de um seguro de vida inteira para um segurado de 30 anos com indenização paga no final do mês de morte e juros de 4\% ao ano.
+
+
+11) Para o VPA calculado no exercício anterior, calcule o prêmio mensal que deverá ser pago até o final da vida do segurado.
+
+
+12) Calcule o prêmio trimestral que um segurado de 50 anos deve pagar até a sua morte para garantir uma indenização de \$100.000 paga no final do trimestre de morte.
+
+
+13) Calcule o prêmio mensal pago durante 15 anos para um segurado de 30 anos que deseja contratar um seguro temporário por 35 anos, com indenização de \$100.000 paga no final do mês de morte. Assuma uma taxa de juros de 3%.
