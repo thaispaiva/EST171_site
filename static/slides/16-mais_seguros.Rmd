@@ -1,0 +1,563 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "14 de maio de 2018"
+subtitle: "16 - Seguros: mais cálculos"
+
+output:
+  ioslides_presentation:
+    css: my.css
+    highlight: pygments
+    logo: img/logo_ufmg.png
+    widescreen: true
+    self_contained: false
+    lib_dir: libs
+  beamer_presentation:
+    highlight: pygments
+
+header-includes:
+- \usepackage{amsmath, amsbsy, relsize}
+- \usepackage{lifecon.sty}
+---
+
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
+
+```{r echo=FALSE}
+## EST171 - Métodos Computacionais para Análise de Risco
+## Código da aula 16 - Mais cálculos de Seguros
+
+```
+
+```{r echo=FALSE, purl=FALSE}
+file_name = "16-mais_seguros"
+```
+
+
+
+## Aula de Hoje
+
+- Múltiplas Vidas
+
+  + seguros e anuidades
+  + anuidades reversíveis
+
+- Despesas
+
+- Simulação de tempos de vida
+
+  + simulação de VPAs
+  + aplicação: princípio do percentil
+
+
+# Múltiplas Vidas
+
+
+## Seguros para Múltiplas Vidas
+
+- A teoria geral que vimos até agora para seguros, anuidades, prêmios e reservas pode ser extendida para considerar apólices para **múltiplas vidas**.
+
+- A principal relação para essas quantidades envolve as v.a.'s do tempo de vida futuro dos *status* de vida conjunta e último sobrevivente:
+
+$$T_{xy} + T_{\overline{xy}} = T_x + T_y $$
+
+- Essa relação também se aplica a Valores Presentes Atuariais.
+
+
+## <span class="green3">**Exemplo**</span> {.build}
+
+- Considere duas vidas independentes com idades 60 e 70.
+
+- Assumindo que as duas vidas seguem a distribuição de sobrevivência da tabela do SOA, encontre o VPA de um seguro vitalício que paga uma unidade monetária no final do ano da *última morte*.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+require(lifecontingencies)
+data("soa08Act")
+
+
+## Exemplo 1: VPA seguro último sobrevivente
+```
+
+
+## <span class="green3">**Exemplo**</span> {.build}
+
+```{r}
+tab.xy = list(soa08Act,soa08Act)
+
+## cálculo direto
+Axyzn(tab.xy, x=c(60,70), status="last")
+
+## cálculo indireto
+Axn(soa08Act,60) + Axn(soa08Act,70) - Axyzn(tab.xy,x=c(60,70))
+
+```
+
+
+## <span class="green3">**Exemplo**</span> {.build}
+
+- E se a indenização do seguro for paga no final do ano da *primeira morte*? O VPA será maior ou menor?
+<br><br>
+```{r echo=FALSE}
+
+## Exemplo 2: VPA seguro vida conjunta
+
+## cálculo direto
+##
+
+## cálculo indireto
+##
+
+```
+
+- Verifique se a igualdade $A_{xy} + A_{\overline{xy}} = A_x + A_y$ é verdadeira.
+
+```{r echo=FALSE}
+
+## verifique se a igualdade é verdadeira
+##
+
+```
+
+
+## Anuidades Reversíveis {.build}
+
+- A teoria de múltiplas vidas é utilizada para avaliar **anuidades reversíveis**, um tipo especial de anuidades para duas vidas.
+
+- Uma anuidade reversível paga os benefícios após uma das vidas falhar, e depois enquanto a outra estiver viva.
+
+- Por exemplo, o VPA de uma anuidade que paga \$1 vitaliciamente para $(y)$ após a morte de $(x)$ é dada por:
+
+<span style="font-size: 40px;">
+$$\ddot{a}_{x|y} = \ddot{a}_y - \ddot{a}_{xy}$$
+</span>
+
+
+## <span class="green3">**Exemplo**</span> {.build}
+
+- Calcule o VPA de uma anuidade reversível vitalícia para um segurado de 60 anos, que começa a ser paga após a morte de um indivíduo de 70 anos.
+
+```{r echo=FALSE}
+
+## Exemplo 3: anuidades reversíveis
+
+## VPA de a_{60|70}
+##
+
+```
+
+```{r echo=FALSE, purl=FALSE}
+axn(soa08Act,60) - axyzn(tab.xy,c(60,70))
+```
+
+
+# Despesas
+
+
+## Despesas
+
+- Vamos ver agora como incorporar as **despesas** nos cálculos dos VPA's, prêmios e reservas.
+
+- Na prática, tratamos as despesas como se fossem "benefícios".
+
+- Para encontrar o <span class="black">**prêmio bruto**</span>, o VPA das despesas é adicionado ao VPA dos benefícios, e então igualado ao VPA dos prêmios.
+
+- Similarmente, as <span class="black">**reservas**</span> são obtidas como a diferença entre o VPA dos benefícios e despesas futuros e o VPA dos prêmios futuros.
+
+
+## <span class="green3">**Exemplo**</span> 
+
+- Para um seguro de vida inteira discreto com soma segurada de \$100.000 para uma vida de 35 anos, considere:
+
+  + despesa de 10% dos prêmios por ano;
+  
+  + despesa de \$25 por apólice por ano;
+  
+  + despesa de manutenção anual de \$2,50 por cada \$1.000 de soma segurada;
+  
+  + todas as despesas são pagas no começo do ano.
+  
+- Encontre o prêmio bruto $G$.
+
+```{r echo=FALSE}
+
+## Exemplo 4: Seguro com despesas
+
+## encontre o prêmio bruto
+
+```
+
+
+## <span class="green3">**Exemplo**</span> 
+
+- Para um seguro de vida inteira de \$1.000 para um segurado de 45 anos, considere:
+
+  + despesa de 10\% do prêmio bruto por ano;
+  
+  + despesas adicionais de \$3 por ano;
+  
+  + todas as despesas são pagas no começo do ano.
+  
+- Calcule:
+
+  a) o prêmio puro anual;
+  b) o prêmio bruto anual;
+  c) a reserva líquida no final do primeiro ano;
+  d) a reserva bruta no final do primeiro ano.
+
+```{r echo=FALSE}
+
+## Exemplo 5: Reserva com despesas
+
+## encontre o prêmio puro
+##
+
+## encontre o prêmio bruto
+##
+
+## encontre a reserva líquida
+##
+
+## encontre a reserva bruta
+##
+
+############################################################
+
+```
+
+
+# Simulação de tempos de vida
+
+
+## Simulação de tempos de vida
+
+- O valor presente de contratos de seguro e anuidades (*life-contingencies*) são <span class="red3">variáveis aleatórias</span>.
+
+- São variáveis aleatórias que dependem do tempo de vida futuro de $(x)$.
+
+- Podemos usar amostras de $T(x)$ e $K(x)$ para avaliar funções mais complexas dessas variáveis através de [Métodos de Monte Carlo](https://pt.wikipedia.org/wiki/M%C3%A9todo_de_Monte_Carlo).
+
+
+## Simulação de tempos de vida
+
+- Vamos gerar uma amostra de $n=1000$ tempos de vida para indivíduos nascendo hoje, e que terão distribuição de mortalidade de acordo com a tabela SOA.
+
+```{r}
+
+## Simulação - amostra de tempos de vida ao nascer K(0)
+set.seed(123)
+K0 = rLife(n=1000, object=soa08Act, x=0, type="Kx")
+
+```
+
+
+## Simulação de tempos de vida {.build}
+
+- Como está distribuída essa variável aleatória?
+
+```{r echo=FALSE, fig.align='center'}
+## histograma
+hist(K0, freq=F, main="Tempos de vida ao nascer")
+lines(density(K0), lwd=2, col="blue")
+
+```
+
+
+## Simulação de tempos de vida {.build}
+
+- Como está distribuída essa variável aleatória?
+
+```{r results='hide'}
+## estatísticas descritivas
+summary(K0)
+
+```
+
+```{r results='hide'}
+## média empírica
+mean(K0)
+
+## média teórica
+exn(soa08Act)
+
+## são iguais?
+t.test(x=K0, mu=exn(soa08Act))
+
+```
+
+## <span class="green3">**Exercício**</span>
+
+- Gere uma nova amostra de K0 alterando a semente. Repita os resultados do slide anterior. O que mudou?
+
+- E se aumentar o tamanho da amostra?
+
+- E se selecionarmos `type="Tx"`?
+
+
+## Simulação de tempos de vida
+
+- Gerar uma amostra de tempos de vida pode ser usado para computar quantias que dependem de $T(x)$ e $K(x)$.
+
+- Por exemplo, se quisermos calcular a esperança e variância do valor presente de um seguro de vida inteira.
+
+
+## <span class="green3">**Exemplo**</span> {.build}
+
+- Gere uma amostra de $n=10.000$ tempos de vida ao nascer de acordo com a tabela do SOA. Fixe a semente como `2018`.
+
+- Com i=6\%, calcule o valor presente do pagamento de uma indenização de \$1.000 no final do ano de morte para cada indivíduo dessa amostra. Armazene esses valores em um vetor `VP`.
+
+- Encontre a média e a variância de `VP`.
+
+```{r echo=FALSE}
+
+## Exemplo - simulação de valores presente de seguro
+
+## 1) gerar amostra de tempos de vida ao nascer
+set.seed(2018)
+##
+
+## 2) calcular valor presente da indenização
+##
+
+## 3) encontrar média e variância
+##
+
+```
+
+```{r echo=FALSE, purl=FALSE}
+## 1) gerar amostra de tempos de vida ao nascer
+set.seed(2018)
+K0 = rLife(10000, soa08Act, 0, type="Kx")
+
+## 2) calcular valor presente da indenização
+VP = 1000*(1/1.06)^K0
+
+## 3) encontrar média e variância
+mean(VP)
+var(VP)
+```
+
+
+## <span class="green3">**Exemplo**</span> {.build}
+
+- Compare esses valores que você obteve com os valores de VPA e variância calculados pelas funções do pacote `lifecontingencies`.
+
+```{r echo=FALSE}
+## média teórica
+##
+
+## variância teórica
+##
+
+```
+
+
+```{r echo=FALSE, purl=FALSE}
+## média teórica
+( A = 1000*Axn(soa08Act, 0, i=0.06) )
+
+## variância teórica
+( 1000^2*Axn(soa08Act, 0, i=0.06, power=2) - A^2 )
+```
+
+
+## Princípio do Percentil
+
+- A simulação de uma amostra de tempos de vida ao nascer também pode ser útil para determinar o prêmio de acordo com o <span class="black">Princípio do Percentil</span>.
+
+- O prêmio é determinado como sendo o valor mínimo que faz com que a probabilidade da seguradora ter uma perda total negativa seja $\alpha$.
+
+$$L_{0,i} = VP(\mbox{benef. futuros})_{0,i} - VP(\mbox{prêmios futuros})_{0,i} $$
+$$L = \sum_{i=1} L_{0,i} $$
+$$P(L < 0) = \alpha$$
+
+
+## Princípio do Percentil
+
+- Se o tamanho da carteira for suficientemente grande, podemos usar o Teorema Central do Limite para encontrar o prêmio de acordo com o Princípio do Percentil. 
+
+- Com $N$ grande, $L$ tem distribuição aproximadamente normal, com média $E(L)=N.\,E(L_{0,i})$ e variância $Var(L) = N.\,Var(L_{0,i})$.
+
+$$P(L<0) = P\left( \frac{L-E(L)}{\sqrt{Var(L)}} < \frac{-E(L)}{\sqrt{Var(L)}} \right) = \Phi\left(\frac{-E(L)}{\sqrt{Var(L)}}\right) = \boldsymbol\alpha $$
+
+- Assim, usamos a equação acima para encontrar o prêmio que satisfaz essa condição, já que $E(L)$ e $Var(L)$ dependem de $P$.
+
+
+## Princípio do Percentil
+
+- Também podemos usar a nossa amostra de tempos de vida simulados, e obter o prêmio que satisfaz o princípio do percentil usando Métodos de Monte Carlo.
+
+
+## <span class="green3">**Exemplo**</span>
+
+- Um segurado de idade 25 contrata um seguro temporário por 40 anos de \$100.000.
+
+- Encontre o menor prêmio que a seguradora pode cobrar para garantir que a probabilidade de perda negativa não seja maior do que 5\%.
+
+
+## <span class="green3">**Exemplo**</span> {.build}
+
+```{r results='hide',fig.show='hide'}
+
+## Exemplo - cálculo do prêmio de acordo com o princípio do percentil
+
+## primeiro, vamos gerar amostras de VPA's de seguros temporários
+set.seed(171)
+samples = 100000*rLifeContingencies(n=10000, lifecontingency="Axn", object=soa08Act,
+                                    x=25, t=40, parallel=TRUE)
+
+## distribuição da amostra
+head(samples)
+hist(samples)
+summary(samples)
+
+## probabilidade de VPA positivo
+mean(samples>0)
+qxt(soa08Act,25,40)
+
+```
+
+
+## <span class="green3">**Exemplo**</span> 
+
+```{r}
+## Calculando o prêmio (único)
+
+## de acordo com o princípio do percentil
+(P.perc = quantile(samples, p=0.95))
+
+## de acordo com o princípio da equivalência
+(P.equi = mean(samples))                  # empírico
+(P.teo  = 100000*Axn(soa08Act, 25, 40))   # teórico
+
+```
+
+
+## <span class="green3">**Exemplo**</span> 
+
+```{r echo=FALSE, fig.align='center'}
+## histograma dos VPAs
+hist(samples, freq=F, main="VPAs de seguros temporários", xlab="Axn")
+abline(v=P.perc, lwd=2, col=1)
+abline(v=P.equi, lwd=2, col=2)
+legend("topright", lwd=2, col=c(1,2), legend=c("P (percentil)", "P (equiv.)"))
+
+```
+
+
+## <span class="green3">**Exemplo**</span> 
+
+```{r}
+## probabilidade de perda positiva
+mean(samples>P.perc)
+mean(samples>P.equi)
+
+```
+
+
+## <span class="green3">**Exemplo**</span>
+
+- Uma seguradora vai subscrever a cobertura de pagamentos de aposentadorias vitalícias para uma carteira de 1000 aposentados, todos de 65 anos.
+
+- Calcule o valor a ser cobrado de cada aposentado para que a probabilidade da seguradora ter uma perda negativa seja de no máximo 1\%.
+
+
+## <span class="green3">**Exemplo**</span> {.build}
+
+```{r results='hide', fig.show='hide'}
+
+## Exemplo - carteira de aposentados
+
+## primeiro, gerar amostra de VPAs de anuidades
+set.seed(1405)
+ax65 = rLifeContingencies(100000, lifecontingency="axn", object=soa08Act, x=65, parallel=TRUE)
+
+## distribuição da amostra
+head(ax65)
+hist(ax65)
+summary(ax65)
+
+```
+
+
+## <span class="green3">**Exemplo**</span>
+
+- Se $Z$ é a v.a. que representa o VP dessa anuidade, o VP da perda total da carteira com 1000 segurados tem distribuição normal com média e desvio padrão dados por:
+
+$$\mu = 1000.\,E(Z) \qquad\qquad \sigma = \sqrt{1000.\,Var(Z)} $$
+
+```{r}
+## média e desvio padrão dos VPAs
+muax65 = mean(ax65)
+sdax65 = sd(ax65)
+
+## prêmio
+(P = qnorm(p=0.99, mean=1000*muax65, sd=sqrt(1000)*sdax65)/1000)
+
+```
+
+
+## <span class="green3">**Exemplo**</span>
+
+```{r echo=FALSE, fig.align='center'}
+## distribuição da perda total
+aux = seq(1000*muax65 - 4*sqrt(1000)*sdax65, 1000*muax65 + 4*sqrt(1000)*sdax65, len=1000)
+f = dnorm(aux, mean=1000*muax65, sd=sqrt(1000)*sdax65)
+plot(aux, f, type="l", lwd=2, main="Distribuição da perda total")
+abline(v=1000*P, col=2, lwd=2)
+
+```
+
+
+## Simulação de VPAs
+
+- O pacote `lifecontingencies` também encontra o VPA de momentos de ordem maior do que um, com a opção `power`.
+
+<span class="green3">**Exemplo:**</span>
+
+- Vamos calcular a variância de um **seguro crescente** temporário por 20 anos para um segurado de 45 anos.
+
+
+## <span class="green3">**Exemplo**</span>
+
+```{r}
+
+## Exemplo - variância de seguro crescente
+
+## gerar amostra de VPAs
+set.seed(0910)
+sampleIAxn = rLifeContingencies(50000, lifecontingency="IAxn", object=soa08Act,
+                                x=45, t=20, parallel=TRUE)
+
+## variância amostral
+var(sampleIAxn)
+
+## variância teórica
+IAxn(soa08Act, 45, 20, power=2) - (IAxn(soa08Act, 45, 20))^2
+
+```
+
+
+
+
+
+[//]: # ##########################################################
+[//]: # Para gerar arquivo com apenas os comandos do R desta aula
+```{r include=FALSE, purl=FALSE}
+# gerar arquivo com comandos do R
+purl(input=paste0(file_name,".Rmd"),
+     output=paste0("../labs/",file_name,".R"),
+     documentation=0, encoding='UTF-8')
+# Saída: 'filename.R' com apenas o código extraído do arquivo original
+# Opções: documentation=1 inclui o texto no título dos chunks
+# Para excluir um chunk do arquivo final, incluir a opção purl=FALSE no cabeçalho do chunk
+```
+
+
+
+
+
+
+
