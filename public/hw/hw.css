@@ -2,7 +2,6 @@
 
 @import 'https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700';
 @import 'https://fonts.googleapis.com/css?family=Source+Code+Pro';
-
 @charset "UTF-8";
 
 /* Tufte CSS styles */
@@ -124,6 +123,11 @@ ol>li {
 	padding-left: 90px;
 }
 
+/* ol {
+/*	counter-reset: li;
+} */
+
+
 ol>li:before {
 	/* Use the counter as content */
 	/* content: "Question " counter(li)"."; */
@@ -136,6 +140,32 @@ ol>li:before {
 	font-weight: bold;
 }
 
+
+/* styling nested lists */
+
 ol ol {
-	counter-reset: subitem;
+	counter-reset: my-counter;
+}
+
+ol ol>li {
+	/* Create a positioning context */
+	position: relative;
+	/* Disable the normal item numbering */
+	list-style: none;
+	width: 90%;
+	padding-top: 2px;
+	padding-bottom: 5px;
+	padding-right: 0;
+	padding-left: 30px;
+}
+
+ol ol>li:before {
+	/* Use the counter as content */
+	 content: counter(my-counter, lower-latin)")";
+	/* Increment the counter by 1 */
+	counter-increment: my-counter;
+	position: absolute;
+	color: #008CBA;
+	/* left: -0.2px; */
+	font-weight: bold;
 }

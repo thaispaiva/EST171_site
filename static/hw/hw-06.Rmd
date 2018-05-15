@@ -1,0 +1,66 @@
+---
+title: "Lista de Exercícios 6"
+date: "Entrega: **20/05/2018** via Moodle (até as 23:55)"
+output: 
+  html_document: 
+    css: hw.css
+    theme: yeti
+    toc: true
+    toc_float: true
+    fig_caption: true
+---
+
+## 
+
+Você irá entregar essa lista de exercício no Moodle da disciplina. Você deverá submeter o **arquivo pdf gerado automaticamente pelo R** usando *markdown*. Não serão aceitos arquivos em outro formato!
+<br><br>
+
+<span style="font-size:larger">**Suposição:**</span>
+
+- Para os exercícios abaixo, utilize a tabela atuarial `soa08Act` com juros de 6\% ao ano.
+
+
+## Reservas
+
+
+1) Calcule a reserva no tempo $t=4$ para um seguro de vida vitalício com soma segurada de \$100.000 para um indivíduo de 60 anos que é pago com prêmios anuais por no máximo 5 anos.
+
+
+2) Calcule a reserva no tempo $t=10$ para um seguro de vida inteira para um indivíduo de 60 anos que paga a soma segurada de \$100.000 no final do ano de morte. Os prêmios são pagos vitaliciamente a cada trimestre.
+
+
+3) Calcule a reserva no tempo $t=5$ para um seguro dotal puro de \$50.000 para um indivíduo de 75 anos com duração de 20 anos. Os prêmios são pagos anualmente durante a vigência do seguro.
+
+
+4) Considere um seguro dotal misto de 20 anos para um segurado com 60 anos, com soma segurada de \$100.000. e prêmios anuais pagos por no máximo 15 anos.
+
+    1) Crie uma função para avaliar a reserva ${}_{t}V$ no tempo $t$, com $t=0,1,...,20$. Sua função deve levar em consideração as diferentes fórmulas da reserva dependendo do valor de $t$. Inclua o código da função na sua resposta.
+  
+    2) Faça um gráfico do valor da reserva ${}_{t}V$ para $t=0,1,...,20$.
+  
+
+## Seguros: mais cálculos
+
+
+5) Um casal contrata uma anuidade antecipada de \$1.000 paga mensalmente até o final da vida da esposa de 30 anos, com pagamentos iniciando após a morte do marido de 40 anos.
+
+    1) Encontre o VPA dessa anuidade.
+    
+    2) Assumindo que os prêmios são pagos enquanto ambos estiverem vivos por no máximo 30 anos, encontre o valor do prêmio mensal para esse contrato.
+
+
+6) Considere um seguro temporário por 20 anos para um segurado de 30 anos, e soma segurada de \$10.000. Calcule o prêmio bruto anual $G$ considerando as despesas anuais: fixas de $\$30$, e proporcionais de $15\%.G$.
+
+
+7) Simule uma amostra de tamanho 10^4 de tempos de vida futuro em anos inteiros para indivíduos de 25 anos.
+
+    1) Inclua uma tabela com as estatísticas descritivas dessa amostra, e um histograma com a densidade estimada para a variável aleatória $K_{25}$.
+  
+    2) Utilizando a sua amostra de tempos de vida futuro, estime a probabilidade de que um indivíduo de 25 anos sobreviva até os 60 anos. Compare esse valor com a probabilidade teórica obtida pela tabela de vida.
+  
+
+8) Um segurado de 65 anos quer contratar uma anuidade antecipada, anual e vitalícia de \$1.000. Encontre o menor prêmio único que a seguradora pode cobrar para garantir que a probabilidade de perda negativa não seja maior do que 25\%.
+
+
+
+
