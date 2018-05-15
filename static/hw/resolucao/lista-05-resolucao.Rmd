@@ -1,0 +1,167 @@
+---
+title: "Lista de Exercícios 5"
+author: "Thaís Paiva"
+date: "13/05/2018"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+
+## Matemática Financeira
+
+### Exercício 1
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+require(lifecontingencies)
+```
+
+```{r}
+## taxa de juros efetiva
+i = nominal2Real(0.05,2)
+v = 1/(1+i)
+
+VPbenef = 1000*v^(10)
+VPpgto = 200 + 500*v^6
+
+x = (VPbenef - VPpgto)*(1+i)^15
+```
+
+Para que o valor presente dos fluxos de pagamentos seja zero, o último pagamento deve ser de \$ `r round(x,2)`.
+
+
+### Exercício 2
+
+```{r}
+## função valor presente
+VP = function(x) 500*annuity(i=x, 15, m=5, type="due") - 1000*annuity(i=x, 5, type="due")
+
+## encontrando a raiz
+TRI = uniroot(VP, c(0,1))$root
+```
+
+A taxa interna de retorno é a taxa de juros que faz com que o valor presente desse fluxo de pagamentos seja zero. Encontrando a raiz do VP do fluxo de pagamentos, obtemos que a taxa interna de retorno é `r round(TRI*100,2)`\%.
+
+
+### Exercício 3
+
+```{r}
+p = 37*annuity(i=0.08, n=Inf, type="due") # perpetuidade imediata
+```
+
+Para contratar essa perpetuidade, seria apropriado pagar o seu valor presente, igual a \$ `r round(p,2)`.
+
+
+
+## Tabelas de Vida
+
+
+### Exercício 4
+
+```{r}
+data(demoChina)
+
+## criando a tabela de vida
+tbCL1 = probs2lifetable(probs=demoChina$CL1,radix=10000,type="qx","CL1")
+summary(tbCL1)
+```
+
+
+### Exercício 5
+
+```{r}
+p = pxt(tbCL1, x=2, t=2)
+```
+
+De acordo com a tabela de vida em consideração, a probabilidade de uma vida de 2 anos sobreviver até os 4 anos é `r round(p,4)`.
+
+
+### Exercício 6
+
+```{r}
+d = tbCL1@lx[tbCL1@x==35] - tbCL1@lx[tbCL1@x==45]
+```
+
+O número de mortes entre as idades 35 e 45 é dado por $l_{35} - l_{45}$, e é igual a `r round(d,4)`.
+
+
+### Exercício 7
+
+```{r}
+p = pxyzt(list(tbCL1,tbCL1,tbCL1), c(14,15,16), 60)
+```
+
+A probabilidade de que três irmãos de idades 14, 15 e 16 estejam todos vivos após 60 anos é `r round(p,4)`.
+
+
+
+## Matemática Atuarial
+
+
+### Exercício 8
+
+```{r}
+## criar tabela atuarial
+actCL1 = new("actuarialtable", x=tbCL1@x, lx=tbCL1@lx, interest=0.05)
+
+## VPA seguro dotal puro
+S = 100000
+VPA = S*Exn(actCL1, x=25, n=65-25)
+```
+
+Para receber \$ 100.000 daqui a 40 anos caso sobreviva, um segurado de 25 deverá pagar hoje \$ `r format(round(VPA,2),scientific=FALSE)`.
+
+
+### Exercício 9
+
+```{r}
+## VPA seguro dotal misto
+VPA = S*AExn(actCL1, x=25, n=65-25)
+```
+
+Para receber \$ 100.000 daqui a 40 anos caso sobreviva, ou quando morrer nesse período, um segurado de 25 deverá pagar hoje \$ `r format(round(VPA,2),scientific=FALSE)`.
+
+
+### Exercício 10
+
+```{r}
+## VPA seguro de vida inteira
+VPA = S*Axn(actCL1, x=30, k=12, i=0.04)
+```
+
+O VPA de um seguro de vida inteira para um indivíduo de 30 anos com indenização de \$ 100.000 paga no final do mês de morte e juros de 4\% é \$ `r format(round(VPA,2),scientific=FALSE)`.
+
+
+### Exercício 11
+
+```{r}
+## prêmio mensal
+P = (VPA/axn(actCL1, x=30, k=12, i=0.04))/12
+```
+
+Se o seguro do exercício anterior for pago com prêmios mensais vitalícios, o valor de cada prêmio será \$ `r format(round(P,2),scientific=FALSE)`.
+
+
+### Exercício 12
+
+```{r}
+## prêmio trimestral
+P = (S*Axn(actCL1, x=50, k=4)/axn(actCL1, x=50, k=4))/4
+```
+
+O prêmio que um segurado de 50 anos deverá pagar trimestralmente para contratar esse seguro vitalício, também trimestral, é de \$ `r format(round(P,2),scientific=FALSE)`.
+
+
+### Exercício 13
+
+```{r}
+## prêmio mensal
+P = (S*Axn(actCL1, x=30, n=35, k=12, i=0.03)/axn(actCL1, x=30, n=15, k=12, i=0.03))/12
+```
+
+O prêmio mensal, pago durante 15 anos, por um segurado de 30 anos para um seguro temporário por 35 anos é de \$ `r format(round(P,2),scientific=FALSE)`.
+
+
+
+

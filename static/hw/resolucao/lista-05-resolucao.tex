@@ -1,0 +1,326 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Lista de Exercícios 5},
+            pdfauthor={Thaís Paiva},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{Lista de Exercícios 5}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Thaís Paiva}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{13/05/2018}
+
+
+\begin{document}
+\maketitle
+
+\hypertarget{matematica-financeira}{%
+\subsection{Matemática Financeira}\label{matematica-financeira}}
+
+\hypertarget{exercicio-1}{%
+\subsubsection{Exercício 1}\label{exercicio-1}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## taxa de juros efetiva}
+\NormalTok{i =}\StringTok{ }\KeywordTok{nominal2Real}\NormalTok{(}\FloatTok{0.05}\NormalTok{,}\DecValTok{2}\NormalTok{)}
+\NormalTok{v =}\StringTok{ }\DecValTok{1}\OperatorTok{/}\NormalTok{(}\DecValTok{1}\OperatorTok{+}\NormalTok{i)}
+
+\NormalTok{VPbenef =}\StringTok{ }\DecValTok{1000}\OperatorTok{*}\NormalTok{v}\OperatorTok{^}\NormalTok{(}\DecValTok{10}\NormalTok{)}
+\NormalTok{VPpgto =}\StringTok{ }\DecValTok{200} \OperatorTok{+}\StringTok{ }\DecValTok{500}\OperatorTok{*}\NormalTok{v}\OperatorTok{^}\DecValTok{6}
+
+\NormalTok{x =}\StringTok{ }\NormalTok{(VPbenef }\OperatorTok{-}\StringTok{ }\NormalTok{VPpgto)}\OperatorTok{*}\NormalTok{(}\DecValTok{1}\OperatorTok{+}\NormalTok{i)}\OperatorTok{^}\DecValTok{15}
+\end{Highlighting}
+\end{Shaded}
+
+Para que o valor presente dos fluxos de pagamentos seja zero, o último
+pagamento deve ser de \$ 80.74.
+
+\hypertarget{exercicio-2}{%
+\subsubsection{Exercício 2}\label{exercicio-2}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## função valor presente}
+\NormalTok{VP =}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x) }\DecValTok{500}\OperatorTok{*}\KeywordTok{annuity}\NormalTok{(}\DataTypeTok{i=}\NormalTok{x, }\DecValTok{15}\NormalTok{, }\DataTypeTok{m=}\DecValTok{5}\NormalTok{, }\DataTypeTok{type=}\StringTok{"due"}\NormalTok{) }\OperatorTok{-}\StringTok{ }\DecValTok{1000}\OperatorTok{*}\KeywordTok{annuity}\NormalTok{(}\DataTypeTok{i=}\NormalTok{x, }\DecValTok{5}\NormalTok{, }\DataTypeTok{type=}\StringTok{"due"}\NormalTok{)}
+
+\NormalTok{## encontrando a raiz}
+\NormalTok{TRI =}\StringTok{ }\KeywordTok{uniroot}\NormalTok{(VP, }\KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{1}\NormalTok{))}\OperatorTok{$}\NormalTok{root}
+\end{Highlighting}
+\end{Shaded}
+
+A taxa interna de retorno é a taxa de juros que faz com que o valor
+presente desse fluxo de pagamentos seja zero. Encontrando a raiz do VP
+do fluxo de pagamentos, obtemos que a taxa interna de retorno é 4.29\%.
+
+\hypertarget{exercicio-3}{%
+\subsubsection{Exercício 3}\label{exercicio-3}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p =}\StringTok{ }\DecValTok{37}\OperatorTok{*}\KeywordTok{annuity}\NormalTok{(}\DataTypeTok{i=}\FloatTok{0.08}\NormalTok{, }\DataTypeTok{n=}\OtherTok{Inf}\NormalTok{, }\DataTypeTok{type=}\StringTok{"due"}\NormalTok{) }\CommentTok{# perpetuidade imediata}
+\end{Highlighting}
+\end{Shaded}
+
+Para contratar essa perpetuidade, seria apropriado pagar o seu valor
+presente, igual a \$ 499.5.
+
+\hypertarget{tabelas-de-vida}{%
+\subsection{Tabelas de Vida}\label{tabelas-de-vida}}
+
+\hypertarget{exercicio-4}{%
+\subsubsection{Exercício 4}\label{exercicio-4}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{data}\NormalTok{(demoChina)}
+
+\NormalTok{## criando a tabela de vida}
+\NormalTok{tbCL1 =}\StringTok{ }\KeywordTok{probs2lifetable}\NormalTok{(}\DataTypeTok{probs=}\NormalTok{demoChina}\OperatorTok{$}\NormalTok{CL1,}\DataTypeTok{radix=}\DecValTok{10000}\NormalTok{,}\DataTypeTok{type=}\StringTok{"qx"}\NormalTok{,}\StringTok{"CL1"}\NormalTok{)}
+\KeywordTok{summary}\NormalTok{(tbCL1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## This is lifetable:  CL1 
+##  Omega age is:  105 
+##  Expected curtated lifetime at birth is:  73.14131
+\end{verbatim}
+
+\hypertarget{exercicio-5}{%
+\subsubsection{Exercício 5}\label{exercicio-5}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p =}\StringTok{ }\KeywordTok{pxt}\NormalTok{(tbCL1, }\DataTypeTok{x=}\DecValTok{2}\NormalTok{, }\DataTypeTok{t=}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+De acordo com a tabela de vida em consideração, a probabilidade de uma
+vida de 2 anos sobreviver até os 4 anos é 0.9971.
+
+\hypertarget{exercicio-6}{%
+\subsubsection{Exercício 6}\label{exercicio-6}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{d =}\StringTok{ }\NormalTok{tbCL1}\OperatorTok{@}\NormalTok{lx[tbCL1}\OperatorTok{@}\NormalTok{x}\OperatorTok{==}\DecValTok{35}\NormalTok{] }\OperatorTok{-}\StringTok{ }\NormalTok{tbCL1}\OperatorTok{@}\NormalTok{lx[tbCL1}\OperatorTok{@}\NormalTok{x}\OperatorTok{==}\DecValTok{45}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+O número de mortes entre as idades 35 e 45 é dado por
+\(l_{35} - l_{45}\), e é igual a 195.0743.
+
+\hypertarget{exercicio-7}{%
+\subsubsection{Exercício 7}\label{exercicio-7}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p =}\StringTok{ }\KeywordTok{pxyzt}\NormalTok{(}\KeywordTok{list}\NormalTok{(tbCL1,tbCL1,tbCL1), }\KeywordTok{c}\NormalTok{(}\DecValTok{14}\NormalTok{,}\DecValTok{15}\NormalTok{,}\DecValTok{16}\NormalTok{), }\DecValTok{60}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+A probabilidade de que três irmãos de idades 14, 15 e 16 estejam todos
+vivos após 60 anos é 0.1777.
+
+\hypertarget{matematica-atuarial}{%
+\subsection{Matemática Atuarial}\label{matematica-atuarial}}
+
+\hypertarget{exercicio-8}{%
+\subsubsection{Exercício 8}\label{exercicio-8}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## criar tabela atuarial}
+\NormalTok{actCL1 =}\StringTok{ }\KeywordTok{new}\NormalTok{(}\StringTok{"actuarialtable"}\NormalTok{, }\DataTypeTok{x=}\NormalTok{tbCL1}\OperatorTok{@}\NormalTok{x, }\DataTypeTok{lx=}\NormalTok{tbCL1}\OperatorTok{@}\NormalTok{lx, }\DataTypeTok{interest=}\FloatTok{0.05}\NormalTok{)}
+
+\NormalTok{## VPA seguro dotal puro}
+\NormalTok{S =}\StringTok{ }\DecValTok{100000}
+\NormalTok{VPA =}\StringTok{ }\NormalTok{S}\OperatorTok{*}\KeywordTok{Exn}\NormalTok{(actCL1, }\DataTypeTok{x=}\DecValTok{25}\NormalTok{, }\DataTypeTok{n=}\DecValTok{65-25}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Para receber \$ 100.000 daqui a 40 anos caso sobreviva, um segurado de
+25 deverá pagar hoje \$ 11426.64.
+
+\hypertarget{exercicio-9}{%
+\subsubsection{Exercício 9}\label{exercicio-9}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## VPA seguro dotal misto}
+\NormalTok{VPA =}\StringTok{ }\NormalTok{S}\OperatorTok{*}\KeywordTok{AExn}\NormalTok{(actCL1, }\DataTypeTok{x=}\DecValTok{25}\NormalTok{, }\DataTypeTok{n=}\DecValTok{65-25}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Para receber \$ 100.000 daqui a 40 anos caso sobreviva, ou quando morrer
+nesse período, um segurado de 25 deverá pagar hoje \$ 16498.73.
+
+\hypertarget{exercicio-10}{%
+\subsubsection{Exercício 10}\label{exercicio-10}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## VPA seguro de vida inteira}
+\NormalTok{VPA =}\StringTok{ }\NormalTok{S}\OperatorTok{*}\KeywordTok{Axn}\NormalTok{(actCL1, }\DataTypeTok{x=}\DecValTok{30}\NormalTok{, }\DataTypeTok{k=}\DecValTok{12}\NormalTok{, }\DataTypeTok{i=}\FloatTok{0.04}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+O VPA de um seguro de vida inteira para um indivíduo de 30 anos com
+indenização de \$ 100.000 paga no final do mês de morte e juros de 4\% é
+\$ 19391.06.
+
+\hypertarget{exercicio-11}{%
+\subsubsection{Exercício 11}\label{exercicio-11}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## prêmio mensal}
+\NormalTok{P =}\StringTok{ }\NormalTok{(VPA}\OperatorTok{/}\KeywordTok{axn}\NormalTok{(actCL1, }\DataTypeTok{x=}\DecValTok{30}\NormalTok{, }\DataTypeTok{k=}\DecValTok{12}\NormalTok{, }\DataTypeTok{i=}\FloatTok{0.04}\NormalTok{))}\OperatorTok{/}\DecValTok{12}
+\end{Highlighting}
+\end{Shaded}
+
+Se o seguro do exercício anterior for pago com prêmios mensais
+vitalícios, o valor de cada prêmio será \$ 78.5.
+
+\hypertarget{exercicio-12}{%
+\subsubsection{Exercício 12}\label{exercicio-12}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## prêmio trimestral}
+\NormalTok{P =}\StringTok{ }\NormalTok{(S}\OperatorTok{*}\KeywordTok{Axn}\NormalTok{(actCL1, }\DataTypeTok{x=}\DecValTok{50}\NormalTok{, }\DataTypeTok{k=}\DecValTok{4}\NormalTok{)}\OperatorTok{/}\KeywordTok{axn}\NormalTok{(actCL1, }\DataTypeTok{x=}\DecValTok{50}\NormalTok{, }\DataTypeTok{k=}\DecValTok{4}\NormalTok{))}\OperatorTok{/}\DecValTok{4}
+\end{Highlighting}
+\end{Shaded}
+
+O prêmio que um segurado de 50 anos deverá pagar trimestralmente para
+contratar esse seguro vitalício, também trimestral, é de \$ 541.65.
+
+\hypertarget{exercicio-13}{%
+\subsubsection{Exercício 13}\label{exercicio-13}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{## prêmio mensal}
+\NormalTok{P =}\StringTok{ }\NormalTok{(S}\OperatorTok{*}\KeywordTok{Axn}\NormalTok{(actCL1, }\DataTypeTok{x=}\DecValTok{30}\NormalTok{, }\DataTypeTok{n=}\DecValTok{35}\NormalTok{, }\DataTypeTok{k=}\DecValTok{12}\NormalTok{, }\DataTypeTok{i=}\FloatTok{0.03}\NormalTok{)}\OperatorTok{/}\KeywordTok{axn}\NormalTok{(actCL1, }\DataTypeTok{x=}\DecValTok{30}\NormalTok{, }\DataTypeTok{n=}\DecValTok{15}\NormalTok{, }\DataTypeTok{k=}\DecValTok{12}\NormalTok{, }\DataTypeTok{i=}\FloatTok{0.03}\NormalTok{))}\OperatorTok{/}\DecValTok{12}
+\end{Highlighting}
+\end{Shaded}
+
+O prêmio mensal, pago durante 15 anos, por um segurado de 30 anos para
+um seguro temporário por 35 anos é de \$ 65.07.
+
+
+\end{document}

@@ -59,3 +59,9 @@ Para os exercícios a seguir, utilize a mesma tabela de vida da seção anterior
 
 
 13) Calcule o prêmio mensal pago durante 15 anos para um segurado de 30 anos que deseja contratar um seguro temporário por 35 anos, com indenização de \$100.000 paga no final do mês de morte. Assuma uma taxa de juros de 3%.
+
+
+## Resolução
+
+Sugestão de respostas: [Resolução Lista 5](./resolucao/lista-05-resolucao.html)
+
