@@ -321,12 +321,34 @@ t.test(x=K0, mu=exn(soa08Act))</pre>
 <li><p>Encontre a média e a variância de <code>VP</code>.</p></li>
 </ul>
 
-<pre >## [1] 48.4425</pre>
+<pre >## [1] 45.70047</pre>
 
-<pre >## [1] 23960.35</pre>
+<pre >## [1] 21324.62</pre>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-7" class="build">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-7">
+
+<ul>
+<li><p>Esses valores dependem da amostra que geramos.</p></li>
+<li><p>E se repetirmos essa simulação 100 vezes?</p></li>
+<li><p>A cada repetição, fazer:</p>
+
+<ol>
+<li><p>Gerar uma amostra de tamanho 10.000 de tempos de vida ao nascer.</p></li>
+<li><p>Para cada indivíduo da amostra, calcular o valor presente de um seguro de vida inteira.</p></li>
+<li><p>Obter a média dos valores presentes de cada amostra.</p></li>
+<li><p>Plotar a média do valor presente em um gráfico de frequência.</p></li>
+</ol></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-8">
+
+<div class="centered">
+<img src='https://raw.githubusercontent.com/thaispaiva/EST171_site/master/static/slides/animated_histogram/hist_ex.gif' title=''/></div>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-9" class="build">
 
 <ul>
 <li>Compare esses valores que você obteve com os valores de VPA e variância calculados pelas funções do pacote <code>lifecontingencies</code>.</li>
@@ -366,7 +388,7 @@ Princípio do Percentil</span>.</p></li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-8">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-10">
 
 <ul>
 <li><p>Um segurado de idade 25 contrata um seguro temporário por 40 anos de $100.000.</p></li>
@@ -374,7 +396,7 @@ Princípio do Percentil</span>.</p></li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-9" class="build">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-11" class="build">
 
 <pre class = 'prettyprint lang-r'>## Exemplo - cálculo do prêmio de acordo com o princípio do percentil
 
@@ -394,7 +416,7 @@ mean(samples&gt;0)
 qxt(soa08Act,25,40)</pre>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-10">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-12">
 
 <pre class = 'prettyprint lang-r'>## Calculando o prêmio (único)
 
@@ -414,12 +436,12 @@ qxt(soa08Act,25,40)</pre>
 <pre >## [1] 4797.088</pre>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-11">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-13">
 
 <p><img src="16-mais_seguros_files/figure-html/unnamed-chunk-22-1.png" width="720" style="display: block; margin: auto;" /></p>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-12">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-14">
 
 <pre class = 'prettyprint lang-r'>## probabilidade de perda positiva
 mean(samples&gt;P.perc)</pre>
@@ -431,7 +453,7 @@ mean(samples&gt;P.perc)</pre>
 <pre >## [1] 0.2143</pre>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-13">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-15">
 
 <ul>
 <li><p>Uma seguradora vai subscrever a cobertura de pagamentos de aposentadorias vitalícias para uma carteira de 1000 aposentados, todos de 65 anos.</p></li>
@@ -439,7 +461,7 @@ mean(samples&gt;P.perc)</pre>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-14" class="build">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-16" class="build">
 
 <pre class = 'prettyprint lang-r'>## Exemplo - carteira de aposentados
 
@@ -454,7 +476,7 @@ hist(ax65)</pre>
 <pre class = 'prettyprint lang-r'>summary(ax65)</pre>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-15">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-17">
 
 <ul>
 <li>Se \(Z\) é a v.a. que representa o VP dessa anuidade, o VP da perda total da carteira com 1000 segurados tem distribuição normal com média e desvio padrão dados por:</li>
@@ -472,7 +494,7 @@ sdax65 = sd(ax65)
 <pre >## [1] 10.16922</pre>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-16">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-18">
 
 <p><img src="16-mais_seguros_files/figure-html/unnamed-chunk-26-1.png" width="720" style="display: block; margin: auto;" /></p>
 
@@ -490,7 +512,7 @@ sdax65 = sd(ax65)
 </ul>
 
 </article></slide><slide class=""><hgroup><h2><span class="green3">
-<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-17">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-19">
 
 <pre class = 'prettyprint lang-r'>## Exemplo - variância de seguro crescente
 
