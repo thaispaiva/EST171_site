@@ -1,0 +1,61 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "05 de março de 2018"
+subtitle: "Apresentação Trabalho Final"
+
+output:
+  ioslides_presentation:
+    highlight: pygments
+    widescreen: TRUE
+
+---
+
+
+# Nova Seção
+
+
+## Novo Slide
+
+- O texto em cada slide é incluído assim como um arquivo `rmarkdown` usual.
+
+- Você pode usar *texto em itálico* ou **em negrito**.
+
+- Para mudar a cor, é preciso usar [código html](https://bookdown.org/yihui/rmarkdown/ioslides-presentation.html#text-color):
+
+  - <span class="blue3">Azul</span>, <span class="red">vermelho</span>, <span class="green2">verde</span>, <span class="black">preto</span>, <span class="yellow3">amarelo</span>.
+  
+
+ - **Fórmulas** podem ser incluídas usando Latex: $\sigma^2$ (na mesma linha do texto), ou em destaque
+
+$$ \bar{X} = \sum_{i=1}^n \frac{X_i}{n} $$
+
+
+## Código em R 
+
+- Vocês irão entregar apenas <span class="red3">**1 (um) arquivo .Rmd**</span>, que deverá incluir tanto o conteúdo da apresentação, como todo o código para executar as análises.
+
+- O código deve ser incluído usando os *chunks* como vocês já estão acostumados. 
+
+- Lembre-se de usar as opções como `echo=FALSE`, `message=FALSE`, `warning=FALSE` quando vocês não quiserem mostrar o código e as mensagens de erro nos slides. 
+
+- Para mais detalhes sobre opções de *chunk*: <https://rmarkdown.rstudio.com/lesson-3.html>
+
+
+## Gráficos
+
+- Para incluir um gráfico, coloque o código em um chunk separado, e use as opções `fig.align='center'` para centralizar, e `fig.width` e `fig.height` para controlar o tamanho (default é 7).
+
+```{r echo=FALSE, fig.align='center', fig.heigth=3, fig.width=5}
+plot(1:10,1:10, pch=1:10, col=1:10)
+```
+
+
+## Para mais detalhes
+
+- <https://rmarkdown.rstudio.com/ioslides_presentation_format.html>
+
+
+- Ou me procure: [thaispaiva@est.ufmg.br](mailto:thaispaiva@est.ufmg.br).
+

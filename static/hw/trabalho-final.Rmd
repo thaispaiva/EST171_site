@@ -1,0 +1,50 @@
+---
+title: "Trabalho Final"
+date: "Apresentações: **25/06/2018** e **27/06/2018** em sala <br/> Entrega: arquivo .Rmd até **27/06/2018** via Moodle"
+output: 
+  html_document: 
+    css: hw.css
+    theme: yeti
+    toc: true
+    toc_float: true
+    fig_caption: true
+---
+
+## Instruções
+
+- O trabalho será feito em duplas. Cada dupla deverá preencher este [formulário](https://goo.gl/9tUL97) até o dia 30/05/18 com os dados do seu trabalho, e escolher o horário da sua apresentação.
+
+- As apresentações terão duração de 15 minutos cada, e serão feitas durante as aulas dos dias **25 e 27 de junho**.
+
+- Os slides deverão ser feitos com o `rmarkdown`. 
+
+  - Para isso, você deve salvar o template [apresentacao_trabalho.Rmd](apresentacao_trabalho.Rmd) no seu computador e compilar usando o botão **Knit**. O resultado deverá ser igual aos slides em [apresentacao_trabalho.html](apresentacao_trabalho.html).
+  
+  - Depois, é só editar o template para incluir as suas informações (*Obs.: só edite o arquivo após ter certeza que ele compilou corretamente*).
+  
+- Cada dupla deverá submeter **apenas o arquivo .Rmd** no Moodle até o dia 27/06/18.
+
+
+## Conteúdo
+
+- Cada dupla deve escolher um banco de dados do livro "*Computational Actuarial Science with R*" no pacote `CASdatasets`. Para uma lista dos dados, veja `?CASdatasets`.
+
+- A primeira parte da apresentação deve incluir uma descrição dos dados e a **Análise Descritiva** das variáveis. Lembre-se de analisar as distribuições marginais, conjuntas e condicionais que fizerem sentido para os seus dados.
+
+- A segunda parte da apresentação deve ser sobre a **Inferência e Ajuste** de algum modelo estatístico coerente para a sua base de dados. Os modelos podem ser relacionados a qualquer um dos tópicos vistos durante o semestre, ou outro modelo que vocês já tenham aprendido. Essa parte deve incluir as suposições do modelo, os passos para fazer o ajuste, e a apresentação dos resultados.
+
+
+## Avaliação
+
+- A participação de cada aluno durante as demais apresentações será levada em conta na sua nota final.
+
+- Os pesos para cada parte do trabalho serão:
+
+<div style="width: 200px; margin:0 auto;" >
+|                           | Peso    |
+|---------------------------|---------|
+|Apresentação (individual)  |  5 pts  |
+|Análise Descritiva         | 15 pts  |
+|Ajuste do Modelo           | 15 pts  |
+|Participação               |  5 pts  |
+</div>
