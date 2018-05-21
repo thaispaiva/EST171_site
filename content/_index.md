@@ -16,7 +16,7 @@ O objetivo do curso é apresentar uma série de funções e aplicações computa
  <span></span>     | <span></span>
 -----------|----------------------------------
 Quando     |  Seg & Qua 07:30 - 09:10        |
-Onde       |  Sala 2024 (ICEx)               |  
+Onde       |  Sala 2024/3048 (ICEx)               |  
 
 ### Contato
 {.table .table-condensed .table-striped .text-left}

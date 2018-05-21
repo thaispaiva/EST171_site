@@ -1,0 +1,202 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "23 de maio de 2018"
+subtitle: "18 - Finanças: alocação de portfólios"
+
+output:
+  ioslides_presentation:
+    css: my.css
+    highlight: pygments
+    logo: img/logo_ufmg.png
+    widescreen: true
+    self_contained: false
+    lib_dir: libs
+  beamer_presentation:
+    highlight: pygments
+
+header-includes:
+- \usepackage{amsmath, amsbsy, relsize}
+- \usepackage{lifecon.sty}
+---
+
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
+
+```{r echo=FALSE}
+## EST171 - Métodos Computacionais para Análise de Risco
+## Código da aula 18 - Alocação de Portfólios
+
+```
+
+```{r echo=FALSE, purl=FALSE}
+file_name = "18-portfolios"
+```
+
+
+
+## Aula de Hoje
+
+- 
+
+
+## Alocação de Portfólios
+
+- Markowitz (1952) foi um dos primeiros a ver a alocação de porfólios como um problema de otimização. Desde então, esse tópico tem sido bastante estudado e vários modelos foram propostos.
+
+- Alocação de portfólios pode ser visto como um método para maximizar o grau de satisfação do investidor.
+
+- Por exemplo, um investidor pode estar procurando um portfólio que **minimize** o risco representado por um estimador da covariância dos retornos diários de ações, enquanto outro investidor pode querer medir o risco como a redução da riqueza em um determinado tempo.
+
+
+## Alocação de Portfólios
+
+- Primeiro, vamos ver como fazer otimização no R, o que permite que o usuário implemente sua própria rotina para outros processos.
+
+- Depois, serão apresentados exemplos simples para serem entendidos, mas que podem ser estendidos para modelos mais complexos.
+
+
+# Otimização no R
+
+
+## Otimização no R
+
+- Vários algoritmos e pacotes existem para resolver problemas de otimização. Vamos focar em um pacote para cada tipo de problema, mas estejam cientes de que existem outras rotinas para um mesmo tipo de otimização.
+
+- As rotinas de otimização não-lineares que já estão na base do R são: `optim()` e `nlminb()`, que acomodam apenas restrições simples.
+
+- Outros pacotes: `Rglpk`, `quadprog`, `Rsolnp`, `DEoptim`, `robustbase`.
+
+
+## Otimização linear
+
+- Seja $\mathbf x \in \mathbb{R}^n$ um vetor de variáveis sujeitas a restrições dadas por equações e inequações lineares.
+
+- O problema de <span class="black">otimização linear</span> pode ser escrito como:
+
+$$\mbox{minimize} \qquad \mathbf c' \mathbf{x} \\ \mbox{sujeito a:} \quad \mathbf{A}_{eq} \,\mathbf x = \mathbf a_{eq} \quad\mbox{ e } \quad \mathbf A \, \mathbf x \geq \mathbf a $$
+onde $\mathbf{A}_{eq}$ e $\mathbf{a}_{eq}$ são a matriz e o vetor de coeficientes da restrição da igualdade, $\mathbf{A}$ e $\mathbf{a}$ são os coeficientes da restrição da desigualdade, e $\mathbf{c}$ é o vetor de coeficientes da função que desejamos maximizar/minimizar.
+
+
+## Otimização linear
+
+- Vários pacotes possuem funções implementadas para otimização linear:
+(https://cran.r-project.org/web/views/Optimization.html)[https://cran.r-project.org/web/views/Optimization.html]
+
+- Vamos usar o pacote `Rglpk` que tem funções para otimização linear e programação inteira mista.
+
+
+## Otimização linear
+
+```{r echo=FALSE}
+## instalar pacotes
+# install.packages("Rglpk")
+
+## carregar pacotes
+require(Rglpk)
+
+```
+
+```{r purl=FALSE}
+args(Rglpk_solve_LP)
+```
+
+onde `obj` contém os coeficientes da função que queremos otimizar, `mat` é a matriz com os coeficientes das restrições, `dir` descreve as direções e tipos de desiguldades, e `rhs` é o vetor do lado direito ("*right hand side*") das restrições.
+
+- A função `LP_solver` que está no código da aula prepara os objetos no formato correto e executa a otimização linear de acordo com a fórmula do slide anterior.
+
+```{r echo=FALSE}
+## Função para executar a otimização linear
+LP_solver <- function(c, cstr = list(), trace = FALSE) {
+Aeq <- Reduce(rbind, cstr[names(cstr) %in% "Aeq"])
+aeq <- Reduce(c, cstr[names(cstr) %in% "aeq"])
+A <- Reduce(rbind, cstr[names(cstr) %in% "A"])
+a <- Reduce(c, cstr[names(cstr) %in% "a"])
+
+sol <- Rglpk_solve_LP(obj = c, mat = rbind(Aeq, A), 
+                      dir = c(rep("==", nrow(Aeq)), rep(">=", nrow(A))),
+                      rhs = c(aeq, a), verbose = trace)
+
+status <- sol$status
+solution <- if (status) rep(NA, length(c)) else sol$solution
+list(solution = solution, status = status)
+}
+
+```
+
+
+## Otimização Quadrática (13.2.3)
+
+- definição matemática
+
+- incluir a função no código
+
+
+## Otimização Não-Linear (13.2.4)
+
+- definição matemática
+
+- incluir a função no código
+
+
+## Base de dados (13.3)
+
+- resumir cada base
+
+
+## Retornos e performance cumulativa (13.4)
+
+- definições
+
+
+
+# 2ª aula
+
+
+## Tipos de otimização de portfólios (13.5.1)
+
+- definições e exemplos
+
+
+## Mean-Variance Portfolio (13.5.2)
+
+- definição
+
+- exemplo
+
+- robust mean-variance? (13.5.3)
+
+
+## Minimum Variance Portfolio (13.5.4)
+
+- definição
+
+- exemplo
+
+
+## Conditional Value-at-Risk Portfolio (13.5.5)?? - talvez seja mais complicado
+
+- definição
+
+- exemplo
+
+[//]: # ##########################################################
+[//]: # Para gerar arquivo com apenas os comandos do R desta aula
+```{r include=FALSE, purl=FALSE}
+# gerar arquivo com comandos do R
+purl(input=paste0(file_name,".Rmd"),
+     output=paste0("../labs/",file_name,".R"),
+     documentation=0, encoding='UTF-8')
+# Saída: 'filename.R' com apenas o código extraído do arquivo original
+# Opções: documentation=1 inclui o texto no título dos chunks
+# Para excluir um chunk do arquivo final, incluir a opção purl=FALSE no cabeçalho do chunk
+```
+
+
+
+
+
+
+

@@ -87,6 +87,8 @@ lessons:
     hw: "hw-06.html"
   - date: "21/05/18"
     title: "Projeções (Prof. Bernardo Lanza)"
+    lab: "17-projecoes/"
+    data: "17-projecoes/"
   - title: "PARTE IV: Aplicações em Finança e Ramo Não-Vida"
   - date: "23/05/18"
     title: "Finanças (aplicação de modelos para tarifação)"

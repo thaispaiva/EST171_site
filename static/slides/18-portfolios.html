@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '18 - Finanças: alocação de portfólios',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '18-portfolios_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(18-portfolios_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="18-portfolios_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">23 de maio de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Alocação de Portfólios</h2></hgroup><article  id="alocacao-de-portfolios">
+
+<ul>
+<li><p>Markowitz (1952) foi um dos primeiros a ver a alocação de porfólios como um problema de otimização. Desde então, esse tópico tem sido bastante estudado e vários modelos foram propostos.</p></li>
+<li><p>Alocação de portfólios pode ser visto como um método para maximizar o grau de satisfação do investidor.</p></li>
+<li><p>Por exemplo, um investidor pode estar procurando um portfólio que <strong>minimize</strong> o risco representado por um estimador da covariância dos retornos diários de ações, enquanto outro investidor pode querer medir o risco como a redução da riqueza em um determinado tempo.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Alocação de Portfólios</h2></hgroup><article  id="alocacao-de-portfolios-1">
+
+<ul>
+<li><p>Primeiro, vamos ver como fazer otimização no R, o que permite que o usuário implemente sua própria rotina para outros processos.</p></li>
+<li><p>Depois, serão apresentados exemplos simples para serem entendidos, mas que podem ser estendidos para modelos mais complexos.</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Otimização no R</h2></hgroup><article  id="otimizacao-no-r">
+
+</article></slide><slide class=""><hgroup><h2>Otimização no R</h2></hgroup><article  id="otimizacao-no-r-1">
+
+<ul>
+<li><p>Vários algoritmos e pacotes existem para resolver problemas de otimização. Vamos focar em um pacote para cada tipo de problema, mas estejam cientes de que existem outras rotinas para um mesmo tipo de otimização.</p></li>
+<li><p>As rotinas de otimização não-lineares que já estão na base do R são: <code>optim()</code> e <code>nlminb()</code>, que acomodam apenas restrições simples.</p></li>
+<li><p>Outros pacotes: <code>Rglpk</code>, <code>quadprog</code>, <code>Rsolnp</code>, <code>DEoptim</code>, <code>robustbase</code>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Otimização linear</h2></hgroup><article  id="otimizacao-linear">
+
+<ul>
+<li><p>Seja \(\mathbf x \in \mathbb{R}^n\) um vetor de variáveis sujeitas a restrições dadas por equações e inequações lineares.</p></li>
+<li><p>O problema de <span class="black">
+otimização linear</span> pode ser escrito como:</p></li>
+</ul>
+
+<p>\[\mbox{minimize} \qquad \mathbf c&#39; \mathbf{x} \\ \mbox{sujeito a:} \quad \mathbf{A}_{eq} \,\mathbf x = \mathbf a_{eq} \quad\mbox{ e } \quad \mathbf A \, \mathbf x \geq \mathbf a \] onde \(\mathbf{A}_{eq}\) e \(\mathbf{a}_{eq}\) são a matriz e o vetor de coeficientes da restrição da igualdade, \(\mathbf{A}\) e \(\mathbf{a}\) são os coeficientes da restrição da desigualdade, e \(\mathbf{c}\) é o vetor de coeficientes da função que desejamos maximizar/minimizar.</p>
+
+</article></slide><slide class=""><hgroup><h2>Otimização linear</h2></hgroup><article  id="otimizacao-linear-1">
+
+<ul>
+<li><p>Vários pacotes possuem funções implementadas para otimização linear: (<a href='https://cran.r-project.org/web/views/Optimization.html' title=''>https://cran.r-project.org/web/views/Optimization.html</a>)[<a href='https://cran.r-project.org/web/views/Optimization.html' title=''>https://cran.r-project.org/web/views/Optimization.html</a>]</p></li>
+<li><p>Vamos usar o pacote <code>Rglpk</code> que tem funções para otimização linear e programação inteira mista.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Otimização linear</h2></hgroup><article  id="otimizacao-linear-2">
+
+<pre >## Loading required package: Rglpk</pre>
+
+<pre >## Warning: package &#39;Rglpk&#39; was built under R version 3.4.4</pre>
+
+<pre >## Loading required package: slam</pre>
+
+<pre >## Warning: package &#39;slam&#39; was built under R version 3.4.4</pre>
+
+<pre >## Using the GLPK callable library version 4.47</pre>
+
+<pre class = 'prettyprint lang-r'>args(Rglpk_solve_LP)</pre>
+
+<pre >## function (obj, mat, dir, rhs, bounds = NULL, types = NULL, max = FALSE, 
+##     control = list(), ...) 
+## NULL</pre>
+
+<p>onde <code>obj</code> contém os coeficientes da função que queremos otimizar, <code>mat</code> é a matriz com os coeficientes das restrições, <code>dir</code> descreve as direções e tipos de desiguldades, e <code>rhs</code> é o vetor do lado direito (&ldquo;<em>right hand side</em>&rdquo;) das restrições.</p>
+
+<ul>
+<li>A função <code>LP_solver</code> que está no código da aula prepara os objetos no formato correto e executa a otimização linear de acordo com a fórmula do slide anterior.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Otimização Quadrática (13.2.3)</h2></hgroup><article  id="otimizacao-quadratica-13.2.3">
+
+<ul>
+<li><p>definição matemática</p></li>
+<li><p>incluir a função no código</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Otimização Não-Linear (13.2.4)</h2></hgroup><article  id="otimizacao-nao-linear-13.2.4">
+
+<ul>
+<li><p>definição matemática</p></li>
+<li><p>incluir a função no código</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Base de dados (13.3)</h2></hgroup><article  id="base-de-dados-13.3">
+
+<ul>
+<li>resumir cada base</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Retornos e performance cumulativa (13.4)</h2></hgroup><article  id="retornos-e-performance-cumulativa-13.4">
+
+<ul>
+<li>definições</li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>2ª aula</h2></hgroup><article  id="-aula">
+
+</article></slide><slide class=""><hgroup><h2>Tipos de otimização de portfólios (13.5.1)</h2></hgroup><article  id="tipos-de-otimizacao-de-portfolios-13.5.1">
+
+<ul>
+<li>definições e exemplos</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Mean-Variance Portfolio (13.5.2)</h2></hgroup><article  id="mean-variance-portfolio-13.5.2">
+
+<ul>
+<li><p>definição</p></li>
+<li><p>exemplo</p></li>
+<li><p>robust mean-variance? (13.5.3)</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Minimum Variance Portfolio (13.5.4)</h2></hgroup><article  id="minimum-variance-portfolio-13.5.4">
+
+<ul>
+<li><p>definição</p></li>
+<li><p>exemplo</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Conditional Value-at-Risk Portfolio (13.5.5)?? - talvez seja mais complicado</h2></hgroup><article  id="conditional-value-at-risk-portfolio-13.5.5---talvez-seja-mais-complicado">
+
+<ul>
+<li><p>definição</p></li>
+<li><p>exemplo</p></li>
+</ul></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
