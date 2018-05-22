@@ -93,6 +93,8 @@ lessons:
   - title: "PARTE IV: Aplicações em Finanças e Ramo Não-Vida"
   - date: "23/05/18"
     title: "Finanças: alocação de portfólios"
+    slides: "18-portfolios.html"
+    lab: "18-portfolios.R"
   - date: "28/05/18"
     title: "Finanças: alocação de portfólios"
   - date: "30/05/18"

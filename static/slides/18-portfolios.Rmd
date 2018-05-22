@@ -39,7 +39,17 @@ file_name = "18-portfolios"
 
 ## Aula de Hoje
 
-- 
+- Otimização no R
+
+  - Otimização linear
+  
+  - Otimização quadrática
+  
+  - Otimização não-linear
+  
+- Bases de Dados
+
+- Retornos e Valor do Portfólio
 
 
 ## Alocação de Portfólios
@@ -76,25 +86,32 @@ file_name = "18-portfolios"
 
 - O problema de <span class="black">otimização linear</span> pode ser escrito como:
 
-$$\mbox{minimize} \qquad \mathbf c' \mathbf{x} \\ \mbox{sujeito a:} \quad \mathbf{A}_{eq} \,\mathbf x = \mathbf a_{eq} \quad\mbox{ e } \quad \mathbf A \, \mathbf x \geq \mathbf a $$
+$$\mbox{minimize}_{\mathbf{x}} \quad \mathbf c' \mathbf{x} \\[.2cm] \mbox{sujeito a:} \quad \mathbf{A}_{eq} \,\mathbf x = \mathbf a_{eq} \quad\mbox{ e }\\  \qquad \quad \mathbf A \, \mathbf x \geq \mathbf a $$
 onde $\mathbf{A}_{eq}$ e $\mathbf{a}_{eq}$ são a matriz e o vetor de coeficientes da restrição da igualdade, $\mathbf{A}$ e $\mathbf{a}$ são os coeficientes da restrição da desigualdade, e $\mathbf{c}$ é o vetor de coeficientes da função que desejamos maximizar/minimizar.
 
 
 ## Otimização linear
 
 - Vários pacotes possuem funções implementadas para otimização linear:
-(https://cran.r-project.org/web/views/Optimization.html)[https://cran.r-project.org/web/views/Optimization.html]
+
+<https://cran.r-project.org/web/views/Optimization.html>  
+
 
 - Vamos usar o pacote `Rglpk` que tem funções para otimização linear e programação inteira mista.
 
 
 ## Otimização linear
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 ## instalar pacotes
 # install.packages("Rglpk")
+# install.packages("quadprog")
+# install.packages("Rsolnp")
 
-## carregar pacotes
+
+## Otimização linear
+
+## carregar pacote
 require(Rglpk)
 
 ```
@@ -127,60 +144,256 @@ list(solution = solution, status = status)
 ```
 
 
-## Otimização Quadrática (13.2.3)
+## Otimização quadrática
 
-- definição matemática
+- Comparado à otimização linear, os problemas de <span class="black">otimização quadrática</span> contém um termo quadrático ($\mathbf{x}'\mathbf{Q}\,\mathbf{x}$) na função que desejamos maximizar/minimizar.
 
-- incluir a função no código
+- Os demais parâmetros permanecem os mesmos.
 
-
-## Otimização Não-Linear (13.2.4)
-
-- definição matemática
-
-- incluir a função no código
+$$\mbox{minimize}_{\mathbf{x}} \quad \mathbf c' \mathbf{x} + \mathbf{x}'\mathbf{Q}\,\mathbf{x} \\[.2cm] \mbox{sujeito a:} \quad \mathbf{A}_{eq} \,\mathbf x = \mathbf a_{eq} \quad\mbox{ e } \\ \qquad \quad \mathbf A \, \mathbf x \geq \mathbf a $$
 
 
-## Base de dados (13.3)
+## Otimização quadrática
 
-- resumir cada base
+- Vários pacotes possuem funções implementadas para otimização quadrática:
 
-
-## Retornos e performance cumulativa (13.4)
-
-- definições
+<https://cran.r-project.org/web/views/Optimization.html>  
 
 
+- Vamos usar o pacote `quadprog`.
 
-# 2ª aula
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 
+## Otimização quadrática
 
-## Tipos de otimização de portfólios (13.5.1)
+## carregar pacote
+require(quadprog)
 
-- definições e exemplos
-
-
-## Mean-Variance Portfolio (13.5.2)
-
-- definição
-
-- exemplo
-
-- robust mean-variance? (13.5.3)
+```
 
 
-## Minimum Variance Portfolio (13.5.4)
+## Otimização quadrática
 
-- definição
+- A função `solve.QP` encontra soluções para problemas da forma 
+$\min_{\mathbf{x}} \left(  -\mathbf{c}'\mathbf{x} + \tfrac{1}{2}\, \mathbf{x}' \mathbf{Q}\,\mathbf{x}  \right)$ sujeito a $\mathbf{A}\,\mathbf{x} \geq \mathbf{a}$
 
-- exemplo
+```{r purl=FALSE}
+args(solve.QP)
+```
+
+onde `Dmat` é a matriz $\mathbf{Q}$ do termo quadrático, `dvec` é o vetor $\mathbf{c}$ da parte linear, e `Amat` e `bvec` são a matriz $\mathbf{A}$ e o vetor $\mathbf{a}$ com os coeficientes das restrições.
+
+- A função `QP_solver` que está no código da aula prepara os objetos no formato correto e executa a otimização quadrática de acordo com a fórmula do slide anterior.
+
+```{r echo=FALSE}
+## Função para executar a otimização quadrática
+QP_solver <- function(c, Q, cstr = list(), trace = FALSE) {
+  Aeq <- Reduce(rbind, cstr[names(cstr) %in% "Aeq"])
+  aeq <- Reduce(c, cstr[names(cstr) %in% "aeq"])
+  A <- Reduce(rbind, cstr[names(cstr) %in% "A"])
+  a <- Reduce(c, cstr[names(cstr) %in% "a"])
+  
+  sol <- try(solve.QP(Dmat = Q,dvec = -2*c, Amat = t(rbind(Aeq, A)), bvec = c(aeq, a),
+                      meq = nrow(Aeq)), silent = TRUE)
+  if (trace)
+    cat(sol)
+  if (inherits(sol, "try-error"))
+    list(solution = rep(NA, length(c)), status = 1)
+  else
+    list(solution = sol$solution, status = 0)
+}
+
+```
 
 
-## Conditional Value-at-Risk Portfolio (13.5.5)?? - talvez seja mais complicado
+## Otimização não-linear 
 
-- definição
+- Os problemas de <span class="black">otimização não-linear</span> são caracterizados por uma função *não-linear* $f(\mathbf{x})$ que desejamos maximizar/minimizar.
 
-- exemplo
+$$\mbox{minimize}_{\mathbf{x}} \quad f(\mathbf{x}) \\[.2cm] \mbox{sujeito a:} \quad\,\, \mathbf{A}_{eq} \,\mathbf x = \mathbf a_{eq}, \\ \qquad \qquad \quad \mathbf A \, \mathbf x \geq \mathbf a, \\ \qquad \qquad\, h_i^{eq}(\mathbf{x}) = \,0, \\ \qquad \qquad \,\,\, h_i(\mathbf{x}) \geq \,0. $$
+
+onde $(\mathbf{A}_{eq}, \mathbf{a}_{eq})$ e $(\mathbf{A},\mathbf{a})$ são os coeficientes das restrições lineares, e $h_i^{eq}$ e $h_i$ são as restrições não-lineares.
+
+- A função `NLP_solver` que está no código da aula prepara os objetos e executa a otimização não-linear usando o pacote `Rsolnp`.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+## Otimização não-linear
+
+## carregar pacote
+require(Rsolnp)
+
+NLP_solver <- function(par, f, cstr = list(), trace = FALSE) {
+  Aeq <- Reduce(rbind, cstr[names(cstr) %in% "Aeq"])
+  aeq <- Reduce(c, cstr[names(cstr) %in% "aeq"])
+  A <- Reduce(rbind, cstr[names(cstr) %in% "A"])
+  a <- Reduce(c, cstr[names(cstr) %in% "a"])
+  heq <- Reduce(c, cstr[names(cstr) %in% "heq"])
+  h <- Reduce(c, cstr[names(cstr) %in% "h"])
+  leqfun <- c(function(par) c(Aeq %*% par), heq)
+  eqfun <- function(par)
+    unlist(lapply(leqfun, do.call, args = list(par)))
+  eqB <- c(aeq, rep(0, length(heq)))
+  
+  lineqfun <- c(function(par) c(A %*% par), h)
+  ineqfun <- function(par)
+    unlist(lapply(lineqfun, do.call, args = list(par)))
+  ineqLB <- c(a, rep(0, length(h)))
+  ineqUB <- rep(Inf, length(ineqLB))
+  
+  sol <- solnp(par = par, fun = f, eqfun = eqfun, eqB = eqB,
+               ineqfun = ineqfun, ineqLB = ineqLB, ineqUB = ineqUB,
+               control = list(trace = trace))
+  
+  status <- sol$convergence
+  solution <- if (status) rep(NA, length(par)) else sol$pars
+  list(solution = solution, status = status)
+}
+
+```
+
+
+# Base de dados
+
+
+## Base de dados
+
+- Algumas bases de dados que vamos usar nos exemplos de otimização:
+
+  - **Índices de ações européias**: base `EuStockMarkets`  que já vem na configuração base do R. Consiste em índices de ações européias entre 1991 e 1998, incluindo DAX alemão, SMI suíço, CAC francês e FTSE britânico.
+  
+```{r echo=FALSE}
+
+## Bases de dados
+
+## Indices de ações européias
+```
+
+```{r}
+data("EuStockMarkets")
+head(EuStockMarkets)
+
+```
+
+
+## Base de dados
+
+- Para ilustrar como obter dados de outras fontes, vamos usar também uma base de índices NASDAQ e do tesouro americano.
+
+1) Primeiro, vá até <https://finance.yahoo.com/> e procure pelo código de algum índice (por exemplo, `IXIC` que é o índice NASDAQ).
+
+2) Clique em *Historical Data*. 
+
+3) Se quiser, pode selecionar um período específico (por exemplo, 1 ano), e em seguida clique em *Download Data*. 
+
+Você terá um arquivo .csv salvo na pasta de Downloads com as cotações diárias e outras informações do índice selecionado.
+
+
+## Base de dados
+
+```{r}
+## Indice NASDAQ Bank
+file = "../datasets/IXIC.csv"
+Nas = read.csv(file, colClasses = c("Date", rep("numeric",6)))
+
+head(Nas)
+
+```
+
+
+# Retornos
+
+
+## Retornos 
+
+- A partir dos dados que baixamos, vamos definir algumas quantidades mais apropriadas para modelar com uma distribuição estatísticas.
+
+- Por exemplo, uma das transformações mais comuns é para obter os <span class="black">**retornos**</span>:
+
+$$ r_t = \frac{P_t - P_{t-1}}{P_{t-1}} = \frac{P_t}{P_{t-1}} - 1 $$
+onde $P_t$ é o preço da ação/índice no tempo $t$.
+
+
+## Retorno Acumulado
+
+- Baseado nos retornos nos tempos $t$, podemos obter o <span class="black">**retorno acumulado**</span> no período $T$ como:
+
+$$r_T = \frac{P_T}{P_0} - 1 = \frac{P_T}{P_{T-1}}\,.\,\frac{P_{T-1}}{P_{T-2}} \dots \frac{P_1}{P_0} - 1 = \prod_{t=1}^T \frac{P_t}{P_{t-1}} - 1$$
+
+
+## Retorno de portfólio
+
+- Considere um **portfólio** de investimentos no tempo $t$. Seu valor é dado por:
+
+$$W_t = \sum_i P_{i,t} $$
+que corresponde à soma dos valores dos seus componentes.
+
+
+## Retorno de portfólio
+
+- O <span class="black">**retorno do portfólio**</span> é dado por:
+
+$$R_t = \frac{W_t - W_{t-1}}{W_{t-1}} = \frac{[P_{1,t} - P_{1,t-1}]+\dots+[P_{N,t} - P_{N,t-1}]}{W_{t-1}} \\[.5cm] \,\,\qquad\quad =\frac{r_1.P_{1,t-1} + \dots + r_N.P_{N,t-1}}{W_{t-1}} $$
+
+
+## Retorno de portfólio
+
+- Assim, o retorno do portfólio é a soma dos valores dos seus componentes ponderados por $w_i=\frac{P_{t-1}}{W_{t-1}}$.
+
+$$R_t = \sum_{i=1}^N \frac{P_{t-1}}{W_{t-1}}.r_i = \sum_{i=1}^N w_i .\, r_i $$
+
+
+## Retorno de portfólio
+
+- Calculando os retornos para os nossos dados:
+
+```{r}
+## Retornos
+
+x <- apply(EuStockMarkets, MAR=2,
+           function(x) x[-1] / x[-length(x)] - 1)
+
+```
+
+
+## Valor do portfólio
+
+- Dados os retornos $r_t$ e os pesos $w_i$, o <span class="black">**valor do portfólio**</span> no tempo $t$ pode ser calculado como:
+
+$$W_t = W_0 \,. \prod_{i=1}^t (1 + \mathbf{r}'_t \mathbf{w}) $$
+onde $W_0$ é o valor inicial do portfólio.
+
+
+## Valor do portfólio
+
+```{r}
+## Função para calcular o valor do portfólio
+pftPerf <- function(x, w, W0 = 1000) {
+  W0 * cumprod(c(1, 1 + x %*% w))
+}
+
+```
+
+
+## Valor do portfólio
+
+```{r echo=FALSE, fig.align='center'}
+## Gráfico do valor do portfólio
+nc <- ncol(x)
+w <- rep(1/nc, nc)  # pesos uniformes
+plot(1:nrow(EuStockMarkets), pftPerf(x, w), type = "l",
+     main = "Portfolio Cumulated Performance",
+     xlab = "Date", ylab = "Wealth")
+```
+
+
+```{r echo=FALSE}
+
+## Exercício: fazer para os dados da NASDAQ
+
+```
+
+
 
 [//]: # ##########################################################
 [//]: # Para gerar arquivo com apenas os comandos do R desta aula

@@ -119,7 +119,15 @@
 <slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
 
 <ul>
-<li></li>
+<li><p>Otimização no R</p>
+
+<ul>
+<li><p>Otimização linear</p></li>
+<li><p>Otimização quadrática</p></li>
+<li><p>Otimização não-linear</p></li>
+</ul></li>
+<li><p>Bases de Dados</p></li>
+<li><p>Retornos e Valor do Portfólio</p></li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>Alocação de Portfólios</h2></hgroup><article  id="alocacao-de-portfolios">
@@ -155,26 +163,21 @@
 otimização linear</span> pode ser escrito como:</p></li>
 </ul>
 
-<p>\[\mbox{minimize} \qquad \mathbf c&#39; \mathbf{x} \\ \mbox{sujeito a:} \quad \mathbf{A}_{eq} \,\mathbf x = \mathbf a_{eq} \quad\mbox{ e } \quad \mathbf A \, \mathbf x \geq \mathbf a \] onde \(\mathbf{A}_{eq}\) e \(\mathbf{a}_{eq}\) são a matriz e o vetor de coeficientes da restrição da igualdade, \(\mathbf{A}\) e \(\mathbf{a}\) são os coeficientes da restrição da desigualdade, e \(\mathbf{c}\) é o vetor de coeficientes da função que desejamos maximizar/minimizar.</p>
+<p>\[\mbox{minimize}_{\mathbf{x}} \quad \mathbf c&#39; \mathbf{x} \\[.2cm] \mbox{sujeito a:} \quad \mathbf{A}_{eq} \,\mathbf x = \mathbf a_{eq} \quad\mbox{ e }\\  \qquad \quad \mathbf A \, \mathbf x \geq \mathbf a \] onde \(\mathbf{A}_{eq}\) e \(\mathbf{a}_{eq}\) são a matriz e o vetor de coeficientes da restrição da igualdade, \(\mathbf{A}\) e \(\mathbf{a}\) são os coeficientes da restrição da desigualdade, e \(\mathbf{c}\) é o vetor de coeficientes da função que desejamos maximizar/minimizar.</p>
 
 </article></slide><slide class=""><hgroup><h2>Otimização linear</h2></hgroup><article  id="otimizacao-linear-1">
 
 <ul>
-<li><p>Vários pacotes possuem funções implementadas para otimização linear: (<a href='https://cran.r-project.org/web/views/Optimization.html' title=''>https://cran.r-project.org/web/views/Optimization.html</a>)[<a href='https://cran.r-project.org/web/views/Optimization.html' title=''>https://cran.r-project.org/web/views/Optimization.html</a>]</p></li>
-<li><p>Vamos usar o pacote <code>Rglpk</code> que tem funções para otimização linear e programação inteira mista.</p></li>
+<li>Vários pacotes possuem funções implementadas para otimização linear:</li>
+</ul>
+
+<p><a href='https://cran.r-project.org/web/views/Optimization.html' title=''>https://cran.r-project.org/web/views/Optimization.html</a></p>
+
+<ul>
+<li>Vamos usar o pacote <code>Rglpk</code> que tem funções para otimização linear e programação inteira mista.</li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>Otimização linear</h2></hgroup><article  id="otimizacao-linear-2">
-
-<pre >## Loading required package: Rglpk</pre>
-
-<pre >## Warning: package &#39;Rglpk&#39; was built under R version 3.4.4</pre>
-
-<pre >## Loading required package: slam</pre>
-
-<pre >## Warning: package &#39;slam&#39; was built under R version 3.4.4</pre>
-
-<pre >## Using the GLPK callable library version 4.47</pre>
 
 <pre class = 'prettyprint lang-r'>args(Rglpk_solve_LP)</pre>
 
@@ -188,61 +191,189 @@ otimização linear</span> pode ser escrito como:</p></li>
 <li>A função <code>LP_solver</code> que está no código da aula prepara os objetos no formato correto e executa a otimização linear de acordo com a fórmula do slide anterior.</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Otimização Quadrática (13.2.3)</h2></hgroup><article  id="otimizacao-quadratica-13.2.3">
+</article></slide><slide class=""><hgroup><h2>Otimização quadrática</h2></hgroup><article  id="otimizacao-quadratica">
 
 <ul>
-<li><p>definição matemática</p></li>
-<li><p>incluir a função no código</p></li>
+<li><p>Comparado à otimização linear, os problemas de <span class="black">
+otimização quadrática</span> contém um termo quadrático (\(\mathbf{x}&#39;\mathbf{Q}\,\mathbf{x}\)) na função que desejamos maximizar/minimizar.</p></li>
+<li><p>Os demais parâmetros permanecem os mesmos.</p></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Otimização Não-Linear (13.2.4)</h2></hgroup><article  id="otimizacao-nao-linear-13.2.4">
+<p>\[\mbox{minimize}_{\mathbf{x}} \quad \mathbf c&#39; \mathbf{x} + \mathbf{x}&#39;\mathbf{Q}\,\mathbf{x} \\[.2cm] \mbox{sujeito a:} \quad \mathbf{A}_{eq} \,\mathbf x = \mathbf a_{eq} \quad\mbox{ e } \\ \qquad \quad \mathbf A \, \mathbf x \geq \mathbf a \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Otimização quadrática</h2></hgroup><article  id="otimizacao-quadratica-1">
 
 <ul>
-<li><p>definição matemática</p></li>
-<li><p>incluir a função no código</p></li>
+<li>Vários pacotes possuem funções implementadas para otimização quadrática:</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Base de dados (13.3)</h2></hgroup><article  id="base-de-dados-13.3">
+<p><a href='https://cran.r-project.org/web/views/Optimization.html' title=''>https://cran.r-project.org/web/views/Optimization.html</a></p>
 
 <ul>
-<li>resumir cada base</li>
+<li>Vamos usar o pacote <code>quadprog</code>.</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Retornos e performance cumulativa (13.4)</h2></hgroup><article  id="retornos-e-performance-cumulativa-13.4">
+</article></slide><slide class=""><hgroup><h2>Otimização quadrática</h2></hgroup><article  id="otimizacao-quadratica-2">
 
 <ul>
-<li>definições</li>
+<li>A função <code>solve.QP</code> encontra soluções para problemas da forma \(\min_{\mathbf{x}} \left( -\mathbf{c}&#39;\mathbf{x} + \tfrac{1}{2}\, \mathbf{x}&#39; \mathbf{Q}\,\mathbf{x} \right)\) sujeito a \(\mathbf{A}\,\mathbf{x} \geq \mathbf{a}\)</li>
 </ul>
 
-</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>2ª aula</h2></hgroup><article  id="-aula">
+<pre class = 'prettyprint lang-r'>args(solve.QP)</pre>
 
-</article></slide><slide class=""><hgroup><h2>Tipos de otimização de portfólios (13.5.1)</h2></hgroup><article  id="tipos-de-otimizacao-de-portfolios-13.5.1">
+<pre >## function (Dmat, dvec, Amat, bvec, meq = 0, factorized = FALSE) 
+## NULL</pre>
+
+<p>onde <code>Dmat</code> é a matriz \(\mathbf{Q}\) do termo quadrático, <code>dvec</code> é o vetor \(\mathbf{c}\) da parte linear, e <code>Amat</code> e <code>bvec</code> são a matriz \(\mathbf{A}\) e o vetor \(\mathbf{a}\) com os coeficientes das restrições.</p>
 
 <ul>
-<li>definições e exemplos</li>
+<li>A função <code>QP_solver</code> que está no código da aula prepara os objetos no formato correto e executa a otimização quadrática de acordo com a fórmula do slide anterior.</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Mean-Variance Portfolio (13.5.2)</h2></hgroup><article  id="mean-variance-portfolio-13.5.2">
+</article></slide><slide class=""><hgroup><h2>Otimização não-linear</h2></hgroup><article  id="otimizacao-nao-linear">
 
 <ul>
-<li><p>definição</p></li>
-<li><p>exemplo</p></li>
-<li><p>robust mean-variance? (13.5.3)</p></li>
+<li>Os problemas de <span class="black">
+otimização não-linear</span> são caracterizados por uma função <em>não-linear</em> \(f(\mathbf{x})\) que desejamos maximizar/minimizar.</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Minimum Variance Portfolio (13.5.4)</h2></hgroup><article  id="minimum-variance-portfolio-13.5.4">
+<p>\[\mbox{minimize}_{\mathbf{x}} \quad f(\mathbf{x}) \\[.2cm] \mbox{sujeito a:} \quad\,\, \mathbf{A}_{eq} \,\mathbf x = \mathbf a_{eq}, \\ \qquad \qquad \quad \mathbf A \, \mathbf x \geq \mathbf a, \\ \qquad \qquad\, h_i^{eq}(\mathbf{x}) = \,0, \\ \qquad \qquad \,\,\, h_i(\mathbf{x}) \geq \,0. \]</p>
+
+<p>onde \((\mathbf{A}_{eq}, \mathbf{a}_{eq})\) e \((\mathbf{A},\mathbf{a})\) são os coeficientes das restrições lineares, e \(h_i^{eq}\) e \(h_i\) são as restrições não-lineares.</p>
 
 <ul>
-<li><p>definição</p></li>
-<li><p>exemplo</p></li>
+<li>A função <code>NLP_solver</code> que está no código da aula prepara os objetos e executa a otimização não-linear usando o pacote <code>Rsolnp</code>.</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Conditional Value-at-Risk Portfolio (13.5.5)?? - talvez seja mais complicado</h2></hgroup><article  id="conditional-value-at-risk-portfolio-13.5.5---talvez-seja-mais-complicado">
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Base de dados</h2></hgroup><article  id="base-de-dados">
+
+</article></slide><slide class=""><hgroup><h2>Base de dados</h2></hgroup><article  id="base-de-dados-1">
 
 <ul>
-<li><p>definição</p></li>
-<li><p>exemplo</p></li>
-</ul></article></slide>
+<li><p>Algumas bases de dados que vamos usar nos exemplos de otimização:</p>
+
+<ul>
+<li><strong>Índices de ações européias</strong>: base <code>EuStockMarkets</code> que já vem na configuração base do R. Consiste em índices de ações européias entre 1991 e 1998, incluindo DAX alemão, SMI suíço, CAC francês e FTSE britânico.</li>
+</ul></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>data(&quot;EuStockMarkets&quot;)
+head(EuStockMarkets)</pre>
+
+<pre >##          DAX    SMI    CAC   FTSE
+## [1,] 1628.75 1678.1 1772.8 2443.6
+## [2,] 1613.63 1688.5 1750.5 2460.2
+## [3,] 1606.51 1678.6 1718.0 2448.2
+## [4,] 1621.04 1684.1 1708.1 2470.4
+## [5,] 1618.16 1686.6 1723.1 2484.7
+## [6,] 1610.61 1671.6 1714.3 2466.8</pre>
+
+</article></slide><slide class=""><hgroup><h2>Base de dados</h2></hgroup><article  id="base-de-dados-2">
+
+<ul>
+<li>Para ilustrar como obter dados de outras fontes, vamos usar também uma base de índices NASDAQ e do tesouro americano.</li>
+</ul>
+
+<ol>
+<li><p>Primeiro, vá até <a href='https://finance.yahoo.com/' title=''>https://finance.yahoo.com/</a> e procure pelo código de algum índice (por exemplo, <code>IXIC</code> que é o índice NASDAQ).</p></li>
+<li><p>Clique em <em>Historical Data</em>.</p></li>
+<li><p>Se quiser, pode selecionar um período específico (por exemplo, 1 ano), e em seguida clique em <em>Download Data</em>.</p></li>
+</ol>
+
+<p>Você terá um arquivo .csv salvo na pasta de Downloads com as cotações diárias e outras informações do índice selecionado.</p>
+
+</article></slide><slide class=""><hgroup><h2>Base de dados</h2></hgroup><article  id="base-de-dados-3">
+
+<pre class = 'prettyprint lang-r'>## Indice NASDAQ Bank
+file = &quot;../datasets/IXIC.csv&quot;
+Nas = read.csv(file, colClasses = c(&quot;Date&quot;, rep(&quot;numeric&quot;,6)))
+
+head(Nas)</pre>
+
+<pre >##         Date    Open    High     Low   Close Adj.Close     Volume
+## 1 2017-05-22 6098.25 6135.92 6097.24 6133.62   6133.62 1726230000
+## 2 2017-05-23 6149.55 6150.91 6121.79 6138.71   6138.71 1705860000
+## 3 2017-05-24 6154.18 6166.09 6139.33 6163.02   6163.02 1666050000
+## 4 2017-05-25 6183.02 6217.34 6174.52 6205.26   6205.26 1767690000
+## 5 2017-05-26 6207.04 6211.52 6196.66 6210.19   6210.19 1571040000
+## 6 2017-05-30 6204.18 6217.13 6200.41 6203.19   6203.19 1688480000</pre>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Retornos</h2></hgroup><article  id="retornos">
+
+</article></slide><slide class=""><hgroup><h2>Retornos</h2></hgroup><article  id="retornos-1">
+
+<ul>
+<li><p>A partir dos dados que baixamos, vamos definir algumas quantidades mais apropriadas para modelar com uma distribuição estatísticas.</p></li>
+<li><p>Por exemplo, uma das transformações mais comuns é para obter os <span class="black">
+<strong>retornos</strong></span>:</p></li>
+</ul>
+
+<p>\[ r_t = \frac{P_t - P_{t-1}}{P_{t-1}} = \frac{P_t}{P_{t-1}} - 1 \] onde \(P_t\) é o preço da ação/índice no tempo \(t\).</p>
+
+</article></slide><slide class=""><hgroup><h2>Retorno Acumulado</h2></hgroup><article  id="retorno-acumulado">
+
+<ul>
+<li>Baseado nos retornos nos tempos \(t\), podemos obter o <span class="black">
+<strong>retorno acumulado</strong></span> no período \(T\) como:</li>
+</ul>
+
+<p>\[r_T = \frac{P_T}{P_0} - 1 = \frac{P_T}{P_{T-1}}\,.\,\frac{P_{T-1}}{P_{T-2}} \dots \frac{P_1}{P_0} - 1 = \prod_{t=1}^T \frac{P_t}{P_{t-1}} - 1\]</p>
+
+</article></slide><slide class=""><hgroup><h2>Retorno de portfólio</h2></hgroup><article  id="retorno-de-portfolio">
+
+<ul>
+<li>Considere um <strong>portfólio</strong> de investimentos no tempo \(t\). Seu valor é dado por:</li>
+</ul>
+
+<p>\[W_t = \sum_i P_{i,t} \] que corresponde à soma dos valores dos seus componentes.</p>
+
+</article></slide><slide class=""><hgroup><h2>Retorno de portfólio</h2></hgroup><article  id="retorno-de-portfolio-1">
+
+<ul>
+<li>O <span class="black">
+<strong>retorno do portfólio</strong></span> é dado por:</li>
+</ul>
+
+<p>\[R_t = \frac{W_t - W_{t-1}}{W_{t-1}} = \frac{[P_{1,t} - P_{1,t-1}]+\dots+[P_{N,t} - P_{N,t-1}]}{W_{t-1}} \\[.5cm] \,\,\qquad\quad =\frac{r_1.P_{1,t-1} + \dots + r_N.P_{N,t-1}}{W_{t-1}} \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Retorno de portfólio</h2></hgroup><article  id="retorno-de-portfolio-2">
+
+<ul>
+<li>Assim, o retorno do portfólio é a soma dos valores dos seus componentes ponderados por \(w_i=\frac{P_{t-1}}{W_{t-1}}\).</li>
+</ul>
+
+<p>\[R_t = \sum_{i=1}^N \frac{P_{t-1}}{W_{t-1}}.r_i = \sum_{i=1}^N w_i .\, r_i \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Retorno de portfólio</h2></hgroup><article  id="retorno-de-portfolio-3">
+
+<ul>
+<li>Calculando os retornos para os nossos dados:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Retornos
+
+x &lt;- apply(EuStockMarkets, MAR=2,
+           function(x) x[-1] / x[-length(x)] - 1)</pre>
+
+</article></slide><slide class=""><hgroup><h2>Valor do portfólio</h2></hgroup><article  id="valor-do-portfolio">
+
+<ul>
+<li>Dados os retornos \(r_t\) e os pesos \(w_i\), o <span class="black">
+<strong>valor do portfólio</strong></span> no tempo \(t\) pode ser calculado como:</li>
+</ul>
+
+<p>\[W_t = W_0 \,. \prod_{i=1}^t (1 + \mathbf{r}&#39;_t \mathbf{w}) \] onde \(W_0\) é o valor inicial do portfólio.</p>
+
+</article></slide><slide class=""><hgroup><h2>Valor do portfólio</h2></hgroup><article  id="valor-do-portfolio-1">
+
+<pre class = 'prettyprint lang-r'>## Função para calcular o valor do portfólio
+pftPerf &lt;- function(x, w, W0 = 1000) {
+  W0 * cumprod(c(1, 1 + x %*% w))
+}</pre>
+
+</article></slide><slide class=""><hgroup><h2>Valor do portfólio</h2></hgroup><article  id="valor-do-portfolio-2">
+
+<p><img src="18-portfolios_files/figure-html/unnamed-chunk-16-1.png" width="720" style="display: block; margin: auto;" /></p></article></slide>
 
 
   <slide class="backdrop"></slide>
