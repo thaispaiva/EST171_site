@@ -270,11 +270,11 @@ include_graphics("img/anuidade2.png")
 - Perpetuidades (anuidade infinita) antecipada e postecipada:
 
 ```{r fig.align='center', fig.height=0.5, echo=FALSE, purl=FALSE}
-include_graphics("img/anuidade3.png")
+include_graphics("img/anuidade4.png")
 ```
 
 ```{r fig.align='center', fig.height=0.5, echo=FALSE, purl=FALSE}
-include_graphics("img/anuidade4.png") 
+include_graphics("img/anuidade3.png") 
 ```
 
 
