@@ -62,5 +62,8 @@ Você irá entregar essa lista de exercício no Moodle da disciplina. Você deve
 8) Um segurado de 65 anos quer contratar uma anuidade antecipada, anual e vitalícia de \$1.000. Encontre o menor prêmio único que a seguradora pode cobrar para garantir que a probabilidade de perda negativa não seja maior do que 25\%.
 
 
+## Resolução
+
+Sugestão de respostas: [Resolução Lista 6](./resolucao/lista-06-resolucao.html)
 
 

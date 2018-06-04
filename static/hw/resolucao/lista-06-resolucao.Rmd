@@ -1,0 +1,156 @@
+---
+title: "Lista de Exercícios 6"
+author: "Thaís Paiva"
+date: "21/05/2018"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
+
+
+## Reservas
+
+### Exercício 1
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+require(lifecontingencies)
+data("soa08Act")
+```
+
+```{r}
+## prêmio
+P = 100000*Axn(soa08Act, x=60)/axn(soa08Act, x=60, n=5)
+
+## reserva t=4
+V = 100000*Axn(soa08Act, x=60+4) - P*axn(soa08Act, x=60+4, n=5-4)
+```
+
+Para esse seguro, o valor da reserva no tempo $t=4$ é \$`r format(round(V,2), scientific=FALSE)`.
+
+
+### Exercício 2
+
+```{r}
+## prêmio (anual)
+P = 100000*Axn(soa08Act, x=60)/axn(soa08Act, x=60, k=4)
+
+## reserva t=10
+V = 100000*Axn(soa08Act, x=60+10) - P*axn(soa08Act, x=60+10, k=4)
+```
+
+Para esse seguro, o valor da reserva no tempo $t=10$ é \$`r format(round(V,2), scientific=FALSE)`.
+
+
+### Exercício 3
+
+```{r}
+## prêmio
+P = 50000*Exn(soa08Act, x=75, n=20)/axn(soa08Act, x=75, n=20)
+
+## reserva t=5
+V = 50000*Exn(soa08Act, x=75+5, n=20-5) - P*axn(soa08Act, x=75+5, n=20-5)
+```
+
+Para esse seguro, o valor da reserva no tempo $t=5$ é \$`r format(round(V,2), scientific=FALSE)`.
+
+
+### Exercício 4
+
+
+**a)** O código abaixo calcula a reserva para este contrato, considerando os diferentes valores de acordo com o tempo $t$.
+
+
+```{r}
+## prêmio
+P = 100000*AExn(soa08Act, x=60, n=20)/axn(soa08Act, x=60, n=15)
+
+## reserva
+V = function(t){
+  if(t<=15)
+    res = 100000*AExn(soa08Act, x=60+t, n=20-t) - P*axn(soa08Act, x=60+t, n=15-t)
+  else
+    res = 100000*AExn(soa08Act, x=60+t, n=20-t)
+  if(t>=20 | t<0)
+    res = 0
+  return(res)
+}
+```
+
+
+**b)** Vemos a seguir a constituição da reserva para o seguro dotal misto ao longo do tempo. 
+
+
+```{r echo=FALSE, fig.align='center', out.width="70%"}
+t = 0:20
+V = Vectorize(V)(t)
+plot(t, V, type="b", pch=20, main="Reserva de seguro dotal misto de 20 anos")
+```
+
+    
+## Seguros: mais cálculos
+
+
+### Exercício 5
+
+```{r}
+VPA = 1000*12*( axn(soa08Act, x=30, k=12) - axyzn(list(soa08Act, soa08Act), x=c(30,40), k=12) )
+P = VPA/(12*axyzn(list(soa08Act,soa08Act),c(30,40),n=30,k=12))
+```
+
+**a)** O VPA da anuidade reversível é \$`r format(round(VPA,2), scientific=FALSE)`.
+
+**b)** O prêmio mensal para esse contrato é \$`r format(round(P,2), scientific=FALSE)`.
+
+
+### Exercício 6
+
+```{r}
+G = (10000*Axn(soa08Act,30,20)+30*axn(soa08Act,30,20))/(0.85*axn(soa08Act,30,20))
+```
+
+O prêmio bruto para esse contrato é \$`r format(round(G,2), scientific=FALSE)`.
+
+
+### Exercício 7
+
+Uma amostra de $K_{25}$ pode ser gerada com o seguinte comando:
+
+```{r}
+K25 = rLife(n=10^4, object=soa08Act, x=25, type="Kx")
+```
+
+**a)** As estatísticas descritivas e o histograma da amostra de $K_{25}$ podem ser vistos abaixo.
+
+```{r echo=FALSE}
+summary(K25)
+```
+
+```{r echo=FALSE, fig.align='center', out.width="70%"}
+hist(K25, freq=F, main="Histograma de K25")
+lines(density(K25), lwd=2, col=4)
+```
+
+
+**b)** Podemos estimar a probabilidade de um indivíduo de 25 anos sobreviver até os 60 anos usando a amostra simulada acima. Como vemos abaixo, a probabilidade estimada é bem próxima da probabilidade teórica obtida a partir da tábua de mortalidade.
+
+
+```{r}
+## probabilidade estimada
+mean(K25>35)
+
+## probabilidade teórica
+pxt(soa08Act, x=25, t=35)
+```
+
+
+### Exercício 8
+
+```{r}
+a65 = 1000*rLifeContingencies(n=100000, lifecontingency="axn", object=soa08Act,
+                              x=65, parallel=TRUE)
+P.perc = quantile(a65, p=0.75)
+```
+
+O prêmio para esse contrato obtido de acordo com o princípio do percentil é \$`r format(round(P.perc,2), scientific=FALSE)`.
+
