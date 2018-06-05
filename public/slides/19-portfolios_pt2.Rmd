@@ -2,7 +2,7 @@
 title: "Métodos Computacionais para Análise de Risco"
 author: 'Prof.: Thais Paiva'
 
-date: "28 de maio de 2018"
+date: "04 de junho de 2018"
 subtitle: "19 - Portfólios (parte 2)"
 
 output:

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '20 - Tarifação',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '20-tarifacao_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(20-tarifacao_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="20-tarifacao_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">06 de junho de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li><p>Modelo Coletivo para Tarifação de Seguros</p></li>
+<li><p>Modelo para a Frequência</p>
+
+<ul>
+<li><p>Modelo Poisson</p></li>
+<li><p>Exemplos</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Tarifação de Seguros</h2></hgroup><article  id="tarifacao-de-seguros">
+
+<ul>
+<li><p>Vimos na Parte III do curso como calcular Seguros e Anuidades de Vida, isto é, contratos cujos pagamentos dependem de eventos incertos relacionados à mortalidade e sobrevivência de vidas.</p></li>
+<li><p>Para calcular os prêmios desses seguros, precisamos determinar a distribuição de probabilidade da variável aleatória valor presente da perda futura da seguradora. Essa variável aleatória depende do tempo de vida futuro de um indivíduo, que é descrito através de uma tábua de vida.</p></li>
+<li><p>E para calcular um seguro de carro? E um seguro residencial? E um plano de saúde? (<strong>Ramo Não-Vida</strong>)</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Tarifação de Seguros</h2></hgroup><article  id="tarifacao-de-seguros-1">
+
+<ul>
+<li><p>Para seguros do <strong>Ramo Não-Vida</strong>, vamos usar dados históricos para construir <span class="black">
+modelos de tarifação</span>.</p></li>
+<li><p>Vamos discutir o uso de Modelos Lineares Generalizados em um exemplo para tarifação de seguros de automóveis.</p></li>
+<li><p>O objetivo é encontrar um <span class="blue3">
+<strong>prêmio</strong></span> a ser cobrado de um segurado para uma apólice anual, baseado em <em>características observáveis</em> do segurado (como idade ou gênero) ou do objeto segurado (modelo e ano do carro, por exemplo).</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Modelo Coletivo</h2></hgroup><article  id="modelo-coletivo">
+
+</article></slide><slide class=""><hgroup><h2>Modelo Coletivo</h2></hgroup><article  id="modelo-coletivo-1">
+
+<p><span class="black">
+Princípio do valor esperado:</span></p>
+
+<ul>
+<li>o prêmio associado a um risco anual \(S\) é</li>
+</ul>
+
+<p>\[\pi(S) = (1+\alpha).\mathbb{E}(S) \] onde \(\alpha&gt;0\) representa algum tipo de carregamento, e \(S\) é a perda aleatória anual.</p>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Coletivo</h2></hgroup><article  id="modelo-coletivo-2">
+
+<ul>
+<li><p>Seja \((N_t)\) o processo de contagem do número de sinistros ocorridos entre \([0,t]\), e \((Y_i)\) o valor da i-ésima indenização.</p></li>
+<li><p>Então a perda total no período \([0,t]\) é:</p></li>
+</ul>
+
+<p>\[S_t = \sum_{i=1}^{N_t} Y_i \] com \(S_t=0\) se \(N_t=0\).</p>
+
+</article></slide><slide class=""><hgroup><h2>Prêmio Puro</h2></hgroup><article  id="premio-puro">
+
+<ul>
+<li><p>Se \(\alpha=0\), o prêmio é chamado de <span class="blue3">
+<strong>prêmio puro</strong></span>.</p></li>
+<li><p>Cobrar o prêmio puro pode ser justificado pela <a href='https://pt.wikipedia.org/wiki/Lei_dos_grandes_n%C3%BAmeros' title=''>Lei dos Grandes Números</a>, se assumirmos que as perdas são independentes e identicamente distribuídas.</p></li>
+<li><p>No entanto, de acordo com a <a href='https://en.wikipedia.org/wiki/Ruin_theory' title=''>Teoria da Ruína</a>, sabemos que a ruína será inevitável quando não há carregamento.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Prêmio Puro</h2></hgroup><article  id="premio-puro-1">
+
+<ul>
+<li><p>O primeiro passo é calcular \(\mathbb{E}(S)\) para \(S=S_1\), o total anual.</p></li>
+<li><p>Se \(N=N_1\) (número de indenizações no ano) e \(Y_1,\dots,Y_N\) são independentes e as perdas \(Y_i\) são i.i.d., então</p></li>
+</ul>
+
+<p>\[\pi = \mathbb{E}(S) = \mathbb{E}(N) \cdot \mathbb{E}(Y) \]</p>
+
+<ul>
+<li>O <span class="blue3">
+<strong>prêmio puro anual</strong></span> é o produto de dois termos:
+
+<ul>
+<li>a frequência anual \(\mathbb{E}(N)\);</li>
+<li>o custo médio das indenizações \(\mathbb{E}(Y)\).</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Prêmio Puro considerando Heterogeneidade</h2></hgroup><article  id="premio-puro-considerando-heterogeneidade">
+
+<ul>
+<li><p>O prêmio puro do slide anterior considera apenas a média geral para todos os segurados, assumindo um risco homogêneo.</p></li>
+<li><p>No entanto, sabemos que um modelo mais realista seria considerar riscos diferentes, ou <em>heterogeneidade</em>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Prêmio Puro considerando Heterogeneidade</h2></hgroup><article  id="premio-puro-considerando-heterogeneidade-1">
+
+<ul>
+<li><p>Vamos considerar o caso em que a heterogeneidade pode ser observada através de uma variável binária \(Z\) (por exemplo, risco baixo e risco alto com probabilidade 50% em cada).</p></li>
+<li><p>Vamos assumir que \(N\) tem uma distribuição Binomial, com probabilidade 10% ou 20% de acordo com \(Z\). E vamos considerar que a perda é determinística, \(Y=100\).</p></li>
+<li>A seguradora tem duas opções:</li>
+</ul>
+
+<ol>
+<li>cobrar o mesmo prêmio para todos os segurados, \(\pi = \mathbb{E}(S) = \mathbb{E}(N) \cdot \mathbb{E}(Y) = 15\)</li>
+<li>cobrar um prêmio considerando a heterogeneidade, \(\pi(z) = \mathbb{E}(S|Z=z) = 10 \mbox{ ou } 20\) dependendo de \(z\).</li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Prêmio Puro considerando Heterogeneidade</h2></hgroup><article  id="premio-puro-considerando-heterogeneidade-2">
+
+<ul>
+<li><p>Isso pode ser perigoso se existirem duas seguradoras com modelos diferentes de tarifação. Os segurados de baixo risco irão preferir a seguradora que cobrar de acordo com b), enquanto segurados de alto risco irão preferir a seguradora que cobrar a).</p></li>
+<li><p>Por isso, a seguradora que não levar em conta a heterogeneidade, e não cobrar prêmios de acordo com as características individuais, não irá sobreviver em um mercado competitivo.</p></li>
+<li><p>Nesse exemplo, a seguradora deve cobrar:</p></li>
+</ul>
+
+<p>\[\pi(z) = \mathbb{E}(S|Z=z) = \mathbb{E}(N|Z=z) \cdot \mathbb{E}(Y|Z=z) \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Prêmio Puro considerando Heterogeneidade</h2></hgroup><article  id="premio-puro-considerando-heterogeneidade-3">
+
+<ul>
+<li><p>O problema é que a <strong>heterogeneidade</strong> nem sempre é totalmente observável.</p></li>
+<li><p>Na prática, a seguradora poderá observar algumas informações, resumidas em um vetor \(\boldsymbol{X}\), relacionadas às características do segurado, do objeto segurado, etc.</p></li>
+<li><p>Algumas dessas <span class="blue3">
+<strong>covariáveis</strong></span> podem fornecer uma boa aproximação para a variável latente \(Z\). Nesse caso, a seguradora deve cobrar:</p></li>
+</ul>
+
+<p>\[\pi(\boldsymbol{x}) = \mathbb{E}(S|\boldsymbol{X}=\boldsymbol{x}) = \mathbb{E}(N|\boldsymbol{X}=\boldsymbol{x}) \cdot \mathbb{E}(Y|\boldsymbol{X}=\boldsymbol{x}) \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Prêmio Puro considerando Heterogeneidade</h2></hgroup><article  id="premio-puro-considerando-heterogeneidade-4">
+
+<ul>
+<li><p>Nosso objetivo é propor modelos para estimar:</p>
+
+<ul>
+<li><p>\(\mathbb{E}(N|\boldsymbol{X}=\boldsymbol{x})\): a <span class="blue3">
+<strong>frequência</strong></span> esperada de indenizações para segurados com características \(\boldsymbol{x}\); e</p></li>
+<li><p>\(\mathbb{E}(Y|\boldsymbol{X}=\boldsymbol{x})\): a <span class="blue3">
+<strong>severidade</strong></span>, ou custo médio das indenizações para segurados com características \(\boldsymbol{x}\).</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Modelo para a Frequência</h2></hgroup><article  id="modelo-para-a-frequencia">
+
+</article></slide><slide class=""><hgroup><h2>Modelo para a Frequência</h2></hgroup><article  id="modelo-para-a-frequencia-1">
+
+<ul>
+<li><p>Vamos começar considerando modelos para a frequência de indenizações \(\mathbb{E}(N|\boldsymbol{X}=\boldsymbol{x})\).</p></li>
+<li><p>Como estamos falando de contagens de eventos, a primeira opção é considerar a distribuição de Poisson.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Poisson</h2></hgroup><article  id="modelo-poisson">
+
+<ul>
+<li><p>Assuma que o número de indenizações para um segurado siga um <a href='https://pt.wikipedia.org/wiki/Processo_de_Poisson#Processo_de_ponto_de_Poisson_homog%C3%AAneo' title=''>Processo de Poisson homogêneo</a> com intensidade \(\lambda\).</p></li>
+<li><p>Isso quer dizer que o número de eventos tem incrementos independentes, e que a quantidade de indenizações observadas durante o intervalo de tempo \([t,t+h]\) tem distribuição Poisson(\(\lambda \cdot h\)).</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Poisson </h2><h3> Exposição</h3></hgroup><article  id="modelo-poisson-exposicao">
+
+<ul>
+<li><p>Para um segurado \(i\), muitas vezes não temos o número de indenizações anual, isto é, \(N_i\) para o período \([0,1]\).</p></li>
+<li><p>Mas normalmente temos no banco de dados o número observado de indenizações \(Y_i\) durante o período \([0,E_i]\), onde \(E_i\) é a <span class="blue3">
+<strong>exposição</strong></span> do segurado no ano.</p></li>
+</ul>
+
+<p>\[Y_i \sim \mbox{Poisson}(\lambda \cdot E_i) \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Poisson</h2></hgroup><article  id="modelo-poisson-1">
+
+<ul>
+<li><p>Considere o modelo Poisson para um grupo de segurados em que todos tem a mesma intensidade \(\lambda\).</p></li>
+<li><p>Para estimar \(\lambda\), podemos usar máxima verossimilhança:</p></li>
+</ul>
+
+<p>\[\mathcal{L}(\lambda,\boldsymbol{Y},\boldsymbol{E}) = \prod_{i=1}^n \frac{e^{-\lambda. E_i}(\lambda.E_i)^{Y_i}}{Y_i!} \]</p>
+
+<p>\[\hat{\lambda} = \frac{\sum_{i=1}^n Y_i}{\sum_{i=1}^n E_i} \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Poisson</h2></hgroup><article  id="modelo-poisson-2">
+
+<ul>
+<li>Como já falamos antes, faz sentido pensar que \(\lambda\) dependa de características (covariáveis) de cada segurado.</li>
+</ul>
+
+<p>\[Y_i \sim \mbox{Poisson}(\lambda_i \cdot E_i) \]</p>
+
+<ul>
+<li>Utilizando uma <a href='https://support.minitab.com/pt-br/minitab/18/help-and-how-to/modeling-statistics/regression/supporting-topics/logistic-regression/link-function/' title=''>função de ligação</a> logarítmica (\(\lambda_i = e^{\boldsymbol{X}&#39;_i\boldsymbol{\beta}}\)):</li>
+</ul>
+
+<p>\[Y_i \sim \mbox{Poisson}\left(e^{ \boldsymbol{X}&#39;_i\boldsymbol{\beta} + \log(E_i)} \right) \]</p>
+
+<ul>
+<li>É importante notar o papel da <strong>Exposição</strong> nesse modelo! O termo \(\log(E_i)\) é chamado de <span class="blue3">
+<em>offset</em></span> e é incluído como se fosse uma covariável, mas sem coeficiente.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Poisson</h2></hgroup><article  id="modelo-poisson-3">
+
+<ul>
+<li><p>Assim, para modelar a <strong>frequência anual</strong> de indenizações, ajustamos uma regressão de Poisson ao número observado de indenizações \(Y\), incluindo as covariáveis \(\boldsymbol{X}\) e o log da exposição \(\log(E_i)\) como <em>offset</em>.</p></li>
+<li><p>Vamos considerar \(\lambda_i = \exp(\boldsymbol{X}&#39;_i \boldsymbol{\beta})\) (para garantir a positividade).</p></li>
+<li><p>A log-verossimilhança é dada por:</p></li>
+</ul>
+
+<p>\[\log \mathcal{L}(\boldsymbol{\beta}; \boldsymbol{Y}, \boldsymbol{E}) = \sum_{i=1}^n \left[ Y_i \log(\lambda_i  E_i) - (\lambda_i E_i) - \log(Y_i!) \right] \\ 
+\hspace{6cm} = \sum_{i=1}^n  \left[ Y_i \cdot \left( \boldsymbol{X}&#39;_i \boldsymbol{\beta} + E_i \right) - \exp\left\{ \boldsymbol{X}&#39;_i \boldsymbol{\beta} + \log(E_i) \right\} - \log(Y_i!) \right]  \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Poisson</h2></hgroup><article  id="modelo-poisson-4">
+
+<ul>
+<li><p>O estimador de máxima verossimilhança para \(\boldsymbol{\beta}\) pode ser encontrado numericamente usando o <a href='https://pt.wikipedia.org/wiki/M%C3%A9todo_de_Newton-Raphson' title=''>algoritmo de Newton-Raphson</a>.</p></li>
+<li><p>Esse método está implementado na função <code>glm</code> do R.</p></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>glm(Y~X1+X2+X3+offset(E), family=poisson(link=&quot;log&quot;))</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo">
+
+<ul>
+<li><p>Vamos considerar o banco de dados <code>freMTPLfreq</code> de seguros automobilísticos contra terceiros na França.</p></li>
+<li><p>Carregue os dados e veja as variáveis disponíveis.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-1">
+
+<ul>
+<li>Antes de ajustar o modelo, vamos categorizar algumas variáveis:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## categorizando variáveis
+freMTPLfreq.f &lt;- freMTPLfreq
+freMTPLfreq.f$DriverAge &lt;- cut(freMTPLfreq$DriverAge,c(17,22,26,42,74,Inf))
+freMTPLfreq.f$CarAge &lt;- cut(freMTPLfreq$CarAge,c(0,1,4,15,Inf),include.lowest=TRUE)
+freMTPLfreq.f$Density &lt;- cut(freMTPLfreq$Density,c(0,40,200,500,4500,Inf),include.lowest=TRUE)
+
+## verificando as classes de cada variável
+summary(freMTPLfreq.f)</pre>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  id="exemplo-2">
+
+<ul>
+<li><p>Ajuste um modelo de Poisson para o número de indenizações, considerando a exposição (log) como <em>offset</em>, e as covariáveis:</p>
+
+<ul>
+<li><p>tipo de combustível;</p></li>
+<li><p>idade do motorista;</p></li>
+<li><p>e a densidade populacional da cidade.</p></li>
+</ul></li>
+</ul>
+
+<p>(Obs: considere as variáveis categorizadas)</p>
+
+</article></slide><slide class=""><hgroup><h2><span class="green3">
+<strong>Exemplo</strong></span></h2></hgroup><article  class="smaller" id="exemplo-3">
+
+<pre >## 
+## Call:
+## glm(formula = ClaimNb ~ Gas + DriverAge + Density + offset(log(Exposure)), 
+##     family = poisson, data = freMTPLfreq.f)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -0.7655  -0.3385  -0.2669  -0.1488   6.5202  
+## 
+## Coefficients:
+##                      Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)          -1.86471    0.04047 -46.079  &lt; 2e-16 ***
+## GasRegular           -0.20598    0.01603 -12.846  &lt; 2e-16 ***
+## DriverAge(22,26]     -0.61606    0.04608 -13.370  &lt; 2e-16 ***
+## DriverAge(26,42]     -1.07967    0.03640 -29.657  &lt; 2e-16 ***
+## DriverAge(42,74]     -1.07765    0.03549 -30.362  &lt; 2e-16 ***
+## DriverAge(74,Inf]    -1.10706    0.05188 -21.338  &lt; 2e-16 ***
+## Density(40,200]       0.18473    0.02675   6.905 5.02e-12 ***
+## Density(200,500]      0.31822    0.02966  10.730  &lt; 2e-16 ***
+## Density(500,4.5e+03]  0.52694    0.02593  20.320  &lt; 2e-16 ***
+## Density(4.5e+03,Inf]  0.63717    0.03482  18.300  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 105613  on 413168  degrees of freedom
+## Residual deviance: 103986  on 413159  degrees of freedom
+## AIC: 135263
+## 
+## Number of Fisher Scoring iterations: 6</pre>
+
+</article></slide><slide class=""><hgroup><h2>Tarifação </h2><h3> Modelo com uma variável categórica</h3></hgroup><article  id="tarifacao-modelo-com-uma-variavel-categorica">
+
+<ul>
+<li>Vamos considerar apenas uma covariável: tipo de combustível (diesel ou regular).</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>vY &lt;- freMTPLfreq.f$ClaimNb   # selecionando Y
+vE &lt;- freMTPLfreq.f$Exposure  # selecionando E
+X1 &lt;- freMTPLfreq.f$Gas       # selecionando X1</pre>
+
+<pre class = 'prettyprint lang-r'>## Frequência de indenizações por tipo de combustível
+tapply(vY, X1, sum)/tapply(vE, X1, sum)</pre>
+
+<pre >##     Diesel    Regular 
+## 0.07467412 0.06515364</pre>
+
+</article></slide><slide class=""><hgroup><h2>Tarifação </h2><h3> Modelo com uma variável categórica</h3></hgroup><article  id="tarifacao-modelo-com-uma-variavel-categorica-1">
+
+<ul>
+<li>Vamos ajustar um modelo de Poisson com essa covariável e <strong>sem intercepto</strong>:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## modelo sem intercepto
+df &lt;- data.frame(vY,vE,X1)
+regpoislog &lt;- glm(vY~0+X1+offset(log(vE)),data=df,family=poisson(link=&quot;log&quot;))
+summary(regpoislog)</pre>
+
+</article></slide><slide class=""><hgroup><h2>Tarifação </h2><h3> Modelo com uma variável categórica</h3></hgroup><article  id="tarifacao-modelo-com-uma-variavel-categorica-2">
+
+<ul>
+<li>Interpretando os coeficientes:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## exponencial dos coeficientes
+##</pre>
+
+</article></slide><slide class=""><hgroup><h2>Tarifação </h2><h3> Modelo com uma variável categórica</h3></hgroup><article  id="tarifacao-modelo-com-uma-variavel-categorica-3">
+
+<ul>
+<li>Modelo <strong>com intercepto</strong>:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## modelo com intercepto
+regpoislog &lt;- glm(vY~X1+offset(log(vE)),data=df,family=poisson(link=&quot;log&quot;))
+summary(regpoislog)</pre>
+
+<ul>
+<li>Interpretando os coeficientes:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## exponencial dos coeficientes
+##</pre>
+
+</article></slide><slide class=""><hgroup><h2>Tarifação </h2><h3> Modelo com uma variável categórica</h3></hgroup><article  id="tarifacao-modelo-com-uma-variavel-categorica-4">
+
+<ul>
+<li><p>Nesse modelo, a categoria de referência é <code>Diesel</code> que tem frequência de 0,0746.</p></li>
+<li><p>Para tipo de combustível <code>Regular</code>, a frequência seria 87,25% da categoria de referência (igual a 0,0651).</p></li>
+<li><p>Essa seria a frequência estimada para calcular o prêmio.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Tarifação </h2><h3> Modelo com covariáveis contínuas</h3></hgroup><article  id="tarifacao-modelo-com-covariaveis-continuas">
+
+<ul>
+<li>Categorizamos algumas variáveis arbitrariamente. E se quisermos trabalhar com as variáveis contínuas?</li>
+</ul>
+
+<p><span class="green3">
+<strong>Exercício:</strong></span></p>
+
+<ul>
+<li><p>Ajuste um modelo de Poisson incluindo apenas a idade categorizada do motorista como covariável (e o <em>offset</em>).</p></li>
+<li><p>Compare esse ajuste com um modelo com a idade contínua.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Tarifação </h2><h3> Modelo com covariáveis contínuas</h3></hgroup><article  id="tarifacao-modelo-com-covariaveis-continuas-1">
+
+<ul>
+<li><p>Uma limitação desse modelo é restringir a uma relação linear entre o número de indenizações e a idade.</p></li>
+<li><p>Alternativas:</p>
+
+<ul>
+<li><p>considerar idade como um fator (uma categoria diferente para cada idade): <code>as.factor(DriverAge)</code></p></li>
+<li><p>modelo não-paramétrico incluindo uma função \(s(X)\) da idade, onde \(s()\) pode ser um <em>spline</em> (curva definida entre dois nós). Esse modelo pode ser implementado com a função <code>gam</code> do pacote <code>mgcv</code>.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Tarifação</h2></hgroup><article  id="tarifacao">
+
+<ul>
+<li>Comparação entre a predição dos modelos para idade:</li>
+</ul>
+
+<p><img src="img/tarif1.png" width="100%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Tarifação</h2></hgroup><article  id="tarifacao-1">
+
+<p><img src="img/tarif2.png" width="100%" style="display: block; margin: auto;" /></p></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>

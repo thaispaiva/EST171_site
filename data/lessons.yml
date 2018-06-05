@@ -106,6 +106,8 @@ lessons:
     data: "NASDAQ/nasdaq.csv"
   - date: "06/06/18"
     title: "Ramo Não-Vida: aplicação de modelos para tarifação"
+    slides: "20-tarifacao.html"
+    lab: "20-tarifacao.R"
   - date: "11/06/18"
     title: "Ramo Não-Vida: aplicação de modelos para tarifação"
   - date: "13/06/18"
