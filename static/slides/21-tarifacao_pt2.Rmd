@@ -1,0 +1,328 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "11 de junho de 2018"
+subtitle: "21 - Tarifação (parte 2)"
+
+output:
+  ioslides_presentation:
+    css: my.css
+    highlight: pygments
+    logo: img/logo_ufmg.png
+    widescreen: true
+    self_contained: false
+    lib_dir: libs
+  beamer_presentation:
+    highlight: pygments
+
+header-includes: \usepackage{amsmath, amsfonts, bm}
+---
+
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
+
+```{r echo=FALSE}
+## EST171 - Métodos Computacionais para Análise de Risco
+## Código da aula 21 - Tarifação (parte 2)
+
+```
+
+```{r echo=FALSE, purl=FALSE}
+file_name = "21-tarifacao_pt2"
+```
+
+
+
+## Aula de Hoje
+
+- Alternativas para Modelo para a Frequência
+
+- Modelos para a Severidade
+
+- Modelos conjuntos para Frequência e Severidade 
+
+
+## Tarifação de Seguros
+
+- Vimos na aula passada como construir um modelo para encontrar o <span class="blue3">**prêmio puro**</span> de acordo com um *modelo coletivo* para a perda financeira coberta por um seguro.
+
+- Vimos também que para uma seguradora ser competitiva, ela precisa levar em conta as informações disponíveis (covariáveis) para obter uma estimativa mais precisa para a perda média de cada contrato.
+
+$$\pi(\boldsymbol x) = \mathbb{E}(N|\boldsymbol X = \boldsymbol x) \cdot \mathbb{E}(Y|\boldsymbol X = \boldsymbol x) $$
+
+
+## Tarifação de Seguros
+
+- Uma opção é modelar cada termo separadamente:
+
+  + $\mathbb{E}(N | \boldsymbol{X}=\boldsymbol{x})$: <span class="blue3">**frequência**</span> esperada de indenizações para segurados com características $\boldsymbol{x}$; e
+  
+  + $\mathbb{E}(Y | \boldsymbol{X}=\boldsymbol{x})$: <span class="blue3">**severidade**</span>, ou custo médio das indenizações para segurados com característica $\boldsymbol{x}$.
+  
+
+## Modelos para a Frequência
+
+- O modelo mais natural para a **frequência** (número esperado de indenizações) é o <span class="black">**Poisson**</span>.
+
+- <span class="red">Limitação:</span> ao assumir que $Y_i \sim \mbox{Poisson}(\lambda_i.\,E_i)$, temos que $\mathbb{E}(Y_i) = \mbox{Var}(Y_i) = \lambda_i.\,E_i$.
+
+- Uma alternativa é modelar a variância como:
+
+$$\mbox{Var}(Y_i) = \phi .\, \mu_i $$
+
+- Outras alternativas para a variância: Seções 14.3.1 -- 14.3.4 do livro.
+
+
+## Modelos para a Frequência
+
+- Também podemos assumir outras distribuições de probabilidade para $Y_i$, como:
+
+  + Binomial Negativa (Seção 14.4.1);
+  
+  + Poisson/Binomial Negativa inflacionada em zero (Seção 14.4.2);
+  
+  + outras (Seção 14.4.3).
+  
+- Veja as seções indicadas para funções e exemplos para estimar os parâmetros de acordo com esses modelos.
+
+
+# Modelos para a Severidade
+
+
+## Modelos para a Severidade
+
+- Vamos agora ver modelos apropriados para a <span class="blue3">**severidade**</span> $\mathbb{E}(Y|\boldsymbol{X}=\boldsymbol{x})$.
+
+- As ferramentas são as mesmas de antes: *Modelos Lineares Generalizados*.
+
+- Além disso, normalmente as covariáveis são mais informativas para prever a **frequência** do que a **severidade**.
+
+
+## Modelos para a Severidade | <span class="green3">**Exemplo**</span>
+
+- Vamos continuar com o exemplo do banco de dados da aula passada.
+
+1) Carregar o banco de dados `freMTPLfreq` com os dados de frequência, exposição e as covariáveis (motor do carro, idade do carro, idade do motorista, modelo do carro, tipo de combustível, região da residência, densidade populacional).
+
+2) Carregar o banco de dados `freMTPLsev` com os dados de severidade (valor das indenizações) para as apólices em que houve sinistro. Quais são as variáveis disponíveis nesse banco?
+
+```{r echo=FALSE, warning=FALSE, message=FALSE, results='hide'}
+require(CASdatasets)
+
+## carregando os dados da aula passada:
+
+## dados de seguros contra terceiros - frequencia
+data(freMTPLfreq)
+
+## categorizando variáveis
+freMTPLfreq.f <- freMTPLfreq
+freMTPLfreq.f$DriverAge <- cut(freMTPLfreq$DriverAge,c(17,22,26,42,74,Inf))
+freMTPLfreq.f$CarAge <- cut(freMTPLfreq$CarAge,c(0,1,4,15,Inf),include.lowest=TRUE)
+freMTPLfreq.f$Density <- cut(freMTPLfreq$Density,c(0,40,200,500,4500,Inf),include.lowest=TRUE)
+
+
+## carregando os dados de severidade
+data(freMTPLsev)
+tail(freMTPLsev)
+
+```
+
+
+## Modelos para a Severidade | <span class="green3">**Exemplo**</span>
+
+```{r}
+## tamanho dos bancos
+dim(freMTPLfreq)
+dim(freMTPLsev)   # nem todas as apólices tiveram indenizações
+sum(freMTPLfreq$ClaimNb>0)
+
+```
+
+
+## Modelos para a Severidade | <span class="green3">**Exemplo**</span>
+
+```{r}
+ids = freMTPLsev$PolicyID   # apólices com indenizações
+length(ids)
+length(unique(ids))
+
+sum(freMTPLfreq$PolicyID %in% ids)
+
+```
+
+
+## Modelos para a Severidade | <span class="green3">**Exemplo**</span>
+
+```{r}
+## distribuição da severidade
+summary(freMTPLsev$ClaimAmount)
+
+```
+
+
+## Modelos para a Severidade | <span class="green3">**Exemplo**</span>
+
+```{r echo=FALSE, fig.align='center'}
+## histogramas
+par(mfrow=c(1,2))
+hist(freMTPLsev$ClaimAmount)
+hist(log(freMTPLsev$ClaimAmount))
+
+```
+
+
+## Modelos para a Severidade
+
+- Vamos unificar os bancos para analisar a relação entre o valor das indenizações e as outras características das apólices.
+
+```{r}
+## Unificando os bancos
+claims <- merge(freMTPLsev, freMTPLfreq)
+claims.f <- merge(freMTPLsev, freMTPLfreq.f)
+
+```
+
+- Qual a dimensão dos bancos resultantes? Quais variáveis estão incluídas nesses bancos? Como a função `merge` unifica os bancos?
+
+
+## Modelos para a Severidade
+
+- Como vimos anteriormente, selecionamos apenas as apólices em que houve pagamento de indenizações. 
+
+  + Veja nos valores da variável `ClaimAmount` dos bancos de dados que acabamos de criar. 
+
+> - Agora, queremos um modelo que explique a variabilidade das indenizações de acordo com as covariáveis. 
+
+> - Por isso, precisamos de distribuições estatísticas que assumam apenas valores positivos. 
+
+
+## Regressão Gama
+
+- $Y$ tem distribuição Gama se a densidade pode ser escrita como:
+
+$$f(y) = \frac{1}{y.\, \Gamma(\varphi^{-1})} \left( \frac{y}{\mu \varphi}\right)^{\varphi^{-1}} \exp \left( - \frac{y}{\mu \varphi}\right), \quad \forall \, y \in \mathbb{R}_{+}.  $$
+
+- A distribuição Gama pertence à família exponencial, e a função de ligação canônica é a inversa. Outras funções de ligação: identidade e logarítmo.
+
+
+## Regressão Log-Normal
+
+- $Y$ tem distribuição log-normal se a densidade pode ser escrita como:
+
+$$f(y) = \frac{1}{y \sqrt{2 \pi \sigma^2}} \exp\left\{ - \frac{(\ln y - \mu)^2}{2 \sigma^2}\right\}, \quad \forall \, y \in \mathbb{R}_{+}.   $$
+
+- Podemos ajustar esse modelo considerando que $Y\sim\mbox{Lognormal}$ se $\log(Y)\sim\mbox{Normal}$.
+
+
+## Modelos para a Severidade | <span class="green3">**Exemplo**</span>
+
+```{r results='hide'}
+
+## Regressão Gama (para indenizações menores)
+reg.gamma <- glm(ClaimAmount ~ CarAge + Gas, family=Gamma(link="log"),
+                 data=claims[claims$ClaimAmount<15000,])
+summary(reg.gamma)
+
+## Regressão Log-Normal
+reg.logn <- lm(log(ClaimAmount) ~ CarAge + Gas,
+               data=claims[claims$ClaimAmount<15000,])
+summary(reg.logn)
+
+```
+
+
+## Modelos para a Severidade
+
+- Outra alternativa: Normal Inversa
+
+- O ajuste dos modelos deve ser comparado usando os instrumentos padrões de Modelos Lineares Generalizados.
+
+
+## Modelando grandes valores
+
+- Se os valores das indenizações não forem muito grandes, as regressões gama e log-normal serão bem próximas (como vimos no exemplo anterior).
+
+- No entanto, quando temos indenizações com valores grandes, os ajustes serão diferentes.
+
+
+## Modelando grandes valores | <span class="green3">**Exemplo**</span>
+
+```{r results='hide'}
+
+## Regressão Gama (para todos os valores)
+reg.gamma <- glm(ClaimAmount ~ DriverAge,
+                 family=Gamma(link="log"), data=claims)
+summary(reg.gamma)
+
+## Regressão Log-Normal
+reg.logn <- lm(log(ClaimAmount) ~ DriverAge, data=claims)
+summary(reg.logn)
+
+```
+
+
+## Modelando grandes valores | <span class="green3">**Exemplo**</span>
+
+- Nesse caso, os coeficientes são significativos nos dois modelos, mas com *sinais diferentes* (o efeito de aumentar a idade será diferente).
+
+- Isso acontece porque os *outliers* irão afetar o ajuste dos modelos.
+
+- Para isso, seria necessário considerar modelos mais robustos para a tarifação. Para mais discussão sobre isso: Seção 14.6.
+
+
+# Modelos conjuntos para Frequência e Severidade 
+
+
+## Modelos conjuntos para Frequência e Severidade 
+
+- Vamos finalizar considerando um modelo conjunto para frequência e severidade.
+
+- A alternativa mais comum é o <span class="black">**modelo Tweedie**</span>.
+
+- A distribuição Tweedie pertence à família exponencial e satisfaz a seguinte condição:
+
+$$\mbox{Var}(Y) = \varphi\,.[\mathbb{E}(Y)]^p $$
+
+
+## Modelo Tweedie
+
+- Se $p=0$, temos uma distribuição com a variância constante (dist. normal);
+
+- Se $p=1$, então a variância é linear (dist. Poisson);
+
+- Se $p=2$, temos uma função de variância quadrática (dist. Gama);
+
+- Se $p \in (1,2)$, então $Y$ tem uma distribuição composta Poisson-Gama.
+
+
+## Modelo Tweedie | <span class="green3">**Exemplo**</span>
+
+- Ajustando o modelo Tweedie com o pacote `tweedie`:
+
+1) Encontrar o valor de $p$: 
+usar a função `tweedie.profile` para encontrar o EMV para $p$ para um determinado modelo.
+
+2) Usar o valor para estimar a regressão:
+função `glm(..., family=tweedie(var.power=p))`.
+
+- Outro pacote: `cplm`.
+
+
+
+
+[//]: # ##########################################################
+[//]: # Para gerar arquivo com apenas os comandos do R desta aula
+```{r include=FALSE, purl=FALSE}
+# gerar arquivo com comandos do R
+purl(input=paste0(file_name,".Rmd"),
+     output=paste0("../labs/",file_name,".R"),
+     documentation=0, encoding='UTF-8')
+# Saída: 'filename.R' com apenas o código extraído do arquivo original
+# Opções: documentation=1 inclui o texto no título dos chunks
+# Para excluir um chunk do arquivo final, incluir a opção purl=FALSE no cabeçalho do chunk
+```
+
+
+

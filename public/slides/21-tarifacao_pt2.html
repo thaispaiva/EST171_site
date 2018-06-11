@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '21 - Tarifação (parte 2)',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '21-tarifacao_pt2_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(21-tarifacao_pt2_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="21-tarifacao_pt2_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">11 de junho de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li><p>Alternativas para Modelo para a Frequência</p></li>
+<li><p>Modelos para a Severidade</p></li>
+<li><p>Modelos conjuntos para Frequência e Severidade</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Tarifação de Seguros</h2></hgroup><article  id="tarifacao-de-seguros">
+
+<ul>
+<li><p>Vimos na aula passada como construir um modelo para encontrar o <span class="blue3">
+<strong>prêmio puro</strong></span> de acordo com um <em>modelo coletivo</em> para a perda financeira coberta por um seguro.</p></li>
+<li><p>Vimos também que para uma seguradora ser competitiva, ela precisa levar em conta as informações disponíveis (covariáveis) para obter uma estimativa mais precisa para a perda média de cada contrato.</p></li>
+</ul>
+
+<p>\[\pi(\boldsymbol x) = \mathbb{E}(N|\boldsymbol X = \boldsymbol x) \cdot \mathbb{E}(Y|\boldsymbol X = \boldsymbol x) \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Tarifação de Seguros</h2></hgroup><article  id="tarifacao-de-seguros-1">
+
+<ul>
+<li><p>Uma opção é modelar cada termo separadamente:</p>
+
+<ul>
+<li><p>\(\mathbb{E}(N | \boldsymbol{X}=\boldsymbol{x})\): <span class="blue3">
+<strong>frequência</strong></span> esperada de indenizações para segurados com características \(\boldsymbol{x}\); e</p></li>
+<li><p>\(\mathbb{E}(Y | \boldsymbol{X}=\boldsymbol{x})\): <span class="blue3">
+<strong>severidade</strong></span>, ou custo médio das indenizações para segurados com característica \(\boldsymbol{x}\).</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Modelos para a Frequência</h2></hgroup><article  id="modelos-para-a-frequencia">
+
+<ul>
+<li><p>O modelo mais natural para a <strong>frequência</strong> (número esperado de indenizações) é o <span class="black">
+<strong>Poisson</strong></span>.</p></li>
+<li><p><span class="red">
+Limitação:</span> ao assumir que \(Y_i \sim \mbox{Poisson}(\lambda_i.\,E_i)\), temos que \(\mathbb{E}(Y_i) = \mbox{Var}(Y_i) = \lambda_i.\,E_i\).</p></li>
+<li><p>Uma alternativa é modelar a variância como:</p></li>
+</ul>
+
+<p>\[\mbox{Var}(Y_i) = \phi .\, \mu_i \]</p>
+
+<ul>
+<li>Outras alternativas para a variância: Seções 14.3.1 – 14.3.4 do livro.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Modelos para a Frequência</h2></hgroup><article  id="modelos-para-a-frequencia-1">
+
+<ul>
+<li><p>Também podemos assumir outras distribuições de probabilidade para \(Y_i\), como:</p>
+
+<ul>
+<li><p>Binomial Negativa (Seção 14.4.1);</p></li>
+<li><p>Poisson/Binomial Negativa inflacionada em zero (Seção 14.4.2);</p></li>
+<li><p>outras (Seção 14.4.3).</p></li>
+</ul></li>
+<li><p>Veja as seções indicadas para funções e exemplos para estimar os parâmetros de acordo com esses modelos.</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Modelos para a Severidade</h2></hgroup><article  id="modelos-para-a-severidade">
+
+</article></slide><slide class=""><hgroup><h2>Modelos para a Severidade</h2></hgroup><article  id="modelos-para-a-severidade-1">
+
+<ul>
+<li><p>Vamos agora ver modelos apropriados para a <span class="blue3">
+<strong>severidade</strong></span> \(\mathbb{E}(Y|\boldsymbol{X}=\boldsymbol{x})\).</p></li>
+<li><p>As ferramentas são as mesmas de antes: <em>Modelos Lineares Generalizados</em>.</p></li>
+<li><p>Além disso, normalmente as covariáveis são mais informativas para prever a <strong>frequência</strong> do que a <strong>severidade</strong>.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Modelos para a Severidade </h2><h3> <span class="green3">
+<strong>Exemplo</strong></span></h3></hgroup><article  id="modelos-para-a-severidade-exemplo">
+
+<ul>
+<li>Vamos continuar com o exemplo do banco de dados da aula passada.</li>
+</ul>
+
+<ol>
+<li><p>Carregar o banco de dados <code>freMTPLfreq</code> com os dados de frequência, exposição e as covariáveis (motor do carro, idade do carro, idade do motorista, modelo do carro, tipo de combustível, região da residência, densidade populacional).</p></li>
+<li><p>Carregar o banco de dados <code>freMTPLsev</code> com os dados de severidade (valor das indenizações) para as apólices em que houve sinistro. Quais são as variáveis disponíveis nesse banco?</p></li>
+</ol>
+
+</article></slide><slide class=""><hgroup><h2>Modelos para a Severidade </h2><h3> <span class="green3">
+<strong>Exemplo</strong></span></h3></hgroup><article  id="modelos-para-a-severidade-exemplo-1">
+
+<pre class = 'prettyprint lang-r'>## tamanho dos bancos
+dim(freMTPLfreq)</pre>
+
+<pre >## [1] 413169     10</pre>
+
+<pre class = 'prettyprint lang-r'>dim(freMTPLsev)   # nem todas as apólices tiveram indenizações</pre>
+
+<pre >## [1] 16181     2</pre>
+
+<pre class = 'prettyprint lang-r'>sum(freMTPLfreq$ClaimNb&gt;0)</pre>
+
+<pre >## [1] 15390</pre>
+
+</article></slide><slide class=""><hgroup><h2>Modelos para a Severidade </h2><h3> <span class="green3">
+<strong>Exemplo</strong></span></h3></hgroup><article  id="modelos-para-a-severidade-exemplo-2">
+
+<pre class = 'prettyprint lang-r'>ids = freMTPLsev$PolicyID   # apólices com indenizações
+length(ids)</pre>
+
+<pre >## [1] 16181</pre>
+
+<pre class = 'prettyprint lang-r'>length(unique(ids))</pre>
+
+<pre >## [1] 15390</pre>
+
+<pre class = 'prettyprint lang-r'>sum(freMTPLfreq$PolicyID %in% ids)</pre>
+
+<pre >## [1] 15390</pre>
+
+</article></slide><slide class=""><hgroup><h2>Modelos para a Severidade </h2><h3> <span class="green3">
+<strong>Exemplo</strong></span></h3></hgroup><article  id="modelos-para-a-severidade-exemplo-3">
+
+<pre class = 'prettyprint lang-r'>## distribuição da severidade
+summary(freMTPLsev$ClaimAmount)</pre>
+
+<pre >##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##       2     698    1156    2130    1243 2036833</pre>
+
+</article></slide><slide class=""><hgroup><h2>Modelos para a Severidade </h2><h3> <span class="green3">
+<strong>Exemplo</strong></span></h3></hgroup><article  id="modelos-para-a-severidade-exemplo-4">
+
+<p><img src="21-tarifacao_pt2_files/figure-html/unnamed-chunk-8-1.png" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Modelos para a Severidade</h2></hgroup><article  id="modelos-para-a-severidade-2">
+
+<ul>
+<li>Vamos unificar os bancos para analisar a relação entre o valor das indenizações e as outras características das apólices.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Unificando os bancos
+claims &lt;- merge(freMTPLsev, freMTPLfreq)
+claims.f &lt;- merge(freMTPLsev, freMTPLfreq.f)</pre>
+
+<ul>
+<li>Qual a dimensão dos bancos resultantes? Quais variáveis estão incluídas nesses bancos? Como a função <code>merge</code> unifica os bancos?</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Modelos para a Severidade</h2></hgroup><article  id="modelos-para-a-severidade-3">
+
+<ul>
+<li><p>Como vimos anteriormente, selecionamos apenas as apólices em que houve pagamento de indenizações.</p>
+
+<ul>
+<li>Veja nos valores da variável <code>ClaimAmount</code> dos bancos de dados que acabamos de criar.</li>
+</ul></li>
+</ul>
+
+<ul class = 'build'>
+<li>Agora, queremos um modelo que explique a variabilidade das indenizações de acordo com as covariáveis.</li>
+</ul>
+
+<ul class = 'build'>
+<li>Por isso, precisamos de distribuições estatísticas que assumam apenas valores positivos.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Gama</h2></hgroup><article  id="regressao-gama">
+
+<ul>
+<li>\(Y\) tem distribuição Gama se a densidade pode ser escrita como:</li>
+</ul>
+
+<p>\[f(y) = \frac{1}{y.\, \Gamma(\varphi^{-1})} \left( \frac{y}{\mu \varphi}\right)^{\varphi^{-1}} \exp \left( - \frac{y}{\mu \varphi}\right), \quad \forall \, y \in \mathbb{R}_{+}.  \]</p>
+
+<ul>
+<li>A distribuição Gama pertence à família exponencial, e a função de ligação canônica é a inversa. Outras funções de ligação: identidade e logarítmo.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Regressão Log-Normal</h2></hgroup><article  id="regressao-log-normal">
+
+<ul>
+<li>\(Y\) tem distribuição log-normal se a densidade pode ser escrita como:</li>
+</ul>
+
+<p>\[f(y) = \frac{1}{y \sqrt{2 \pi \sigma^2}} \exp\left\{ - \frac{(\ln y - \mu)^2}{2 \sigma^2}\right\}, \quad \forall \, y \in \mathbb{R}_{+}.   \]</p>
+
+<ul>
+<li>Podemos ajustar esse modelo considerando que \(Y\sim\mbox{Lognormal}\) se \(\log(Y)\sim\mbox{Normal}\).</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Modelos para a Severidade </h2><h3> <span class="green3">
+<strong>Exemplo</strong></span></h3></hgroup><article  id="modelos-para-a-severidade-exemplo-5">
+
+<pre class = 'prettyprint lang-r'>## Regressão Gama (para indenizações menores)
+reg.gamma &lt;- glm(ClaimAmount ~ CarAge + Gas, family=Gamma(link=&quot;log&quot;),
+                 data=claims[claims$ClaimAmount&lt;15000,])
+summary(reg.gamma)
+
+## Regressão Log-Normal
+reg.logn &lt;- lm(log(ClaimAmount) ~ CarAge + Gas,
+               data=claims[claims$ClaimAmount&lt;15000,])
+summary(reg.logn)</pre>
+
+</article></slide><slide class=""><hgroup><h2>Modelos para a Severidade</h2></hgroup><article  id="modelos-para-a-severidade-4">
+
+<ul>
+<li><p>Outra alternativa: Normal Inversa</p></li>
+<li><p>O ajuste dos modelos deve ser comparado usando os instrumentos padrões de Modelos Lineares Generalizados.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Modelando grandes valores</h2></hgroup><article  id="modelando-grandes-valores">
+
+<ul>
+<li><p>Se os valores das indenizações não forem muito grandes, as regressões gama e log-normal serão bem próximas (como vimos no exemplo anterior).</p></li>
+<li><p>No entanto, quando temos indenizações com valores grandes, os ajustes serão diferentes.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Modelando grandes valores </h2><h3> <span class="green3">
+<strong>Exemplo</strong></span></h3></hgroup><article  id="modelando-grandes-valores-exemplo">
+
+<pre class = 'prettyprint lang-r'>## Regressão Gama (para todos os valores)
+reg.gamma &lt;- glm(ClaimAmount ~ DriverAge,
+                 family=Gamma(link=&quot;log&quot;), data=claims)
+summary(reg.gamma)
+
+## Regressão Log-Normal
+reg.logn &lt;- lm(log(ClaimAmount) ~ DriverAge, data=claims)
+summary(reg.logn)</pre>
+
+</article></slide><slide class=""><hgroup><h2>Modelando grandes valores </h2><h3> <span class="green3">
+<strong>Exemplo</strong></span></h3></hgroup><article  id="modelando-grandes-valores-exemplo-1">
+
+<ul>
+<li><p>Nesse caso, os coeficientes são significativos nos dois modelos, mas com <em>sinais diferentes</em> (o efeito de aumentar a idade será diferente).</p></li>
+<li><p>Isso acontece porque os <em>outliers</em> irão afetar o ajuste dos modelos.</p></li>
+<li><p>Para isso, seria necessário considerar modelos mais robustos para a tarifação. Para mais discussão sobre isso: Seção 14.6.</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Modelos conjuntos para Frequência e Severidade</h2></hgroup><article  id="modelos-conjuntos-para-frequencia-e-severidade">
+
+</article></slide><slide class=""><hgroup><h2>Modelos conjuntos para Frequência e Severidade</h2></hgroup><article  id="modelos-conjuntos-para-frequencia-e-severidade-1">
+
+<ul>
+<li><p>Vamos finalizar considerando um modelo conjunto para frequência e severidade.</p></li>
+<li><p>A alternativa mais comum é o <span class="black">
+<strong>modelo Tweedie</strong></span>.</p></li>
+<li><p>A distribuição Tweedie pertence à família exponencial e satisfaz a seguinte condição:</p></li>
+</ul>
+
+<p>\[\mbox{Var}(Y) = \varphi\,.[\mathbb{E}(Y)]^p \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Tweedie</h2></hgroup><article  id="modelo-tweedie">
+
+<ul>
+<li><p>Se \(p=0\), temos uma distribuição com a variância constante (dist. normal);</p></li>
+<li><p>Se \(p=1\), então a variância é linear (dist. Poisson);</p></li>
+<li><p>Se \(p=2\), temos uma função de variância quadrática (dist. Gama);</p></li>
+<li><p>Se \(p \in (1,2)\), então \(Y\) tem uma distribuição composta Poisson-Gama.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Tweedie </h2><h3> <span class="green3">
+<strong>Exemplo</strong></span></h3></hgroup><article  id="modelo-tweedie-exemplo">
+
+<ul>
+<li>Ajustando o modelo Tweedie com o pacote <code>tweedie</code>:</li>
+</ul>
+
+<ol>
+<li><p>Encontrar o valor de \(p\): usar a função <code>tweedie.profile</code> para encontrar o EMV para \(p\) para um determinado modelo.</p></li>
+<li><p>Usar o valor para estimar a regressão: função <code>glm(..., family=tweedie(var.power=p))</code>.</p></li>
+</ol>
+
+<ul>
+<li>Outro pacote: <code>cplm</code>.</li>
+</ul></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
