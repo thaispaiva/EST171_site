@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '22 - Ramo Não-Vida: reservas',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '22-nao_vida_reservas_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(22-nao_vida_reservas_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="22-nao_vida_reservas_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">13 de junho de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li><p>Cálculo de Reservas para Ramo Não-Vida</p></li>
+<li><p>Triângulos de Desenvolvimento</p></li>
+<li><p>Métodos determinísticos para cálculo de reserva</p>
+
+<ul>
+<li>Método <em>Chain-Ladder</em></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Seguros</h2></hgroup><article  id="seguros">
+
+<ul>
+<li><p>Uma <strong>apólice de seguro</strong> é uma <em>promessa</em> feita pela seguradora de pagar ao segurado por futuras perdas em troca de um prêmio recebido antecipadamente.</p></li>
+<li><p>Por isso, seguradoras não sabem antecipadamente qual será o <em>custo</em> do seu serviço. Para determinar esse custo, precisam confiar na análise de dados históricos para predizer um prêmio sustentável.</p></li>
+<li><p>Em seguros do Ramo Não-Vida (ex: carro, propriedade, acidente), a maioria das apólices tem duração de 12 meses. No entanto, o processo de pagamento das indenizações pode durar anos. Assim, muitas vezes a <em>data de pagamento</em> também é desconhecida para a seguradora.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Reservas</h2></hgroup><article  id="reservas">
+
+<ul>
+<li><p>Em particular, os processos de indenizações decorrentes de seguros de acidentes podem demorar muito tempo para serem finalizados.</p></li>
+<li><p>Esse aspecto da operação de seguros faz com que o maior item do passivo da seguradora seja o das <span class="blue3">
+<strong>Provisões</strong></span> ou <span class="blue3">
+<strong>Reservas</strong></span>.</p></li>
+<li><p>As <span class="blue3">
+<strong>Reservas</strong></span> podem ser quebradas em dois casos:</p>
+
+<ul>
+<li><p>reservas de sinistros que já foram reportados;</p></li>
+<li><p>reservas de sinistros já ocorridos mas não reportados (IBNR - <em>Incurred but not reported</em>).</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Cálculo de Reservas</h2></hgroup><article  id="calculo-de-reservas">
+
+<ul>
+<li><p>Historicamente, as reservas eram calculadas de maneira determinística <em>na mão</em>, e combinadas com o julgamento de um especialista.</p></li>
+<li><p>Com o surgimento dos computadores pessoais, tornou-se possível calcular as reservas através de planilhas, de uma maneira mais rápida e eficiente que antes.</p></li>
+<li><p>Com isso, os atuários puderam considerar diferentes cenários e analisar a sensibilidade e os efeitos das previsões.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Cálculo de Reservas</h2></hgroup><article  id="calculo-de-reservas-1">
+
+<ul>
+<li><p>E à medida que a capacidade dos computadores foi aumentando, modelos mais sofisticados para as reservas passaram a ser considerados.</p></li>
+<li><p>Algumas mudanças em legislações e regulamentos, como a diretiva <a href='https://ec.europa.eu/info/business-economy-euro/banking-and-finance/insurance-and-pensions/risk-management-and-supervision-insurance-companies-solvency-2_en' title=''><em>Solvency II</em></a> da União Européia em 2009, passaram a promover também métodos estatísticos e estocásticos para o cálculo de reservas.</p></li>
+<li><p>Vários métodos vem sendo desenvolvidos para estimar tanto o <strong>valor</strong> como a <strong>variabilidade</strong> de reservas. Vamos ver alguns desses métodos.</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Triângulos de Desenvolvimento</h2></hgroup><article  id="triangulos-de-desenvolvimento">
+
+</article></slide><slide class=""><hgroup><h2>Triângulos de Desenvolvimento</h2></hgroup><article  id="triangulos-de-desenvolvimento-1">
+
+<ul>
+<li><p>Dados históricos de seguros normalmente são apresentados em forma de triângulos, mostrando o <em>desenvolvimento</em> (tempo até o pagamento) de indenizações de acordo com o período de origem do seguro.</p></li>
+<li><p>O <span class="blue3">
+período de origem do seguro</span> pode ser tanto com relação à emissão da apólice, quanto em relação ao período de ocorrência do sinistro.</p></li>
+<li><p>O <span class="blue3">
+período de desenvolvimento</span> de um seguro também pode ser chamado de duração, ou tempo até o pagamento.</p></li>
+<li><p>O triângulo pode ser feito para períodos anuais, mensais, semestrais…</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Triângulos de Desenvolvimento </h2><h3> Exemplo</h3></hgroup><article  id="triangulos-de-desenvolvimento-exemplo">
+
+<ul>
+<li><p>Vamos considerar os dados de um triângulo de desenvolvimento para indenizações de um seguro automobilístico contra terceiros de uma seguradora no Reino Unido.</p></li>
+<li><p>Os períodos de origem estão entre 2007 e 2013.</p></li>
+<li><p>Os dados estão organizados em uma tabela com os <strong>períodos de origem</strong> na primeira coluna, os <strong>períodos de desenvolvimento</strong> na segunda coluna, e os <strong>pagamentos/transações</strong> na terceira coluna.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Triângulos de Desenvolvimento </h2><h3> Exemplo</h3></hgroup><article  id="triangulos-de-desenvolvimento-exemplo-1">
+
+<pre >##    originf dev inc.paid
+## 1     2007   1     3511
+## 2     2007   2     3215
+## 3     2007   3     2266
+## 4     2007   4     1712
+## 5     2007   5     1059
+## 6     2007   6      587
+## 7     2007   7      340
+## 8     2008   1     4001
+## 9     2008   2     3702
+## 10    2008   3     2278
+## 11    2008   4     1180
+## 12    2008   5      956
+## 13    2008   6      629
+## 14    2009   1     4355
+## 15    2009   2     3932
+## 16    2009   3     1946
+## 17    2009   4     1522
+## 18    2009   5     1238
+## 19    2010   1     4295
+## 20    2010   2     3455
+## 21    2010   3     2023
+## 22    2010   4     1320
+## 23    2011   1     4150
+## 24    2011   2     3747
+## 25    2011   3     2320
+## 26    2012   1     5102
+## 27    2012   2     4548
+## 28    2013   1     6283</pre>
+
+</article></slide><slide class=""><hgroup><h2>Triângulos de Desenvolvimento </h2><h3> Exemplo</h3></hgroup><article  id="triangulos-de-desenvolvimento-exemplo-2">
+
+<pre class = 'prettyprint lang-r'>## transformando em triângulo de desenvolvimento
+(inc.triangle &lt;- with(Claims, {
+  M &lt;- matrix(nrow=n, ncol=n,
+              dimnames=list(origin=levels(originf), dev=1:n))
+  M[cbind(originf, dev)] &lt;- inc.paid
+  M
+}))</pre>
+
+</article></slide><slide class=""><hgroup><h2>Triângulos de Desenvolvimento </h2><h3> Exemplo</h3></hgroup><article  id="triangulos-de-desenvolvimento-exemplo-3">
+
+<pre >##       dev
+## origin    1    2    3    4    5   6   7
+##   2007 3511 3215 2266 1712 1059 587 340
+##   2008 4001 3702 2278 1180  956 629  NA
+##   2009 4355 3932 1946 1522 1238  NA  NA
+##   2010 4295 3455 2023 1320   NA  NA  NA
+##   2011 4150 3747 2320   NA   NA  NA  NA
+##   2012 5102 4548   NA   NA   NA  NA  NA
+##   2013 6283   NA   NA   NA   NA  NA  NA</pre>
+
+</article></slide><slide class=""><hgroup><h2>Triângulos de Desenvolvimento</h2></hgroup><article  id="triangulos-de-desenvolvimento-2">
+
+<ul>
+<li><p><span class="black">
+<strong>Objetivo:</strong></span> estimar o desenvolvimento futuro das indenizações para formar uma reserva.</p></li>
+<li><p>Eventualmente, todas as indenizações serão quitadas, mas nem sempre é fácil estimar quando tempo isso irá levar.</p></li>
+<li><p>Vamos falar de seguros de cauda <em>leve</em> ou <em>pesada</em> dependendo de quanto tempo leva até que todos os pagamentos sejam feitos.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Triângulos Cumulativos</h2></hgroup><article  id="triangulos-cumulativos">
+
+<ul>
+<li>Será mais útil trabalhar com os triângulos de indenizações/sinistros acumulados.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## triângulo acumulado
+(cum.triangle &lt;- t(apply(inc.triangle, 1, cumsum)))</pre>
+
+<pre >##       dev
+## origin    1    2     3     4     5     6     7
+##   2007 3511 6726  8992 10704 11763 12350 12690
+##   2008 4001 7703  9981 11161 12117 12746    NA
+##   2009 4355 8287 10233 11755 12993    NA    NA
+##   2010 4295 7750  9773 11093    NA    NA    NA
+##   2011 4150 7897 10217    NA    NA    NA    NA
+##   2012 5102 9650    NA    NA    NA    NA    NA
+##   2013 6283   NA    NA    NA    NA    NA    NA</pre>
+
+</article></slide><slide class=""><hgroup><h2>Triângulos Cumulativos</h2></hgroup><article  id="triangulos-cumulativos-1">
+
+<ul>
+<li>A última diagonal preenchida do triângulo acumulado apresenta os valores acumulados pagos para cada ano de origem.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## diagonal - pagamentos acumulados de cada período de origem
+(latest.paid &lt;- cum.triangle[row(cum.triangle) == n - col(cum.triangle) + 1])</pre>
+
+<pre >## [1]  6283  9650 10217 11093 12993 12746 12690</pre>
+
+</article></slide><slide class=""><hgroup><h2>Triângulos Cumulativos</h2></hgroup><article  id="triangulos-cumulativos-2">
+
+<ul>
+<li>Vamos incluir os dados de pagamentos acumulados à tabela original dos dados.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## pagamentos acumulados
+Claims$cum.paid &lt;- cum.triangle[with(Claims, cbind(originf, dev))]
+head(Claims)</pre>
+
+<pre >##   originf dev inc.paid cum.paid
+## 1    2007   1     3511     3511
+## 2    2007   2     3215     6726
+## 3    2007   3     2266     8992
+## 4    2007   4     1712    10704
+## 5    2007   5     1059    11763
+## 6    2007   6      587    12350</pre>
+
+</article></slide><slide class=""><hgroup><h2>Visualizando os dados</h2></hgroup><article  id="visualizando-os-dados">
+
+<p><img src="22-nao_vida_reservas_files/figure-html/unnamed-chunk-10-1.png" width="85%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Visualizando os dados</h2></hgroup><article  id="visualizando-os-dados-1">
+
+<p><img src="22-nao_vida_reservas_files/figure-html/unnamed-chunk-11-1.png" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Visualizando os dados</h2></hgroup><article  id="visualizando-os-dados-2">
+
+<ul>
+<li><p>De acordo com os gráficos, parece que não há nenhum comportamento anormal nos dados.</p></li>
+<li><p>Os últimos anos (2012 e 2013) parecem ter pagamentos um pouco maiores do que os demais anos, enquanto 2007 parece ter os menores valores.</p></li>
+<li><p>O último pagamento de 2009 (de 1.238) se destaca um pouco também do comportamento geral.</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Modelos Determinísticos para Cálculo da Reserva</h2></hgroup><article  id="modelos-deterministicos-para-calculo-da-reserva">
+
+</article></slide><slide class=""><hgroup><h2>Modelos Determinísticos</h2></hgroup><article  id="modelos-deterministicos">
+
+<ul>
+<li><p>O modelo mais estabelecido e mais antigo para estimar reservas é o <em>Chain-Ladder</em>.</p></li>
+<li><p>O modelo <em>Chain-Ladder</em> clássico é um algoritmo determinístico para prever as indenizações baseado nos dados históricos.</p></li>
+<li><p>Ele assume que o desenvolvimento proporcional de um período para o outro é o mesmo <strong>para todos</strong> os períodos de origem.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Algoritmo <em>Chain-Ladder</em></h2></hgroup><article  id="algoritmo-chain-ladder">
+
+<ul>
+<li><p>Seja \(C_{i,j}\) os <span class="blue3">
+pagamentos acumulados</span> para período de origem \(i\) e após um período de desenvolvimento \(j\).</p></li>
+<li><p><span class="black">
+<strong>1º passo:</strong></span> Calcular os <strong>fatores de desenvolvimento</strong> \(f_k\) entre os períodos de desenvolvimento:</p></li>
+</ul>
+
+<p>\[f_k = \frac{\sum_{i=1}^{n-k} C_{i,k+1}}{\sum_{i=1}^{n-k} C_{i,k}}\]</p>
+
+<pre class = 'prettyprint lang-r'>## fatores de desenvolvimento
+f &lt;- sapply( (n-1):1, function(i) {
+  sum(cum.triangle[1:i, n-i+1])/sum(cum.triangle[1:i, n-i]) } )</pre>
+
+</article></slide><slide class=""><hgroup><h2>Algoritmo <em>Chain-Ladder</em></h2></hgroup><article  id="algoritmo-chain-ladder-1">
+
+<ul>
+<li>Por enquanto, não vamos considerar nenhum desenvolvimento após o ano 7. Assim, fixamos o último fator de desenvolvimento (<em>tail factor</em>) como 1.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>tail &lt;- 1   # último fator de desenvolvimento
+(f &lt;- c(f, tail))</pre>
+
+<pre >## [1] 1.889234 1.282381 1.147105 1.096758 1.050921 1.027530 1.000000</pre>
+
+</article></slide><slide class=""><hgroup><h2>Algoritmo <em>Chain-Ladder</em></h2></hgroup><article  id="algoritmo-chain-ladder-2">
+
+<ul>
+<li><span class="black">
+<strong>2º passo:</strong></span> Aplicar os fatores \(f_k\) ao último pagamento acumulado de cada linha (\(C_{i,n-i+1}\)) para produzir as <strong>previsões</strong> de pagamentos para os anos futuros.</li>
+</ul>
+
+<p>\[\hat{C}_{i,k+1} = f_k \cdot \hat{C}_{i,k} \]</p>
+
+<p>começando por \(\hat{C}_{i, n-i+1} = C_{i,n-i+1}\)</p>
+
+</article></slide><slide class=""><hgroup><h2>Algoritmo <em>Chain-Ladder</em></h2></hgroup><article  id="algoritmo-chain-ladder-3">
+
+<pre class = 'prettyprint lang-r'>## completando o triângulo
+full.triangle &lt;- cum.triangle
+for(k in 1:(n-1)){
+  full.triangle[(n-k+1):n, k+1] &lt;- full.triangle[(n-k+1):n,k]*f[k]
+}
+full.triangle</pre>
+
+<pre >##       dev
+## origin    1        2        3        4        5        6        7
+##   2007 3511  6726.00  8992.00 10704.00 11763.00 12350.00 12690.00
+##   2008 4001  7703.00  9981.00 11161.00 12117.00 12746.00 13096.90
+##   2009 4355  8287.00 10233.00 11755.00 12993.00 13654.62 14030.54
+##   2010 4295  7750.00  9773.00 11093.00 12166.34 12785.86 13137.86
+##   2011 4150  7897.00 10217.00 11719.97 12853.97 13508.51 13880.40
+##   2012 5102  9650.00 12374.98 14195.40 15568.92 16361.71 16812.15
+##   2013 6283 11870.06 15221.94 17461.17 19150.67 20125.85 20679.92</pre>
+
+</article></slide><slide class=""><hgroup><h2>Algoritmo <em>Chain-Ladder</em></h2></hgroup><article  id="algoritmo-chain-ladder-4">
+
+<ul>
+<li>A última coluna contém o total de pagamentos previstos:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## total de pagamentos previstos
+(ultimate.paid &lt;- full.triangle[,n])</pre>
+
+<pre >##     2007     2008     2009     2010     2011     2012     2013 
+## 12690.00 13096.90 14030.54 13137.86 13880.40 16812.15 20679.92</pre>
+
+</article></slide><slide class=""><hgroup><h2>Algoritmo <em>Chain-Ladder</em></h2></hgroup><article  id="algoritmo-chain-ladder-5">
+
+<ul>
+<li>O produto cumulativo dos fatores de desenvolvimento fornece os fatores totais aplicados ao último valor observado até o final (&ldquo;<em>Loss Development Factors</em>&rdquo;):</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## fatores de desenvolvimento totais
+(ldf &lt;- rev(cumprod(rev(f))))</pre>
+
+<pre >## [1] 3.291408 1.742192 1.358560 1.184338 1.079854 1.027530 1.000000</pre>
+
+<ul>
+<li>O inverso dos fatores totais são a proporção do total de indenizações que foram &ldquo;desenvolvidas&rdquo; (estimadas) até o final:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## proporção de indenizações estimadas
+(dev.pattern &lt;- 1/ldf)</pre>
+
+<pre >## [1] 0.3038213 0.5739896 0.7360737 0.8443537 0.9260515 0.9732072 1.0000000</pre>
+
+</article></slide><slide class=""><hgroup><h2>Algoritmo <em>Chain-Ladder</em></h2></hgroup><article  id="algoritmo-chain-ladder-6">
+
+<ul>
+<li>A <span class="blue3">
+<strong>Reserva</strong></span> total estimada é:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## reserva
+(reserve &lt;- sum (latest.paid * (ldf - 1)))</pre>
+
+<pre >## [1] 28655.77</pre>
+
+<pre class = 'prettyprint lang-r'>sum(ultimate.paid - latest.paid)</pre>
+
+<pre >## [1] 28655.77</pre></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>

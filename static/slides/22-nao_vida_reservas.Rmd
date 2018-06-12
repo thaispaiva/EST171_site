@@ -1,0 +1,361 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "13 de junho de 2018"
+subtitle: "22 - Ramo Não-Vida: reservas"
+
+output:
+  ioslides_presentation:
+    css: my.css
+    highlight: pygments
+    logo: img/logo_ufmg.png
+    widescreen: true
+    self_contained: false
+    lib_dir: libs
+  beamer_presentation:
+    highlight: pygments
+
+header-includes: \usepackage{amsmath, amsfonts, bm}
+---
+
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
+
+```{r echo=FALSE}
+## EST171 - Métodos Computacionais para Análise de Risco
+## Código da aula 22 - Ramo Não-Vida (reservas)
+
+```
+
+```{r echo=FALSE, purl=FALSE}
+file_name = "22-nao_vida_reservas"
+```
+
+
+
+## Aula de Hoje
+
+- Cálculo de Reservas para Ramo Não-Vida
+
+- Triângulos de Desenvolvimento
+
+- Métodos determinísticos para cálculo de reserva
+
+  + Método *Chain-Ladder*
+
+
+## Seguros 
+
+- Uma **apólice de seguro** é uma *promessa* feita pela seguradora de pagar ao segurado por futuras perdas em troca de um prêmio recebido antecipadamente.
+
+- Por isso, seguradoras não sabem antecipadamente qual será o *custo* do seu serviço. Para determinar esse custo, precisam confiar na análise de dados históricos para predizer um prêmio sustentável.
+
+- Em seguros do Ramo Não-Vida (ex: carro, propriedade, acidente), a maioria das apólices tem duração de 12 meses. No entanto, o processo de pagamento das indenizações pode durar anos. Assim, muitas vezes a *data de pagamento* também é desconhecida para a seguradora.
+
+
+## Reservas
+
+- Em particular, os processos de indenizações decorrentes de seguros de acidentes podem demorar muito tempo para serem finalizados.
+
+- Esse aspecto da operação de seguros faz com que o maior item do passivo da seguradora seja o das <span class="blue3">**Provisões**</span> ou <span class="blue3">**Reservas**</span>.
+
+- As <span class="blue3">**Reservas**</span> podem ser quebradas em dois casos:
+
+  + reservas de sinistros que já foram reportados;
+  
+  + reservas de sinistros já ocorridos mas não reportados (IBNR - *Incurred but not reported*).
+  
+
+## Cálculo de Reservas
+
+- Historicamente, as reservas eram calculadas de maneira determinística *na mão*, e combinadas com o julgamento de um especialista.
+
+- Com o surgimento dos computadores pessoais, tornou-se possível calcular as reservas através de planilhas, de uma maneira mais rápida e eficiente que antes.
+
+- Com isso, os atuários puderam considerar diferentes cenários e analisar a sensibilidade e os efeitos das previsões.
+
+
+## Cálculo de Reservas
+
+- E à medida que a capacidade dos computadores foi aumentando, modelos mais sofisticados para as reservas passaram a ser considerados.
+
+- Algumas mudanças em legislações e regulamentos, como a diretiva [*Solvency II*](https://ec.europa.eu/info/business-economy-euro/banking-and-finance/insurance-and-pensions/risk-management-and-supervision-insurance-companies-solvency-2_en) da União Européia em 2009, passaram a promover também métodos estatísticos e estocásticos para o cálculo de reservas.
+
+- Vários métodos vem sendo desenvolvidos para estimar tanto o **valor** como a **variabilidade** de reservas. Vamos ver alguns desses métodos.
+
+
+# Triângulos de Desenvolvimento
+
+
+## Triângulos de Desenvolvimento
+
+- Dados históricos de seguros normalmente são apresentados em forma de triângulos, mostrando o *desenvolvimento* (tempo até o pagamento) de indenizações de acordo com o período de origem do seguro.
+
+- O <span class="blue3">período de origem do seguro</span> pode ser tanto com relação à emissão da apólice, quanto em relação ao período de ocorrência do sinistro.
+
+- O <span class="blue3">período de desenvolvimento</span> de um seguro também pode ser chamado de duração, ou tempo até o pagamento.
+
+- O triângulo pode ser feito para períodos anuais, mensais, semestrais...
+
+
+## Triângulos de Desenvolvimento | Exemplo
+
+- Vamos considerar os dados de um triângulo de desenvolvimento para indenizações de um seguro automobilístico contra terceiros de uma seguradora no Reino Unido.
+
+- Os períodos de origem estão entre 2007 e 2013.
+
+- Os dados estão organizados em uma tabela com os **períodos de origem** na primeira coluna, os **períodos de desenvolvimento** na segunda coluna, e os **pagamentos/transações** na terceira coluna.
+
+
+## Triângulos de Desenvolvimento | Exemplo
+
+```{r echo=FALSE}
+## Dados de pagamentos de indenizações - Seguros contra terceiros U.K.
+n <- 7
+Claims <- data.frame(originf = factor(rep(2007:2013, n:1)),
+                     dev = sequence(n:1),
+                     inc.paid = c(3511, 3215, 2266, 1712, 1059,  587,
+                                   340, 4001, 3702, 2278, 1180,  956,
+                                   629, 4355, 3932, 1946, 1522, 1238,
+                                  4295, 3455, 2023, 1320, 4150, 3747,
+                                  2320, 5102, 4548, 6283))
+Claims
+
+```
+
+
+## Triângulos de Desenvolvimento | Exemplo
+
+```{r results='hide'}
+## transformando em triângulo de desenvolvimento
+(inc.triangle <- with(Claims, {
+  M <- matrix(nrow=n, ncol=n,
+              dimnames=list(origin=levels(originf), dev=1:n))
+  M[cbind(originf, dev)] <- inc.paid
+  M
+}))
+
+```
+
+
+## Triângulos de Desenvolvimento | Exemplo
+
+```{r purl=FALSE, echo=FALSE}
+inc.triangle
+```
+
+
+## Triângulos de Desenvolvimento
+
+- <span class="black">**Objetivo:**</span> estimar o desenvolvimento futuro das indenizações para formar uma reserva.
+
+- Eventualmente, todas as indenizações serão quitadas, mas nem sempre é fácil estimar quando tempo isso irá levar.
+
+- Vamos falar de seguros de cauda *leve* ou *pesada* dependendo de quanto tempo leva até que todos os pagamentos sejam feitos.
+
+
+## Triângulos Cumulativos
+
+- Será mais útil trabalhar com os triângulos de indenizações/sinistros acumulados.
+
+```{r}
+## triângulo acumulado
+(cum.triangle <- t(apply(inc.triangle, 1, cumsum)))
+
+```
+
+
+## Triângulos Cumulativos
+
+- A última diagonal preenchida do triângulo acumulado apresenta os valores acumulados pagos para cada ano de origem.
+
+```{r}
+## diagonal - pagamentos acumulados de cada período de origem
+(latest.paid <- cum.triangle[row(cum.triangle) == n - col(cum.triangle) + 1])
+
+```
+
+
+## Triângulos Cumulativos
+
+- Vamos incluir os dados de pagamentos acumulados à tabela original dos dados.
+
+```{r}
+## pagamentos acumulados
+Claims$cum.paid <- cum.triangle[with(Claims, cbind(originf, dev))]
+head(Claims)
+
+```
+
+
+## Visualizando os dados
+
+```{r echo=FALSE, fig.align='center', out.width="85%"}
+
+## Gráfico da sequência de pagamentos individuais e acumulados por origem
+op <- par(fig=c(0,0.5,0,1), cex=0.8, oma=c(0,0,0,0))
+with(Claims, {
+  interaction.plot(x.factor=dev, trace.factor=originf, response=inc.paid,
+                   fun=sum, type="b", bty='n', legend=FALSE); axis(1, at=1:n)
+  par(fig=c(0.45,1,0,1), new=TRUE, cex=0.8, oma=c(0,0,0,0))
+  
+  interaction.plot(x.factor=dev, trace.factor=originf, response=cum.paid,
+                   fun=sum, type="b", bty='n'); axis(1,at=1:n)
+  })
+mtext("Incremental and cumulative claims development",
+      side=3, outer=TRUE, line=-3, cex = 1.1, font=2)
+par(op)
+
+```
+
+
+## Visualizando os dados
+
+```{r echo=FALSE, fig.align='center'}
+
+## Gráfico dos pagamentos acumulados em painéis
+library(lattice)
+xyplot(cum.paid ~ dev | originf, data=Claims, t="b", layout=c(4,2),
+       as.table=TRUE, main="Cumulative claims development")
+
+
+## Cálculo de Reservas
+## Métodos determinísticos
+
+```
+
+
+## Visualizando os dados
+
+- De acordo com os gráficos, parece que não há nenhum comportamento anormal nos dados.
+
+- Os últimos anos (2012 e 2013) parecem ter pagamentos um pouco maiores do que os demais anos, enquanto 2007 parece ter os menores valores. 
+
+- O último pagamento de 2009 (de 1.238) se destaca um pouco também do comportamento geral.
+
+
+# Modelos Determinísticos para Cálculo da Reserva
+
+
+## Modelos Determinísticos
+
+- O modelo mais estabelecido e mais antigo para estimar reservas é o *Chain-Ladder*.
+
+- O modelo *Chain-Ladder* clássico é um algoritmo determinístico para prever as indenizações baseado nos dados históricos. 
+
+- Ele assume que o desenvolvimento proporcional de um período para o outro é o mesmo **para todos** os períodos de origem.
+
+
+## Algoritmo *Chain-Ladder*
+
+- Seja $C_{i,j}$ os <span class="blue3">pagamentos acumulados</span> para período de origem $i$ e após um período de desenvolvimento $j$.
+
+- <span class="black">**1º passo:**</span> Calcular os **fatores de desenvolvimento** $f_k$ entre os períodos de desenvolvimento:
+
+$$f_k = \frac{\sum_{i=1}^{n-k} C_{i,k+1}}{\sum_{i=1}^{n-k} C_{i,k}}$$
+
+```{r}
+
+## fatores de desenvolvimento
+f <- sapply( (n-1):1, function(i) {
+  sum(cum.triangle[1:i, n-i+1])/sum(cum.triangle[1:i, n-i]) } )
+
+```
+
+
+## Algoritmo *Chain-Ladder*
+
+- Por enquanto, não vamos considerar nenhum desenvolvimento após o ano 7. Assim, fixamos o último fator de desenvolvimento (*tail factor*) como 1.
+
+```{r}
+tail <- 1   # último fator de desenvolvimento
+(f <- c(f, tail))
+
+```
+
+
+## Algoritmo *Chain-Ladder*
+
+- <span class="black">**2º passo:**</span> Aplicar os fatores $f_k$ ao último pagamento acumulado de cada linha ($C_{i,n-i+1}$) para produzir as **previsões** de pagamentos para os anos futuros.
+
+$$\hat{C}_{i,k+1} = f_k \cdot \hat{C}_{i,k} $$
+
+começando por $\hat{C}_{i, n-i+1} = C_{i,n-i+1}$
+
+
+## Algoritmo *Chain-Ladder*
+
+```{r}
+## completando o triângulo
+full.triangle <- cum.triangle
+for(k in 1:(n-1)){
+  full.triangle[(n-k+1):n, k+1] <- full.triangle[(n-k+1):n,k]*f[k]
+}
+full.triangle
+
+```
+
+
+## Algoritmo *Chain-Ladder*
+
+- A última coluna contém o total de pagamentos previstos:
+
+```{r}
+## total de pagamentos previstos
+(ultimate.paid <- full.triangle[,n])
+
+```
+
+
+## Algoritmo *Chain-Ladder*
+
+- O produto cumulativo dos fatores de desenvolvimento fornece os fatores totais aplicados ao último valor observado até o final ("*Loss Development Factors*"): 
+
+```{r}
+## fatores de desenvolvimento totais
+(ldf <- rev(cumprod(rev(f))))
+
+```
+
+- O inverso dos fatores totais são a proporção do total de indenizações que foram "desenvolvidas" (estimadas) até o final:
+
+```{r}
+## proporção de indenizações estimadas
+(dev.pattern <- 1/ldf)
+
+```
+
+
+## Algoritmo *Chain-Ladder*
+
+- A <span class="blue3">**Reserva**</span> total estimada é:
+
+```{r}
+## reserva
+(reserve <- sum (latest.paid * (ldf - 1)))
+
+sum(ultimate.paid - latest.paid)
+
+```
+
+
+
+
+
+
+[//]: # ##########################################################
+[//]: # Para gerar arquivo com apenas os comandos do R desta aula
+```{r include=FALSE, purl=FALSE}
+# gerar arquivo com comandos do R
+purl(input=paste0(file_name,".Rmd"),
+     output=paste0("../labs/",file_name,".R"),
+     documentation=0, encoding='UTF-8')
+# Saída: 'filename.R' com apenas o código extraído do arquivo original
+# Opções: documentation=1 inclui o texto no título dos chunks
+# Para excluir um chunk do arquivo final, incluir a opção purl=FALSE no cabeçalho do chunk
+```
+
+
+

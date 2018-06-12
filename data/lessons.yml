@@ -114,6 +114,8 @@ lessons:
     lab: "21-tarifacao_pt2.R"
   - date: "13/06/18"
     title: "Ramo Não-Vida: métodos determinísticos para cálculo de reservas"
+    slides: "22-nao_vida_reservas.html"
+    lab: "22-nao_vida_reservas.R"
   - date: "18/06/18"
     title: "Ramo Não-Vida: métodos estocásticos para cálculo de reservas"
   - date: "20/06/18"
