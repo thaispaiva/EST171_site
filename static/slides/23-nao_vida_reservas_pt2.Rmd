@@ -1,0 +1,593 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "18 de junho de 2018"
+subtitle: "23 - Ramo Não-Vida: reservas (parte 2)"
+
+output:
+  ioslides_presentation:
+    css: my.css
+    highlight: pygments
+    logo: img/logo_ufmg.png
+    widescreen: true
+    self_contained: false
+    lib_dir: libs
+  beamer_presentation:
+    highlight: pygments
+
+header-includes: \usepackage{amsmath, amsfonts, bm}
+---
+
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
+
+```{r echo=FALSE}
+## EST171 - Métodos Computacionais para Análise de Risco
+## Código da aula 23 - Ramo Não-Vida (reservas) - parte 2
+
+```
+
+```{r echo=FALSE, purl=FALSE}
+file_name = "23-nao_vida_reservas_pt2"
+```
+
+
+
+## Aula de Hoje
+
+- Métodos estocásticos para cálculo de reserva
+
+  + *Chain-Ladder* como Regressão Linear
+  
+  + Método *Mack*
+  
+  + Modelo de Regressão de Poisson
+  
+  + Modelo Quasi-Poisson
+  
+  + *Bootstrap Chain-Ladder*
+
+
+## Cálculo de Reserva
+
+- Vimos na aula passada que o cálculo de reservas para seguros do ramo não-vida é baseado na análise de dados históricos.
+
+- Além disso, na operação dos pagamentos de indenizações observamos um *período de desenvolvimento*: tempo entre a ocorrência de um sinistro e a efetivação do pagamento pela seguradora.
+
+- Por isso é importante criar reservas e provisões para pagar as indenizações de eventos que já ocorreram mas ainda não foram avisados/pagos.
+
+
+## Cálculo de Reserva
+
+- O método mais básico para calcular reservas é o <span class="blue3">*Chain-Ladder*</span>. É um método determinístico baseado em **triângulos de desenvolvimento**, que assume que os fatores de desenvolvimento são os mesmos para todos os anos.
+
+- Como as provisões representam uma grande parte do passivo da seguradora, é importante estimar bem não só o seu valor esperado, mas também a variabilidade da reserva.
+
+- Por isso, vamos ver como estimar a reserva através de **métodos estocásticos**.
+
+
+# Métodos estocásticos para cálculo de reserva
+
+
+## Métodos estocásticos para cálculo de reserva
+
+- Vários métodos tem sido desenvolvidos para estimar reservas através de uma abordagem estocástica.
+
+- A ideia principal é tratar os dados observados como *uma realização* de uma variável aleatória.
+
+- Os modelos estatísticos permitem fazer testes de hipóteses, avaliar suposições de distribuição, e monitorar a diferença entre os valores de desenvolvimento reais e os esperados.
+
+- Vamos ver alguns modelos que estendem o método *Chain-Ladder*, e depois outras alternativas.
+
+
+## *Chain-Ladder* como Regressão Linear
+
+- Alguns autores propuseram considerar os fatores de desenvolvimento do método clássico *Chain-Ladder* como coeficientes de uma regressão passando pela origem.
+
+- Seja $C_{\cdot,\,k}$ a $k$-ésima coluna do triângulo acumulado.
+
+
+# *Chain-Ladder* como Regressão Linear
+
+
+## *Chain-Ladder* como Regressão Linear
+
+- Podemos ver o algoritmo *Chain-Ladder* como:
+
+$$C_{\cdot,\,k+1} = f_k.C_{\cdot,\,k} + \varepsilon_k \quad \mbox{com}\quad \varepsilon_k \sim N\left(0, \sigma^2_k\,. {C}^{\delta}_{\cdot,\,k} \right) $$
+- O parâmetro $f_k$ descreve a inclinação da reta passando pela origem dos pontos $[C_{\cdot,\,k}, C_{\cdot,\, k+1}]$, e $\delta$ como parâmetro de ponderação.
+
+  + $\delta=0$: regressão usual com intercepto 0;
+  + $\delta=1$: *chain ladder* com razões ano a ano;
+  + $\delta=2$: médias das razões individuais.
+  
+  
+## *Chain-Ladder* como Regressão Linear
+
+- Vamos ilustrar esses diferentes modelos com os dados da última aula.
+
+- Primeiro, vamos acrescentar colunas aos dados originais para que os pagamentos do período corrente e o seguinte estejam lado a lado. Vamos acrescentar também uma coluna com o período de desenvolvimento como fator.
+
+```{r echo=FALSE}
+## Dados de pagamentos de indenizações - Seguros contra terceiros U.K.
+n <- 7
+Claims <- data.frame(originf = factor(rep(2007:2013, n:1)),
+                     dev = sequence(n:1),
+                     inc.paid = c(3511, 3215, 2266, 1712, 1059,  587,
+                                   340, 4001, 3702, 2278, 1180,  956,
+                                   629, 4355, 3932, 1946, 1522, 1238,
+                                  4295, 3455, 2023, 1320, 4150, 3747,
+                                  2320, 5102, 4548, 6283))
+
+## transformando em triângulo de desenvolvimento
+inc.triangle <- with(Claims, {
+  M <- matrix(nrow=n, ncol=n,
+              dimnames=list(origin=levels(originf), dev=1:n))
+  M[cbind(originf, dev)] <- inc.paid
+  M
+})
+
+## triângulo acumulado
+cum.triangle <- t(apply(inc.triangle, 1, cumsum))
+
+## pagamentos acumulados
+Claims$cum.paid <- cum.triangle[with(Claims, cbind(originf, dev))]
+
+```
+
+```{r}
+names(Claims)[3:4] <- c("inc.paid.k", "cum.paid.k")
+ids <- with(Claims, cbind(originf, dev))
+
+## acrescentando os pagamentos do período k+1
+Claims <- within(Claims,{
+  cum.paid.kp1 <- cbind(cum.triangle[,-1], NA)[ids]
+  inc.paid.kp1 <- cbind(inc.triangle[,-1], NA)[ids]
+  devf <- factor(dev)
+})
+
+```
+
+
+## *Chain-Ladder* como Regressão Linear
+
+```{r}
+head(Claims)
+tail(Claims)
+
+```
+
+
+## *Chain-Ladder* como Regressão Linear
+
+- Agora vamos aplicar o modelo de regressão para cada período de desenvolvimento, para os diferentes parâmetros de ponderação.
+
+```{r}
+## modelos de regressão Chain Ladder
+delta <- 0:2
+ATA <- sapply(delta, function(d)
+  coef(lm(cum.paid.kp1 ~ 0 + cum.paid.k : devf, weights=1/cum.paid.k^d, data=Claims))
+)
+dimnames(ATA)[[2]] <- paste("Delta = ", delta)
+
+```
+
+
+## *Chain-Ladder* como Regressão Linear
+
+```{r}
+ATA
+
+```
+
+- Os coeficientes coincidem com os que já tínhamos estimado com o modelo básico.
+
+
+## 
+
+```{r echo=FALSE, message=FALSE, fig.align='center', out.width="100%"}
+## gráfico do resultado dos modelos
+require(lattice)
+xyplot(cum.paid.kp1 ~ cum.paid.k | devf,
+       data=subset(Claims, dev < (n-1)), main="Age-to-age developments", as.table=TRUE,
+       scales=list(relation="free"), key=list(columns=2, lines=list(lty=1:4, type="l"),
+         text=list(lab=c("lm(y ~ x)","lm(y ~ 0 + x)","lm(y ~ 0 + x, w=1/x)","lm(y ~ 0 + x, w=1/x^2)"))),
+       panel=function(x,y,...){panel.xyplot(x,y,...)
+         if(length(x)>1){
+           panel.abline(lm(y ~ x), lty=1)
+           panel.abline(lm(y ~ 0 + x), lty=2)
+           panel.abline(lm(y ~ 0 + x, weights=1/x), lty=3)
+           panel.abline(lm(y ~ 0 + x, , weights=1/x^2), lty=4)
+         }
+       })
+
+```
+
+
+# Método *Mack*
+
+
+## Método *Mack*
+
+- Mack (1993, 1999) propôs um modelo para estimar a média e o desvio-padrão da previsão do *Chain-Ladder*, sem precisar assumir nenhuma distribuição de probabilidade.
+
+- Esse modelo é válido sob três condições:
+
+1) $\mathbb{E}(F_{ik}| C_{i,1},\dots,C_{i,k}) = f_k$ com $F_{i,k} = \frac{C_{i,k+1}}{C_{i,k}}$;
+
+2) $Var(F_{i,k}|C_{i,1},\dots,C_{i,k}) = \frac{\sigma^2}{w_{ik}.\,C_{ik}^{\alpha}}$;
+
+3) $\{C_{i,1},\dots,C_{i,n}\},\{C_{j,1},\dots,C_{j,n}\}$ são independentes para $i\neq j$;
+
+com $w_{ik} \in [0;1]$, $\alpha \in \{0,1,2\}$ sendo que $\alpha=2-\delta$.
+
+
+## Método *Mack*
+
+- O modelo *Mack* assume que os fatores para cada período de desenvolvimento são constantes para todos os períodos de origem (condição 1), qye a volatilidade decresce à medida que os pagamentos são feitos (condição 2), e todos os períodos de origem são independentes e não há mudança estrutural ou sazonalidade (condição 3).
+
+- Se essas condições são válidas, o modelo fornece um estimador não-enviesado para os pagamentos futuros. $\hat{f}_k$ é um estimador não viciado para $f_k$:
+
+$$\hat{f}_k = \frac{\sum_{i=1}^{n-k} w_{ik}\,. C^{\alpha}_{i,k} \,. F_{i,k}}{\sum_{i=1}^{n-k} w_{ik} \,. C^{\alpha}_{i,k} } $$
+
+
+## Método *Mack*
+
+- Assim, um estimador não-enviesado para $\mathbb{E}(C_{i,k}|C_{i,1},\dots,C_{i,n-i+1})$ é:
+
+$$\hat{C}_{i,k} = \hat{f}_{n-i} \cdot \hat{f}_{n-i+1} \cdots \hat{f}_{k-2} \cdot \left( \hat{f}_{k-1} - 1\right) \cdot C_{i, n-i+1} $$
+
+- Se $\alpha=1$ e $w_{i,k}=1$, então:
+
+$$\hat{\sigma}^2_k = \frac{1}{n-k-1} \sum_{i=1}^{n-k} \left( F_{i,k} - \hat{f}_k \right)^2 \cdot C_{i,k} $$
+
+é um estimador não-enviesado para $\sigma^2_k$.
+
+
+## Método *Mack*
+
+- Na Seção 16.4.2, temos outras fórmulas para estimar o erro médio quadrático da reserva estimada, e outros termos.
+
+- Essas fórmulas estão implementadas no pacote `ChainLadder` com a função `MackChainLadder`. Para ver mais detalhes sobre a implementação, veja a descrição da função.
+
+
+```{r echo=FALSE, message=FALSE}
+
+## Método Mack
+require(ChainLadder)
+```
+
+
+## 
+
+```{r}
+(mack <- MackChainLadder(cum.triangle, weights=1, alpha=1, est.sigma="Mack"))
+
+```
+
+
+## Método *Mack*
+
+- A saída da função fornece várias estatísticas do modelo *Mack*, como a previsão dos pagamentos futuros (IBNR) e o erro quadrático médio, para cada período de origem e também o total. 
+
+- A saída também inclui o CV (Coeficiente de Variação $\sigma/\mu$), que mede a porcentagem do erro médio em relação à reserva estimada.
+
+
+## 
+
+```{r echo=FALSE, fig.align='center', out.width="100%"}
+## gráfico dos valores estimados - modelo Mack
+plot(mack, lattice=TRUE, layout=c(4,2))
+
+```
+
+
+## Método *Mack*
+
+```{r echo=FALSE, fig.align='center', out.height="100%"}
+## gráfico dos resíduos 
+plot(mack)
+
+```
+
+
+# Modelo de Regressão de Poisson
+
+
+## Modelo de Regressão de Poisson
+
+- Alguns autores examinaram a possibilidade de tratar os pagamentos incrementais como variáveis aleatórias de Poisson, o que resulta na mesma previsão que o método de *Chain-Ladder*.
+
+- A ideia é considerar que os pagamentos incrementais $X_{ij}$ tem distribuição de Poisson, dado o período de origem $a_i$, período de desenvolvimento $b_j$, com intercepto $c$ e restrições $a_1=0,\, b_1=0$:
+
+$$\log \mathbb{E}(X_{ij}) = \eta_{ij} = c + a_i + b_j $$
+
+
+## Modelo de Regressão de Poisson
+
+- O modelo de Poisson pode ser implementado diretamente com a função `glm`:
+
+```{r}
+
+## Modelo de Regressão de Poisson
+preg <- glm(inc.paid.k ~ originf + devf,
+            data=Claims, family=poisson(link = "log"))
+
+```
+
+
+## {.smaller}
+
+```{r echo=FALSE}
+summary(preg)
+
+```
+
+
+## Modelo de Regressão de Poisson
+
+- Prevendo os pagamentos incrementais:
+
+```{r}
+## criando a matriz para guardar os 
+allClaims <- data.frame(origin = sort(rep(2007:2013, n)),
+                        dev = rep(1:n,n))
+allClaims <- within(allClaims, {
+  devf <- factor(dev)
+  cal <- origin + dev - 1
+  originf <- factor(origin)
+})
+
+## completando o triângulo
+pred.inc.tri <- t(matrix(predict(preg,type="response",
+                                 newdata=allClaims), n, n))
+
+```
+
+
+## Modelo de Regressão de Poisson
+
+```{r}
+pred.inc.tri
+
+```
+
+
+## Modelo de Regressão de Poisson
+
+- O total das reservas é igual ao obtido ao método *Chain-Ladder* básico:
+
+```{r}
+## reserva
+sum(predict(preg,type="response", newdata=subset(allClaims, cal > 2013)))
+
+```
+
+```{r}
+## fatores de desenvolvimento
+df <- c(0, coef(preg)[(n+1):(2*n-1)])
+sapply(2:7, function(i) sum(exp(df[1:i]))/sum(exp(df[1:(i-1)])))
+
+```
+
+
+## Modelo de Regressão de Poisson
+
+- A limitação do modelo de Poisson é o problema de superdispersão.
+
+```{r message=FALSE}
+## testando super-dispersão
+require(AER)
+dispersiontest(preg)
+
+```
+
+- Nesse caso, um modelo quasi-Poisson deve ser investigado.
+
+
+# Modelo Quasi-Poisson
+
+
+## Modelo Quasi-Poisson
+
+- Com um modelo de regressão de Poisson e função de ligação logarítmica, temos que:
+
+$$\mathbb{E}(X_{i,j}) = \mu_{i,j} = \exp(\eta_{ij}) \qquad\quad \hat{\mu}_{ij} = \exp(\hat{\eta}_{ij}) $$
+
+- Podemos aproximar a variância como:
+
+$$Var(\hat{x}_{ij}) \approx \left| \frac{\partial \mu_{i,j}}{\partial \eta_{i,j}} \right|^2 \cdot Var(\hat{\eta}_{i,j}) \qquad \mbox{onde } \frac{\partial \mu_{i,j}}{\partial \eta_{i,j}} = \mu_{i,j} $$
+
+- Assim, o erro quadrático médio da **reserva** é dado por:
+
+$$\mathbb{E}\left( [R - \hat{R}]^2 \right) \approx \left( \sum_{i+j>n+1}\hat{\phi} \,\cdot \hat{\mu}_{i,j} \right) + \hat{\boldsymbol \mu}' \,\cdot \hat{Var}(\hat{\boldsymbol \eta})\,\cdot \hat{\boldsymbol \mu}$$
+
+
+## Modelo Quasi-Poisson
+
+- Podemos então, ajustar esse modelo Quasi-Poisson:
+
+```{r}
+
+## Modelo Quasi-Poisson
+odpreg <- glm(inc.paid.k ~ originf + devf, data=Claims,
+              family=quasipoisson)
+
+```
+
+
+## {.smaller}
+
+```{r echo=FALSE}
+summary(odpreg)
+
+```
+
+
+## Modelo Quasi-Poisson
+
+- Os coeficientes são os mesmos do modelo Poisson, mas o parâmetro de dispersão é 21,6.
+
+
+## Modelo Quasi-Poisson
+
+```{r echo=FALSE, fig.align='center', out.height="100%", message=FALSE, warning=FALSE}
+## gráfico de resíduos
+op <- par(mfrow=c(2,2), oma = c(0, 0, 3, 0))
+plot(preg)
+par(op)
+
+```
+
+
+## Modelo Quasi-Poisson
+
+- Os gráficos de resíduos parecem razoáveis, porém o R alerta sobre dois pontos (7 e 28) com alto valor de influência (*leverage* > 1).
+
+- Essas linhas se referem aos períodos de desenvolvimento 2 e 1 para os anos de origem 2009 e 2013, respectivamente. 
+
+- Realmente, esses dois pagamentos são consideravelmente mais altos do que os dos anos anteriores. Portanto, deve-se investigar mais a fundo essas observações.
+
+
+## Modelo Quasi-Poisson
+
+- Outros modelos mais generalizados podem ser encontrados na função `glmReserve` do pacote `ChainLadder`. Através do período de origem e o período de desenvolvimento, a função estima as reservas e implementa métodos analíticos e de *bootstrap* para calcular os erros.
+
+```{r}
+(odp <- glmReserve(as.triangle(inc.triangle), var.power=1, cum=FALSE))
+
+```
+
+
+## Cálculo de Reservas com MLG
+
+- O uso de Modelos Lineares Generalizados para o cálculo de reservas tem algumas vantagens:
+
+  + O modelo Poisson com super-dispersão reproduz as estimativas do método *Chain-Ladder*;
+  
+  + Fornece uma modelagem mais coerente do que o método *Mack*;
+  
+  + Pode-se usar toda a teoria estatística já bem estabelecida para fazer teste de hipóteses e teste de diagnóstico.
+  
+
+## Cálculo de Reservas com MLG
+
+- No entanto, deve-se estar atento a alguns pontos:
+
+  + O MLG assume que não há desenvolvimento além da "cauda", e projeta os pagamentos apenas até o tempo do último dado observado. Para considerar desenvolvimento além da "cauda", olhar modelos `ClarkLDF` ou `ClarkCapeCod` no pacote `ChainLadder`.
+  
+  + O modelo assume que os incrementos são independentes. Essa suposição pode não ser válida, por exemplo para observações dentro de uma mesmo ano-calendário que podem ser correlacionadas devido a inflação ou outros fatores externos.
+  
+  + O modelo tende a ser super-parametrizado (parâmetros demais), o que pode levar a uma performance preditiva inferior.
+  
+
+# *Bootstrap Chain-Ladder*
+
+
+## *Bootstrap Chain-Ladder*
+
+- O método de cálculo de reservas *Bootstrap Chain-Ladder* é uma alternativa aos modelos assintóticos que vimos antes.
+
+- <span class="black">**1º passo:**</span> Ajustar um Modelo Quasi-Poisson (resultados iguais ao *Chain-Ladder*) ao triângulo de desenvolvimento para prever os futuros pagamentos. A partir desse modelo, os resíduos de Pearson são calculados. Os resíduos são então amostrados com o método *Bootstrap* para simular novos triângulos.
+
+- <span class="black">**2º passo:**</span> O erro do processo é estimado com a média dos valores obtidos pelo *Bootstrap* e supondo uma distribuição Quasi-Poisson. A amostra obtida fornece uma estimativa para a distribuição preditiva da reserva, que pode ser usada para obter estatísticas descritivas, erros de predição, quantis, etc.
+
+
+## *Bootstrap Chain-Ladder*
+
+- As fórmulas dos resíduos e mais detalhes do método estão na Seção 16.4.4.
+
+- O método está implementado na função `BootChainLadder` no pacote `ChainLadder`.
+
+```{r}
+
+## Bootstrap Chain-Ladder
+set.seed(1)
+B <- BootChainLadder(cum.triangle, R=1000, process.distr="od.pois")
+```
+
+
+## *Bootstrap Chain-Ladder*
+
+```{r echo=FALSE}
+B
+
+```
+
+
+##
+
+```{r echo=FALSE, fig.align='center', out.width="100%"}
+plot(B)
+
+```
+
+
+## *Bootstrap Chain-Ladder*
+
+- Os dois primeiros momentos são iguais aos estimados pelo modelo Poisson. 
+
+- No entanto, diferentemente do modelo *Mack*, temos, além dois primeiros momentos, os quantis da distribuição da reserva.
+
+
+## *Bootstrap Chain-Ladder*
+
+```{r}
+quantile(B, c(0.75,0.95,0.99,0.995))
+
+```
+
+
+## *Bootstrap Chain-Ladder*
+
+- Como temos acesso a todos os triângulos simulados, podemos também estimar percentis para pagamentos a serem feitos no próximo ano. 
+
+- Por exemplo, para encontrar o percentil de 99,5% dos pagamentos do próximo ano:
+
+```{r}
+ny <- (col(inc.triangle) == (nrow(inc.triangle) - row(inc.triangle) + 2))
+paid.ny <- apply(B$IBNR.Triangles, 3,
+                 function(x){next.year.paid <- x[col(x) == (nrow(x) - row(x) + 2)]
+                             sum(next.year.paid) })
+paid.ny.995 <- B$IBNR.Triangles[,,order(paid.ny)[round(B$R*0.995)]]
+inc.triangle.ny <- inc.triangle
+
+```
+
+
+## *Bootstrap Chain-Ladder*
+
+```{r}
+(inc.triangle.ny[ny] <- paid.ny.995[ny])
+
+```
+
+- Somando esses pagamentos e dividindo pelo total da reserva, esse cenário implicaria em uma utilização de 49% da reserva no próximo ano.
+
+
+## Outros métodos
+
+- O valor dos pagamentos incrementais pode ser ajustado com um modelo de regressão log-normal (Seção 16.4.5).
+
+- O modelo incorpora efeitos diferentes para ano de origem, tempo de desenvolvimento e ano de pagamento.
+
+- O ajuste desse modelo permite analisar se há efeitos significativos para cada um dos períodos, e mensurar esses efeitos. Além disso, permite fazer predição para períodos futuros.
+
+
+
+[//]: # ##########################################################
+[//]: # Para gerar arquivo com apenas os comandos do R desta aula
+```{r include=FALSE, purl=FALSE}
+# gerar arquivo com comandos do R
+purl(input=paste0(file_name,".Rmd"),
+     output=paste0("../labs/",file_name,".R"),
+     documentation=0, encoding='UTF-8')
+# Saída: 'filename.R' com apenas o código extraído do arquivo original
+# Opções: documentation=1 inclui o texto no título dos chunks
+# Para excluir um chunk do arquivo final, incluir a opção purl=FALSE no cabeçalho do chunk
+```
+
+
+

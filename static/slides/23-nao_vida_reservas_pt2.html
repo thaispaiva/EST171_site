@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Métodos Computacionais para Análise de Risco</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="generator" content="pandoc" />
+
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <base target="_blank">
+
+  <script type="text/javascript">
+    var SLIDE_CONFIG = {
+      // Slide settings
+      settings: {
+                title: 'Métodos Computacionais para Análise de Risco',
+                        subtitle: '23 - Ramo Não-Vida: reservas (parte 2)',
+                useBuilds: true,
+        usePrettify: true,
+        enableSlideAreas: true,
+        enableTouch: true,
+                        favIcon: '23-nao_vida_reservas_pt2_files/logo.png',
+              },
+
+      // Author information
+      presenters: [
+            {
+        name:  'Prof.: Thais Paiva' ,
+        company: '',
+        gplus: '',
+        twitter: '',
+        www: '',
+        github: ''
+      },
+            ]
+    };
+  </script>
+
+  <link href="libs/ioslides-13.5.1/fonts/fonts.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/default.css" rel="stylesheet" />
+  <link href="libs/ioslides-13.5.1/theme/css/phone.css" rel="stylesheet" />
+  <script src="libs/ioslides-13.5.1/js/modernizr.custom.45394.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/prettify.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-r.js"></script>
+  <script src="libs/ioslides-13.5.1/js/prettify/lang-yaml.js"></script>
+  <script src="libs/ioslides-13.5.1/js/hammer.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-controller.js"></script>
+  <script src="libs/ioslides-13.5.1/js/slide-deck.js"></script>
+
+  <style type="text/css">
+
+    b, strong {
+      font-weight: bold;
+    }
+
+    em {
+      font-style: italic;
+    }
+
+    slides > slide {
+      -webkit-transition: all 0.4s ease-in-out;
+      -moz-transition: all 0.4s ease-in-out;
+      -o-transition: all 0.4s ease-in-out;
+      transition: all 0.4s ease-in-out;
+    }
+
+    .auto-fadein {
+      -webkit-transition: opacity 0.6s ease-in;
+      -webkit-transition-delay: 0.4s;
+      -moz-transition: opacity 0.6s ease-in 0.4s;
+      -o-transition: opacity 0.6s ease-in 0.4s;
+      transition: opacity 0.6s ease-in 0.4s;
+      opacity: 0;
+    }
+
+    slides > slide:not(.nobackground):before {
+      font-size: 12pt;
+      content: "";
+      position: absolute;
+      bottom: 20px;
+      left: 60px;
+      background: url(23-nao_vida_reservas_pt2_files/logo.png) no-repeat 0 50%;
+      -webkit-background-size: 30px 30px;
+      -moz-background-size: 30px 30px;
+      -o-background-size: 30px 30px;
+      background-size: 30px 30px;
+      padding-left: 40px;
+      height: 30px;
+      line-height: 1.9;
+    }
+  </style>
+
+  <link rel="stylesheet" href="my.css" type="text/css" />
+
+</head>
+
+<body style="opacity: 0">
+
+<slides class="layout-widescreen">
+
+  <slide class="title-slide segue nobackground">
+        <aside class="gdbar"><img src="23-nao_vida_reservas_pt2_files/logo.png"></aside>
+        <!-- The content of this hgroup is replaced programmatically through the slide_config.json. -->
+    <hgroup class="auto-fadein">
+      <h1 data-config-title><!-- populated from slide_config.json --></h1>
+      <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
+      <p data-config-presenter><!-- populated from slide_config.json --></p>
+            <p style="margin-top: 6px; margin-left: -2px;">18 de junho de 2018</p>
+          </hgroup>
+  </slide>
+
+<slide class=""><hgroup><h2>Aula de Hoje</h2></hgroup><article  id="aula-de-hoje">
+
+<ul>
+<li><p>Métodos estocásticos para cálculo de reserva</p>
+
+<ul>
+<li><p><em>Chain-Ladder</em> como Regressão Linear</p></li>
+<li><p>Método <em>Mack</em></p></li>
+<li><p>Modelo de Regressão de Poisson</p></li>
+<li><p>Modelo Quasi-Poisson</p></li>
+<li><p><em>Bootstrap Chain-Ladder</em></p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Cálculo de Reserva</h2></hgroup><article  id="calculo-de-reserva">
+
+<ul>
+<li><p>Vimos na aula passada que o cálculo de reservas para seguros do ramo não-vida é baseado na análise de dados históricos.</p></li>
+<li><p>Além disso, na operação dos pagamentos de indenizações observamos um <em>período de desenvolvimento</em>: tempo entre a ocorrência de um sinistro e a efetivação do pagamento pela seguradora.</p></li>
+<li><p>Por isso é importante criar reservas e provisões para pagar as indenizações de eventos que já ocorreram mas ainda não foram avisados/pagos.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Cálculo de Reserva</h2></hgroup><article  id="calculo-de-reserva-1">
+
+<ul>
+<li><p>O método mais básico para calcular reservas é o <span class="blue3">
+<em>Chain-Ladder</em></span>. É um método determinístico baseado em <strong>triângulos de desenvolvimento</strong>, que assume que os fatores de desenvolvimento são os mesmos para todos os anos.</p></li>
+<li><p>Como as provisões representam uma grande parte do passivo da seguradora, é importante estimar bem não só o seu valor esperado, mas também a variabilidade da reserva.</p></li>
+<li><p>Por isso, vamos ver como estimar a reserva através de <strong>métodos estocásticos</strong>.</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Métodos estocásticos para cálculo de reserva</h2></hgroup><article  id="metodos-estocasticos-para-calculo-de-reserva">
+
+</article></slide><slide class=""><hgroup><h2>Métodos estocásticos para cálculo de reserva</h2></hgroup><article  id="metodos-estocasticos-para-calculo-de-reserva-1">
+
+<ul>
+<li><p>Vários métodos tem sido desenvolvidos para estimar reservas através de uma abordagem estocástica.</p></li>
+<li><p>A ideia principal é tratar os dados observados como <em>uma realização</em> de uma variável aleatória.</p></li>
+<li><p>Os modelos estatísticos permitem fazer testes de hipóteses, avaliar suposições de distribuição, e monitorar a diferença entre os valores de desenvolvimento reais e os esperados.</p></li>
+<li><p>Vamos ver alguns modelos que estendem o método <em>Chain-Ladder</em>, e depois outras alternativas.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><em>Chain-Ladder</em> como Regressão Linear</h2></hgroup><article  id="chain-ladder-como-regressao-linear">
+
+<ul>
+<li><p>Alguns autores propuseram considerar os fatores de desenvolvimento do método clássico <em>Chain-Ladder</em> como coeficientes de uma regressão passando pela origem.</p></li>
+<li><p>Seja \(C_{\cdot,\,k}\) a \(k\)-ésima coluna do triângulo acumulado.</p></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2><em>Chain-Ladder</em> como Regressão Linear</h2></hgroup><article  id="chain-ladder-como-regressao-linear-1">
+
+</article></slide><slide class=""><hgroup><h2><em>Chain-Ladder</em> como Regressão Linear</h2></hgroup><article  id="chain-ladder-como-regressao-linear-2">
+
+<ul>
+<li>Podemos ver o algoritmo <em>Chain-Ladder</em> como:</li>
+</ul>
+
+<p>\[C_{\cdot,\,k+1} = f_k.C_{\cdot,\,k} + \varepsilon_k \quad \mbox{com}\quad \varepsilon_k \sim N\left(0, \sigma^2_k\,. {C}^{\delta}_{\cdot,\,k} \right) \] - O parâmetro \(f_k\) descreve a inclinação da reta passando pela origem dos pontos \([C_{\cdot,\,k}, C_{\cdot,\, k+1}]\), e \(\delta\) como parâmetro de ponderação.</p>
+
+<ul>
+<li>\(\delta=0\): regressão usual com intercepto 0;</li>
+<li>\(\delta=1\): <em>chain ladder</em> com razões ano a ano;</li>
+<li>\(\delta=2\): médias das razões individuais.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><em>Chain-Ladder</em> como Regressão Linear</h2></hgroup><article  id="chain-ladder-como-regressao-linear-3">
+
+<ul>
+<li><p>Vamos ilustrar esses diferentes modelos com os dados da última aula.</p></li>
+<li><p>Primeiro, vamos acrescentar colunas aos dados originais para que os pagamentos do período corrente e o seguinte estejam lado a lado. Vamos acrescentar também uma coluna com o período de desenvolvimento como fator.</p></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>names(Claims)[3:4] &lt;- c(&quot;inc.paid.k&quot;, &quot;cum.paid.k&quot;)
+ids &lt;- with(Claims, cbind(originf, dev))
+
+## acrescentando os pagamentos do período k+1
+Claims &lt;- within(Claims,{
+  cum.paid.kp1 &lt;- cbind(cum.triangle[,-1], NA)[ids]
+  inc.paid.kp1 &lt;- cbind(inc.triangle[,-1], NA)[ids]
+  devf &lt;- factor(dev)
+})</pre>
+
+</article></slide><slide class=""><hgroup><h2><em>Chain-Ladder</em> como Regressão Linear</h2></hgroup><article  id="chain-ladder-como-regressao-linear-4">
+
+<pre class = 'prettyprint lang-r'>head(Claims)</pre>
+
+<pre >##   originf dev inc.paid.k cum.paid.k devf inc.paid.kp1 cum.paid.kp1
+## 1    2007   1       3511       3511    1         3215         6726
+## 2    2007   2       3215       6726    2         2266         8992
+## 3    2007   3       2266       8992    3         1712        10704
+## 4    2007   4       1712      10704    4         1059        11763
+## 5    2007   5       1059      11763    5          587        12350
+## 6    2007   6        587      12350    6          340        12690</pre>
+
+<pre class = 'prettyprint lang-r'>tail(Claims)</pre>
+
+<pre >##    originf dev inc.paid.k cum.paid.k devf inc.paid.kp1 cum.paid.kp1
+## 23    2011   1       4150       4150    1         3747         7897
+## 24    2011   2       3747       7897    2         2320        10217
+## 25    2011   3       2320      10217    3           NA           NA
+## 26    2012   1       5102       5102    1         4548         9650
+## 27    2012   2       4548       9650    2           NA           NA
+## 28    2013   1       6283       6283    1           NA           NA</pre>
+
+</article></slide><slide class=""><hgroup><h2><em>Chain-Ladder</em> como Regressão Linear</h2></hgroup><article  id="chain-ladder-como-regressao-linear-5">
+
+<ul>
+<li>Agora vamos aplicar o modelo de regressão para cada período de desenvolvimento, para os diferentes parâmetros de ponderação.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## modelos de regressão Chain Ladder
+delta &lt;- 0:2
+ATA &lt;- sapply(delta, function(d)
+  coef(lm(cum.paid.kp1 ~ 0 + cum.paid.k : devf, weights=1/cum.paid.k^d, data=Claims))
+)
+dimnames(ATA)[[2]] &lt;- paste(&quot;Delta = &quot;, delta)</pre>
+
+</article></slide><slide class=""><hgroup><h2><em>Chain-Ladder</em> como Regressão Linear</h2></hgroup><article  id="chain-ladder-como-regressao-linear-6">
+
+<pre class = 'prettyprint lang-r'>ATA</pre>
+
+<pre >##                  Delta =  0 Delta =  1 Delta =  2
+## cum.paid.k:devf1   1.888217   1.889234   1.890427
+## cum.paid.k:devf2   1.280424   1.282381   1.284454
+## cum.paid.k:devf3   1.146169   1.147105   1.148104
+## cum.paid.k:devf4   1.096888   1.096758   1.096636
+## cum.paid.k:devf5   1.050936   1.050921   1.050906
+## cum.paid.k:devf6   1.027530   1.027530   1.027530</pre>
+
+<ul>
+<li>Os coeficientes coincidem com os que já tínhamos estimado com o modelo básico.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section">
+
+<p><img src="23-nao_vida_reservas_pt2_files/figure-html/unnamed-chunk-9-1.png" width="100%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Método <em>Mack</em></h2></hgroup><article  id="metodo-mack">
+
+</article></slide><slide class=""><hgroup><h2>Método <em>Mack</em></h2></hgroup><article  id="metodo-mack-1">
+
+<ul>
+<li><p>Mack (1993, 1999) propôs um modelo para estimar a média e o desvio-padrão da previsão do <em>Chain-Ladder</em>, sem precisar assumir nenhuma distribuição de probabilidade.</p></li>
+<li><p>Esse modelo é válido sob três condições:</p></li>
+</ul>
+
+<ol>
+<li><p>\(\mathbb{E}(F_{ik}| C_{i,1},\dots,C_{i,k}) = f_k\) com \(F_{i,k} = \frac{C_{i,k+1}}{C_{i,k}}\);</p></li>
+<li><p>\(Var(F_{i,k}|C_{i,1},\dots,C_{i,k}) = \frac{\sigma^2}{w_{ik}.\,C_{ik}^{\alpha}}\);</p></li>
+<li><p>\(\{C_{i,1},\dots,C_{i,n}\},\{C_{j,1},\dots,C_{j,n}\}\) são independentes para \(i\neq j\);</p></li>
+</ol>
+
+<p>com \(w_{ik} \in [0;1]\), \(\alpha \in \{0,1,2\}\) sendo que \(\alpha=2-\delta\).</p>
+
+</article></slide><slide class=""><hgroup><h2>Método <em>Mack</em></h2></hgroup><article  id="metodo-mack-2">
+
+<ul>
+<li><p>O modelo <em>Mack</em> assume que os fatores para cada período de desenvolvimento são constantes para todos os períodos de origem (condição 1), qye a volatilidade decresce à medida que os pagamentos são feitos (condição 2), e todos os períodos de origem são independentes e não há mudança estrutural ou sazonalidade (condição 3).</p></li>
+<li><p>Se essas condições são válidas, o modelo fornece um estimador não-enviesado para os pagamentos futuros. \(\hat{f}_k\) é um estimador não viciado para \(f_k\):</p></li>
+</ul>
+
+<p>\[\hat{f}_k = \frac{\sum_{i=1}^{n-k} w_{ik}\,. C^{\alpha}_{i,k} \,. F_{i,k}}{\sum_{i=1}^{n-k} w_{ik} \,. C^{\alpha}_{i,k} } \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Método <em>Mack</em></h2></hgroup><article  id="metodo-mack-3">
+
+<ul>
+<li>Assim, um estimador não-enviesado para \(\mathbb{E}(C_{i,k}|C_{i,1},\dots,C_{i,n-i+1})\) é:</li>
+</ul>
+
+<p>\[\hat{C}_{i,k} = \hat{f}_{n-i} \cdot \hat{f}_{n-i+1} \cdots \hat{f}_{k-2} \cdot \left( \hat{f}_{k-1} - 1\right) \cdot C_{i, n-i+1} \]</p>
+
+<ul>
+<li>Se \(\alpha=1\) e \(w_{i,k}=1\), então:</li>
+</ul>
+
+<p>\[\hat{\sigma}^2_k = \frac{1}{n-k-1} \sum_{i=1}^{n-k} \left( F_{i,k} - \hat{f}_k \right)^2 \cdot C_{i,k} \]</p>
+
+<p>é um estimador não-enviesado para \(\sigma^2_k\).</p>
+
+</article></slide><slide class=""><hgroup><h2>Método <em>Mack</em></h2></hgroup><article  id="metodo-mack-4">
+
+<ul>
+<li><p>Na Seção 16.4.2, temos outras fórmulas para estimar o erro médio quadrático da reserva estimada, e outros termos.</p></li>
+<li><p>Essas fórmulas estão implementadas no pacote <code>ChainLadder</code> com a função <code>MackChainLadder</code>. Para ver mais detalhes sobre a implementação, veja a descrição da função.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-1">
+
+<pre class = 'prettyprint lang-r'>(mack &lt;- MackChainLadder(cum.triangle, weights=1, alpha=1, est.sigma=&quot;Mack&quot;))</pre>
+
+<pre >## MackChainLadder(Triangle = cum.triangle, weights = 1, alpha = 1, 
+##     est.sigma = &quot;Mack&quot;)
+## 
+##      Latest Dev.To.Date Ultimate   IBNR Mack.S.E CV(IBNR)
+## 2007 12,690       1.000   12,690      0     0.00      NaN
+## 2008 12,746       0.973   13,097    351     3.62   0.0103
+## 2009 12,993       0.926   14,031  1,038    22.90   0.0221
+## 2010 11,093       0.844   13,138  2,045   141.98   0.0694
+## 2011 10,217       0.736   13,880  3,663   426.70   0.1165
+## 2012  9,650       0.574   16,812  7,162   692.39   0.0967
+## 2013  6,283       0.304   20,680 14,397   900.58   0.0626
+## 
+##               Totals
+## Latest:    75,672.00
+## Dev:            0.73
+## Ultimate: 104,327.77
+## IBNR:      28,655.77
+## Mack.S.E    1,417.27
+## CV(IBNR):       0.05</pre>
+
+</article></slide><slide class=""><hgroup><h2>Método <em>Mack</em></h2></hgroup><article  id="metodo-mack-5">
+
+<ul>
+<li><p>A saída da função fornece várias estatísticas do modelo <em>Mack</em>, como a previsão dos pagamentos futuros (IBNR) e o erro quadrático médio, para cada período de origem e também o total.</p></li>
+<li><p>A saída também inclui o CV (Coeficiente de Variação \(\sigma/\mu\)), que mede a porcentagem do erro médio em relação à reserva estimada.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-2">
+
+<p><img src="23-nao_vida_reservas_pt2_files/figure-html/unnamed-chunk-12-1.png" width="100%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Método <em>Mack</em></h2></hgroup><article  id="metodo-mack-6">
+
+<p><img src="23-nao_vida_reservas_pt2_files/figure-html/unnamed-chunk-13-1.png" width="720" height="100%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Modelo de Regressão de Poisson</h2></hgroup><article  id="modelo-de-regressao-de-poisson">
+
+</article></slide><slide class=""><hgroup><h2>Modelo de Regressão de Poisson</h2></hgroup><article  id="modelo-de-regressao-de-poisson-1">
+
+<ul>
+<li><p>Alguns autores examinaram a possibilidade de tratar os pagamentos incrementais como variáveis aleatórias de Poisson, o que resulta na mesma previsão que o método de <em>Chain-Ladder</em>.</p></li>
+<li><p>A ideia é considerar que os pagamentos incrementais \(X_{ij}\) tem distribuição de Poisson, dado o período de origem \(a_i\), período de desenvolvimento \(b_j\), com intercepto \(c\) e restrições \(a_1=0,\, b_1=0\):</p></li>
+</ul>
+
+<p>\[\log \mathbb{E}(X_{ij}) = \eta_{ij} = c + a_i + b_j \]</p>
+
+</article></slide><slide class=""><hgroup><h2>Modelo de Regressão de Poisson</h2></hgroup><article  id="modelo-de-regressao-de-poisson-2">
+
+<ul>
+<li>O modelo de Poisson pode ser implementado diretamente com a função <code>glm</code>:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Modelo de Regressão de Poisson
+preg &lt;- glm(inc.paid.k ~ originf + devf,
+            data=Claims, family=poisson(link = &quot;log&quot;))</pre>
+
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-3" class="smaller">
+
+<pre >## 
+## Call:
+## glm(formula = inc.paid.k ~ originf + devf, family = poisson(link = &quot;log&quot;), 
+##     data = Claims)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -7.0570  -1.7757   0.0356   1.6751   8.7764  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  8.257254   0.010638 776.175  &lt; 2e-16 ***
+## originf2008  0.031561   0.012626   2.500  0.01243 *  
+## originf2009  0.100422   0.012648   7.940 2.02e-15 ***
+## originf2010  0.034684   0.013258   2.616  0.00889 ** 
+## originf2011  0.089664   0.013667   6.561 5.36e-11 ***
+## originf2012  0.281288   0.014081  19.976  &lt; 2e-16 ***
+## originf2013  0.488349   0.016503  29.592  &lt; 2e-16 ***
+## devf2       -0.117395   0.009143 -12.840  &lt; 2e-16 ***
+## devf3       -0.628325   0.011700 -53.701  &lt; 2e-16 ***
+## devf4       -1.031719   0.014977 -68.886  &lt; 2e-16 ***
+## devf5       -1.313412   0.019097 -68.775  &lt; 2e-16 ***
+## devf6       -1.862984   0.029907 -62.293  &lt; 2e-16 ***
+## devf7       -2.428308   0.055266 -43.938  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 26197.85  on 27  degrees of freedom
+## Residual deviance:   322.95  on 15  degrees of freedom
+## AIC: 615.62
+## 
+## Number of Fisher Scoring iterations: 4</pre>
+
+</article></slide><slide class=""><hgroup><h2>Modelo de Regressão de Poisson</h2></hgroup><article  id="modelo-de-regressao-de-poisson-3">
+
+<ul>
+<li>Prevendo os pagamentos incrementais:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## criando a matriz para guardar os 
+allClaims &lt;- data.frame(origin = sort(rep(2007:2013, n)),
+                        dev = rep(1:n,n))
+allClaims &lt;- within(allClaims, {
+  devf &lt;- factor(dev)
+  cal &lt;- origin + dev - 1
+  originf &lt;- factor(origin)
+})
+
+## completando o triângulo
+pred.inc.tri &lt;- t(matrix(predict(preg,type=&quot;response&quot;,
+                                 newdata=allClaims), n, n))</pre>
+
+</article></slide><slide class=""><hgroup><h2>Modelo de Regressão de Poisson</h2></hgroup><article  id="modelo-de-regressao-de-poisson-4">
+
+<pre class = 'prettyprint lang-r'>pred.inc.tri</pre>
+
+<pre >##          [,1]     [,2]     [,3]     [,4]     [,5]     [,6]     [,7]
+## [1,] 3855.492 3428.436 2056.846 1374.073 1036.746 598.4061 340.0000
+## [2,] 3979.118 3538.368 2122.799 1418.133 1069.989 617.5939 350.9020
+## [3,] 4262.776 3790.607 2274.126 1519.227 1146.265 661.6201 375.9167
+## [4,] 3991.562 3549.434 2129.437 1422.568 1073.335 619.5253 351.9994
+## [5,] 4217.163 3750.046 2249.792 1502.970 1134.000 654.5405 371.8942
+## [6,] 5107.890 4542.110 2724.981 1820.420 1373.517 792.7891 450.4438
+## [7,] 6283.000 5587.059 3351.885 2239.222 1689.505 975.1765 554.0719</pre>
+
+</article></slide><slide class=""><hgroup><h2>Modelo de Regressão de Poisson</h2></hgroup><article  id="modelo-de-regressao-de-poisson-5">
+
+<ul>
+<li>O total das reservas é igual ao obtido ao método <em>Chain-Ladder</em> básico:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## reserva
+sum(predict(preg,type=&quot;response&quot;, newdata=subset(allClaims, cal &gt; 2013)))</pre>
+
+<pre >## [1] 28655.77</pre>
+
+<pre class = 'prettyprint lang-r'>## fatores de desenvolvimento
+df &lt;- c(0, coef(preg)[(n+1):(2*n-1)])
+sapply(2:7, function(i) sum(exp(df[1:i]))/sum(exp(df[1:(i-1)])))</pre>
+
+<pre >## [1] 1.889234 1.282381 1.147105 1.096758 1.050921 1.027530</pre>
+
+</article></slide><slide class=""><hgroup><h2>Modelo de Regressão de Poisson</h2></hgroup><article  id="modelo-de-regressao-de-poisson-6">
+
+<ul>
+<li>A limitação do modelo de Poisson é o problema de superdispersão.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## testando super-dispersão
+require(AER)
+dispersiontest(preg)</pre>
+
+<pre >## 
+##  Overdispersion test
+## 
+## data:  preg
+## z = 2.9661, p-value = 0.001508
+## alternative hypothesis: true dispersion is greater than 1
+## sample estimates:
+## dispersion 
+##   11.57289</pre>
+
+<ul>
+<li>Nesse caso, um modelo quasi-Poisson deve ser investigado.</li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Modelo Quasi-Poisson</h2></hgroup><article  id="modelo-quasi-poisson">
+
+</article></slide><slide class=""><hgroup><h2>Modelo Quasi-Poisson</h2></hgroup><article  id="modelo-quasi-poisson-1">
+
+<ul>
+<li>Com um modelo de regressão de Poisson e função de ligação logarítmica, temos que:</li>
+</ul>
+
+<p>\[\mathbb{E}(X_{i,j}) = \mu_{i,j} = \exp(\eta_{ij}) \qquad\quad \hat{\mu}_{ij} = \exp(\hat{\eta}_{ij}) \]</p>
+
+<ul>
+<li>Podemos aproximar a variância como:</li>
+</ul>
+
+<p>\[Var(\hat{x}_{ij}) \approx \left| \frac{\partial \mu_{i,j}}{\partial \eta_{i,j}} \right|^2 \cdot Var(\hat{\eta}_{i,j}) \qquad \mbox{onde } \frac{\partial \mu_{i,j}}{\partial \eta_{i,j}} = \mu_{i,j} \]</p>
+
+<ul>
+<li>Assim, o erro quadrático médio da <strong>reserva</strong> é dado por:</li>
+</ul>
+
+<p>\[\mathbb{E}\left( [R - \hat{R}]^2 \right) \approx \left( \sum_{i+j&gt;n+1}\hat{\phi} \,\cdot \hat{\mu}_{i,j} \right) + \hat{\boldsymbol \mu}&#39; \,\cdot \hat{Var}(\hat{\boldsymbol \eta})\,\cdot \hat{\boldsymbol \mu}\]</p>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Quasi-Poisson</h2></hgroup><article  id="modelo-quasi-poisson-2">
+
+<ul>
+<li>Podemos então, ajustar esse modelo Quasi-Poisson:</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Modelo Quasi-Poisson
+odpreg &lt;- glm(inc.paid.k ~ originf + devf, data=Claims,
+              family=quasipoisson)</pre>
+
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-4" class="smaller">
+
+<pre >## 
+## Call:
+## glm(formula = inc.paid.k ~ originf + devf, family = quasipoisson, 
+##     data = Claims)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -7.0570  -1.7757   0.0356   1.6751   8.7764  
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  8.25725    0.04945 166.994  &lt; 2e-16 ***
+## originf2008  0.03156    0.05869   0.538 0.598608    
+## originf2009  0.10042    0.05879   1.708 0.108190    
+## originf2010  0.03468    0.06162   0.563 0.581851    
+## originf2011  0.08966    0.06352   1.412 0.178503    
+## originf2012  0.28129    0.06545   4.298 0.000635 ***
+## originf2013  0.48835    0.07670   6.367 1.27e-05 ***
+## devf2       -0.11739    0.04250  -2.762 0.014518 *  
+## devf3       -0.62832    0.05438 -11.554 7.24e-09 ***
+## devf4       -1.03172    0.06961 -14.821 2.30e-10 ***
+## devf5       -1.31341    0.08876 -14.797 2.35e-10 ***
+## devf6       -1.86298    0.13900 -13.402 9.41e-10 ***
+## devf7       -2.42831    0.25687  -9.453 1.04e-07 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for quasipoisson family taken to be 21.6031)
+## 
+##     Null deviance: 26197.85  on 27  degrees of freedom
+## Residual deviance:   322.95  on 15  degrees of freedom
+## AIC: NA
+## 
+## Number of Fisher Scoring iterations: 4</pre>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Quasi-Poisson</h2></hgroup><article  id="modelo-quasi-poisson-3">
+
+<ul>
+<li>Os coeficientes são os mesmos do modelo Poisson, mas o parâmetro de dispersão é 21,6.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Quasi-Poisson</h2></hgroup><article  id="modelo-quasi-poisson-4">
+
+<p><img src="23-nao_vida_reservas_pt2_files/figure-html/unnamed-chunk-23-1.png" width="720" height="100%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Quasi-Poisson</h2></hgroup><article  id="modelo-quasi-poisson-5">
+
+<ul>
+<li><p>Os gráficos de resíduos parecem razoáveis, porém o R alerta sobre dois pontos (7 e 28) com alto valor de influência (<em>leverage</em> &gt; 1).</p></li>
+<li><p>Essas linhas se referem aos períodos de desenvolvimento 2 e 1 para os anos de origem 2009 e 2013, respectivamente.</p></li>
+<li><p>Realmente, esses dois pagamentos são consideravelmente mais altos do que os dos anos anteriores. Portanto, deve-se investigar mais a fundo essas observações.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Modelo Quasi-Poisson</h2></hgroup><article  id="modelo-quasi-poisson-6">
+
+<ul>
+<li>Outros modelos mais generalizados podem ser encontrados na função <code>glmReserve</code> do pacote <code>ChainLadder</code>. Através do período de origem e o período de desenvolvimento, a função estima as reservas e implementa métodos analíticos e de <em>bootstrap</em> para calcular os erros.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>(odp &lt;- glmReserve(as.triangle(inc.triangle), var.power=1, cum=FALSE))</pre>
+
+<pre >##       Latest Dev.To.Date Ultimate  IBNR       S.E         CV
+## 2008   12746   0.9732000    13097   351  125.8106 0.35843464
+## 2009   12993   0.9260210    14031  1038  205.0826 0.19757473
+## 2010   11093   0.8443446    13138  2045  278.8519 0.13635790
+## 2011   10217   0.7360951    13880  3663  386.7919 0.10559429
+## 2012    9650   0.5739948    16812  7162  605.2741 0.08451188
+## 2013    6283   0.3038201    20680 14397 1158.1250 0.08044210
+## total  62982   0.6872913    91638 28656 1708.1963 0.05961042</pre>
+
+</article></slide><slide class=""><hgroup><h2>Cálculo de Reservas com MLG</h2></hgroup><article  id="calculo-de-reservas-com-mlg">
+
+<ul>
+<li><p>O uso de Modelos Lineares Generalizados para o cálculo de reservas tem algumas vantagens:</p>
+
+<ul>
+<li><p>O modelo Poisson com super-dispersão reproduz as estimativas do método <em>Chain-Ladder</em>;</p></li>
+<li><p>Fornece uma modelagem mais coerente do que o método <em>Mack</em>;</p></li>
+<li><p>Pode-se usar toda a teoria estatística já bem estabelecida para fazer teste de hipóteses e teste de diagnóstico.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Cálculo de Reservas com MLG</h2></hgroup><article  id="calculo-de-reservas-com-mlg-1">
+
+<ul>
+<li><p>No entanto, deve-se estar atento a alguns pontos:</p>
+
+<ul>
+<li><p>O MLG assume que não há desenvolvimento além da &ldquo;cauda&rdquo;, e projeta os pagamentos apenas até o tempo do último dado observado. Para considerar desenvolvimento além da &ldquo;cauda&rdquo;, olhar modelos <code>ClarkLDF</code> ou <code>ClarkCapeCod</code> no pacote <code>ChainLadder</code>.</p></li>
+<li><p>O modelo assume que os incrementos são independentes. Essa suposição pode não ser válida, por exemplo para observações dentro de uma mesmo ano-calendário que podem ser correlacionadas devido a inflação ou outros fatores externos.</p></li>
+<li><p>O modelo tende a ser super-parametrizado (parâmetros demais), o que pode levar a uma performance preditiva inferior.</p></li>
+</ul></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2><em>Bootstrap Chain-Ladder</em></h2></hgroup><article  id="bootstrap-chain-ladder">
+
+</article></slide><slide class=""><hgroup><h2><em>Bootstrap Chain-Ladder</em></h2></hgroup><article  id="bootstrap-chain-ladder-1">
+
+<ul>
+<li><p>O método de cálculo de reservas <em>Bootstrap Chain-Ladder</em> é uma alternativa aos modelos assintóticos que vimos antes.</p></li>
+<li><p><span class="black">
+<strong>1º passo:</strong></span> Ajustar um Modelo Quasi-Poisson (resultados iguais ao <em>Chain-Ladder</em>) ao triângulo de desenvolvimento para prever os futuros pagamentos. A partir desse modelo, os resíduos de Pearson são calculados. Os resíduos são então amostrados com o método <em>Bootstrap</em> para simular novos triângulos.</p></li>
+<li><p><span class="black">
+<strong>2º passo:</strong></span> O erro do processo é estimado com a média dos valores obtidos pelo <em>Bootstrap</em> e supondo uma distribuição Quasi-Poisson. A amostra obtida fornece uma estimativa para a distribuição preditiva da reserva, que pode ser usada para obter estatísticas descritivas, erros de predição, quantis, etc.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><em>Bootstrap Chain-Ladder</em></h2></hgroup><article  id="bootstrap-chain-ladder-2">
+
+<ul>
+<li><p>As fórmulas dos resíduos e mais detalhes do método estão na Seção 16.4.4.</p></li>
+<li><p>O método está implementado na função <code>BootChainLadder</code> no pacote <code>ChainLadder</code>.</p></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>## Bootstrap Chain-Ladder
+set.seed(1)
+B &lt;- BootChainLadder(cum.triangle, R=1000, process.distr=&quot;od.pois&quot;)</pre>
+
+</article></slide><slide class=""><hgroup><h2><em>Bootstrap Chain-Ladder</em></h2></hgroup><article  id="bootstrap-chain-ladder-3">
+
+<pre >## BootChainLadder(Triangle = cum.triangle, R = 1000, process.distr = &quot;od.pois&quot;)
+## 
+##      Latest Mean Ultimate Mean IBNR IBNR.S.E IBNR 75% IBNR 95%
+## 2007 12,690        12,690         0        0        0        0
+## 2008 12,746        13,099       353      127      430      569
+## 2009 12,993        14,025     1,032      202    1,165    1,368
+## 2010 11,093        13,133     2,040      270    2,216    2,525
+## 2011 10,217        13,866     3,649      392    3,900    4,336
+## 2012  9,650        16,815     7,165      630    7,559    8,268
+## 2013  6,283        20,677    14,394    1,185   15,203   16,298
+## 
+##                  Totals
+## Latest:          75,672
+## Mean Ultimate:  104,305
+## Mean IBNR:       28,633
+## IBNR.S.E          1,721
+## Total IBNR 75%:  29,787
+## Total IBNR 95%:  31,312</pre>
+
+</article></slide><slide class=""><hgroup><h2></h2></hgroup><article  id="section-5">
+
+<p><img src="23-nao_vida_reservas_pt2_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=""><hgroup><h2><em>Bootstrap Chain-Ladder</em></h2></hgroup><article  id="bootstrap-chain-ladder-4">
+
+<ul>
+<li><p>Os dois primeiros momentos são iguais aos estimados pelo modelo Poisson.</p></li>
+<li><p>No entanto, diferentemente do modelo <em>Mack</em>, temos, além dois primeiros momentos, os quantis da distribuição da reserva.</p></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2><em>Bootstrap Chain-Ladder</em></h2></hgroup><article  id="bootstrap-chain-ladder-5">
+
+<pre class = 'prettyprint lang-r'>quantile(B, c(0.75,0.95,0.99,0.995))</pre>
+
+<pre >## $ByOrigin
+##      IBNR 75% IBNR 95% IBNR 99% IBNR 99.5%
+## 2007     0.00     0.00     0.00      0.000
+## 2008   430.00   569.15   716.04    746.160
+## 2009  1165.00  1368.20  1514.01   1580.180
+## 2010  2216.00  2525.05  2757.07   2809.365
+## 2011  3900.00  4336.05  4641.45   4803.130
+## 2012  7559.25  8268.05  8858.09   9014.020
+## 2013 15203.25 16298.35 17215.32  17482.130
+## 
+## $Totals
+##               Totals
+## IBNR 75%:   29786.75
+## IBNR 95%:   31311.80
+## IBNR 99%:   32859.33
+## IBNR 99.5%: 33277.60</pre>
+
+</article></slide><slide class=""><hgroup><h2><em>Bootstrap Chain-Ladder</em></h2></hgroup><article  id="bootstrap-chain-ladder-6">
+
+<ul>
+<li><p>Como temos acesso a todos os triângulos simulados, podemos também estimar percentis para pagamentos a serem feitos no próximo ano.</p></li>
+<li><p>Por exemplo, para encontrar o percentil de 99,5% dos pagamentos do próximo ano:</p></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>ny &lt;- (col(inc.triangle) == (nrow(inc.triangle) - row(inc.triangle) + 2))
+paid.ny &lt;- apply(B$IBNR.Triangles, 3,
+                 function(x){next.year.paid &lt;- x[col(x) == (nrow(x) - row(x) + 2)]
+                             sum(next.year.paid) })
+paid.ny.995 &lt;- B$IBNR.Triangles[,,order(paid.ny)[round(B$R*0.995)]]
+inc.triangle.ny &lt;- inc.triangle</pre>
+
+</article></slide><slide class=""><hgroup><h2><em>Bootstrap Chain-Ladder</em></h2></hgroup><article  id="bootstrap-chain-ladder-7">
+
+<pre class = 'prettyprint lang-r'>(inc.triangle.ny[ny] &lt;- paid.ny.995[ny])</pre>
+
+<pre >## [1] 7076 3308 1352  970  868  338</pre>
+
+<ul>
+<li>Somando esses pagamentos e dividindo pelo total da reserva, esse cenário implicaria em uma utilização de 49% da reserva no próximo ano.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Outros métodos</h2></hgroup><article  id="outros-metodos">
+
+<ul>
+<li><p>O valor dos pagamentos incrementais pode ser ajustado com um modelo de regressão log-normal (Seção 16.4.5).</p></li>
+<li><p>O modelo incorpora efeitos diferentes para ano de origem, tempo de desenvolvimento e ano de pagamento.</p></li>
+<li><p>O ajuste desse modelo permite analisar se há efeitos significativos para cada um dos períodos, e mensurar esses efeitos. Além disso, permite fazer predição para períodos futuros.</p></li>
+</ul></article></slide>
+
+
+  <slide class="backdrop"></slide>
+
+</slides>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!-- map slide visiblity events into shiny -->
+<script>
+  (function() {
+    if (window.jQuery) {
+       window.jQuery(document).on('slideleave', function(e) {
+         window.jQuery(e.target).trigger('hidden');
+      });
+       window.jQuery(document).on('slideenter', function(e) {
+         window.jQuery(e.target).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>
