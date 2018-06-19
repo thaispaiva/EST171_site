@@ -122,6 +122,7 @@ lessons:
     lab: "23-nao_vida_reservas_pt2.R"
   - date: "20/06/18"
     title: "Finalização do Trabalho"
+    slides: "24-consideracoes_finais.html"
   - date: "25/06/18"
     title: "Apresentação Trabalho Final"
     trabalho: "trabalho-final.html"

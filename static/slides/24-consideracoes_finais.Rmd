@@ -1,0 +1,50 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "20 de junho de 2018"
+subtitle: "Considerações Finais"
+
+output:
+  ioslides_presentation:
+    css: my.css
+    highlight: pygments
+    logo: img/logo_ufmg.png
+    widescreen: true
+    self_contained: false
+    lib_dir: libs
+  beamer_presentation:
+    highlight: pygments
+
+header-includes: \usepackage{amsmath, amsfonts, bm}
+---
+
+```{r echo=FALSE, warning=FALSE, purl=FALSE}
+library(knitr)
+```
+
+
+## Alguns links
+
+- [Why Actuaries Should Start Paying Attention to Python](https://blog.actexmadriver.com/2018/06/13/why-actuaries-should-start-paying-attention-to-python/)
+
+- [Insurance Data Science Conference 2018](https://insurancedatascience.org/#about), London, 16 July 2018.
+
+  + R in Insurance: [Past conferences](https://insurancedatascience.org/#projects)
+  
+  + [Correlated log-normal chain-ladder model](https://magesblog.com/post/correlated-lognormal-chain-ladder-model/)
+
+
+## Formulário de avaliação
+
+- Por favor, preencham o formulário abaixo:
+
+<https://goo.gl/forms/Gb3rRQa5fdMgTUgR2>
+
+- Quanto mais comentários e sugestões, melhor!
+
+
+<div class="centered">
+Obrigada!
+</div>
+
