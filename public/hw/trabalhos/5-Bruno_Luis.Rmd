@@ -1,0 +1,207 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: "Bruno Torrente Lopes e Luís Henrique de O. Martins"
+date: "25 de junho de 2018"
+subtitle: "Apresentação do Trabalho Final"
+output:
+  ioslides_presentation:
+    widescreen: TRUE
+    smaller: TRUE
+
+
+---
+
+## Introdução sobre a base
+
+ - Os dados são as reivindicações médias e contagens de reivindicações para veículos segurados no Reino Unido (Século 20). 
+ 
+ - As médias dos sinistros são em libras esterlinas, com seus valores ajustados pela inflação. 
+ 
+ - O banco de dados contém 32 observações, que estão distribuidas em 4 variáveis, sendo duas delas categóricas e duas numéricas.
+ 
+# Analisando os Dados 
+
+## Análise Descritiva
+
+```{r, message=FALSE,echo=FALSE}
+require(plotrix)
+require(CASdatasets)
+data("ukautocoll")
+attach(ukautocoll)
+```
+
+```{r}
+summary(ukautocoll)
+```
+
+
+
+## Análise Descritiva
+
+```{r, message=FALSE}
+var(Claim_Count)
+sd(Claim_Count)
+var(Severity)
+sd(Severity)
+```
+
+```{r, message=FALSE,echo=FALSE}
+detach(ukautocoll)
+```
+
+## Análise Descritiva
+
+```{r, message=FALSE,echo=FALSE, fig.heigth=5, fig.width=4}
+hist(ukautocoll$Severity,density=40, main="Histograma da Severidade",xlab="Severidade",ylab="Frequência")
+boxplot(ukautocoll$Severity,main="Boxplot da Severidade")
+```
+
+
+
+## Análise Descritiva
+
+```{r, message=FALSE,echo=FALSE, fig.heigth=5, fig.width=4}
+hist(ukautocoll$Claim_Count,breaks = 10,density=40, main=c("Histograma do Número de Sinistros", "por observação"),xlab="Sinistros",ylab="Frequência")
+boxplot(ukautocoll$Claim_Count,main=c("Boxplot do Número de Sinistros", "por observação"))
+```
+
+## Análise Descritiva
+
+```{r, message=FALSE,echo=FALSE}
+
+require(plotrix)
+require(CASdatasets)
+data("ukautocoll")
+
+Idades<-c(NULL)
+
+for (x in seq(0,7,by=1)) {
+  
+Idades<-c(Idades,sum(ukautocoll$Claim_Count[seq(1+4*x,4+4*x,by=1)]))
+  
+  }
+total<-sum(ukautocoll$Claim_Count)
+Idades<-Idades/total
+
+slices <- Idades 
+lbls <- unique(ukautocoll$Age)
+pie3D(slices,labels=lbls,explode=0.2, main="Distribuição de Sinistros por Idade")
+
+```
+
+## Análise Descritiva
+
+```{r, message=FALSE,echo=FALSE}
+
+require(plotrix)
+require(CASdatasets)
+data("ukautocoll")
+
+Pleasure<-c(ukautocoll$Claim_Count[seq(1,32,by=4)])
+DriveShort<-c(ukautocoll$Claim_Count[seq(2,32,by=4)])
+DriveLong<-c(ukautocoll$Claim_Count[seq(3,32,by=4)])
+Bussiness<-c(ukautocoll$Claim_Count[seq(4,32,by=4)])
+total<-sum(ukautocoll$Claim_Count)
+
+slices <- c(sum(Pleasure)/total, sum(DriveShort)/total,sum(DriveLong)/total , sum(Bussiness)/total) 
+lbls <- c("Pleasure", "Drive Short", "Drive Long", "Business")
+pie3D(slices,labels=lbls,explode=0.2,main="Distribuição de Sinistros por Classes de Veículos")
+
+```
+
+#Ajustando os Dados 
+
+##
+ 
+```{r, message=FALSE,echo=FALSE}
+
+require(plotrix)
+require(CASdatasets)
+data("ukautocoll")
+modeloCount<-glm(ukautocoll$Claim_Count~ukautocoll$Age+ukautocoll$Vehicle_Use,family = poisson(link="log"))
+
+```
+
+
+```{r, message=FALSE,echo=FALSE}
+summary(modeloCount)
+```
+
+## Ajuste do Modelo
+
+```{r, message=FALSE,echo=FALSE}
+require(plotrix)
+require(CASdatasets)
+data("ukautocoll")
+
+Pleasure<-c(ukautocoll$Claim_Count[seq(1,32,by=4)])
+DriveShort<-c(ukautocoll$Claim_Count[seq(2,32,by=4)])
+DriveLong<-c(ukautocoll$Claim_Count[seq(3,32,by=4)])
+Bussiness<-c(ukautocoll$Claim_Count[seq(4,32,by=4)])
+
+plot(as.numeric(unique(ukautocoll$Age)),Pleasure,type="o",ylim=c(0,1000),xaxt="n",xlab="Idade",ylab="Sinistros",col="red",main="Distribuição de Sinistros por Idade para cada Classe de Veículo")
+axis(1,at=c(1:8),labels = unique(ukautocoll$Age))
+lines(unique(ukautocoll$Age),DriveShort,type = "o",col="blue")
+lines(unique(ukautocoll$Age),DriveLong,type = "o",col="darkgreen")
+lines(unique(ukautocoll$Age),Bussiness,type = "o",col="purple")
+legend(1, 1000, legend=c("Pleasure", "DriveShort","DriveLong","Business"),
+       col=c("red", "blue","darkgreen","purple"), lty=1,
+       title="Vehicle Use", text.font=4, bg='lightgrey')
+
+```
+
+##
+```{r, message=FALSE,echo=FALSE}
+
+require(plotrix)
+require(CASdatasets)
+data("ukautocoll")
+modeloSev<-glm(ukautocoll$Severity~ukautocoll$Age+ukautocoll$Vehicle_Use,family = Gamma(link="log"))
+```
+
+```{r, message=FALSE,echo=FALSE}
+
+
+summary(modeloSev)
+
+
+```
+
+## Ajuste do Modelo
+
+```{r, message=FALSE,echo=FALSE}
+
+require(plotrix)
+require(CASdatasets)
+data("ukautocoll")
+
+Pleasure<-c(ukautocoll$Severity[seq(1,32,by=4)]/4)
+DriveShort<-c(ukautocoll$Severity[seq(2,32,by=4)]/4)
+DriveLong<-c(ukautocoll$Severity[seq(3,32,by=4)]/4)
+Bussiness<-c(ukautocoll$Severity[seq(4,32,by=4)]/4)
+
+plot(as.numeric(unique(ukautocoll$Age)),Pleasure,type="o",ylim=c(40,200),xaxt="n",xlab="Idade",ylab="Severidade",col="red",main="Distribuição da Severidade por Idade para cada Classe de Veículo")
+axis(1,at=c(1:8),labels = unique(ukautocoll$Age))
+lines(unique(ukautocoll$Age),DriveShort,type = "o",col="blue")
+lines(unique(ukautocoll$Age),DriveLong,type = "o",col="darkgreen")
+lines(unique(ukautocoll$Age),Bussiness,type = "o",col="purple")
+legend(6, 200, legend=c("Pleasure", "DriveShort","DriveLong","Business"),
+       col=c("red", "blue","darkgreen","purple"), lty=1,
+       title="Vehicle Use", text.font=4, bg='lightgrey')
+
+```
+
+## Fim!
+
+```{r, message=FALSE,echo=FALSE}
+
+require(plotrix)
+require(CASdatasets)
+data("ukautocoll")
+
+knitr::include_graphics("http://wanna-joke.com/wp-content/uploads/2016/09/gif-car-crash-friday.gif")
+
+knitr::include_graphics("https://static.tudointeressante.com.br/uploads/2015/05/cachorros-que-amam-passear-de-carro-4.gif")
+```
+
+

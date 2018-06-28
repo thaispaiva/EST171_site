@@ -8,6 +8,8 @@ output:
     toc: true
     toc_float: true
     fig_caption: true
+    includes:
+       in_header: myheader.html
 ---
 
 ## Instruções
@@ -47,4 +49,23 @@ output:
 |Análise Descritiva         | 15 pts  |
 |Ajuste do Modelo           | 15 pts  |
 |Participação               |  5 pts  |
+</div>
+
+
+## Trabalhos
+
+<div style="width: 400px; margin:0 auto;" >
+
+| Dupla                               | Arquivo .Rmd    | Slides    |
+|-------------------------------------|:---------------:|:---------:|
+|1) Leonardo Borba e Luanvir          | <a href="trabalhos/1-LeonardoB_Luanvir.Rmd"><i class="fa fa-keyboard-o fa-lg"></i></a> | <a href="trabalhos/1-LeonardoB_Luanvir.html"><i class="fa fa-file-image-o fa-lg"></i></a> |
+|2) Leonardo Silva e Mateus           | <a href="trabalhos/2-LeonardoS_Mateus.Rmd"><i class="fa fa-keyboard-o fa-lg"></i></a> | <a href="trabalhos/2-LeonardoS_Mateus.html"><i class="fa fa-file-image-o fa-lg"></i></a> |
+|3) Fernanda e Verônica               | <a href="trabalhos/3-Fernanda_Veronica.Rmd"><i class="fa fa-keyboard-o fa-lg"></i></a> | <a href="trabalhos/3-Fernanda_Veronica.html"><i class="fa fa-file-image-o fa-lg"></i></a> |
+|4) Ygor Viana e Tomaz                | <a href="trabalhos/4-Ygor_Tomaz.Rmd"><i class="fa fa-keyboard-o fa-lg"></i></a> | <a href="trabalhos/4-Ygor_Tomaz.html"><i class="fa fa-file-image-o fa-lg"></i></a> |
+|5) Bruno e Luís Henrique             | <a href="trabalhos/5-Bruno_Luis.Rmd"><i class="fa fa-keyboard-o fa-lg"></i></a> | <a href="trabalhos/5-Bruno_Luis.html"><i class="fa fa-file-image-o fa-lg"></i></a> |
+|6) Guilherme Maciel e Igor Mazzeto   | <a href="trabalhos/6-Guilherme_Igor.Rmd"><i class="fa fa-keyboard-o fa-lg"></i></a> | <a href="trabalhos/6-Guilherme_Igor.html"><i class="fa fa-file-image-o fa-lg"></i></a> |
+|7) Beatriz e Iara                    | <a href="trabalhos/7-Beatriz_Iara.Rmd"><i class="fa fa-keyboard-o fa-lg"></i></a> | <a href="trabalhos/7-Beatriz_Iara.html"><i class="fa fa-file-image-o fa-lg"></i></a> |
+|8) Taís e Sérgio                     | <a href="trabalhos/8-Tais_Sergio.Rmd"><i class="fa fa-keyboard-o fa-lg"></i></a> | <a href="trabalhos/8-Tais_Sergio.html"><i class="fa fa-file-image-o fa-lg"></i></a> |
+|9) Luísa e Letícia                   | <a href="trabalhos/9-Luisa_Leticia.Rmd"><i class="fa fa-keyboard-o fa-lg"></i></a> | <a href="trabalhos/9-Luisa_Leticia.html"><i class="fa fa-file-image-o fa-lg"></i></a> |
+
 </div>

@@ -1,0 +1,119 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: "Leonardo Borba e Luanvir Luna"
+date: "25 de Junho de 2018"
+output:
+  ioslides_presentation:
+    smaller: TRUE
+    widescreen: TRUE
+  lidy_presentation: default
+subtitle: Apresentacao do Trabalho Final
+---
+
+
+## Sobre a Base
+
+- É uma base de dados contendo dados de frequência de sinistros e valor médio de indenizações e prêmios de carros de todo o país.
+
+- Foram retirados do site da Susep.
+
+- O banco contém 393.071 observações e 14 variáveis.
+
+- Selecionamos apenas o modelo gol 1.0 ano 2009 da região metropolitana de BH para fazermos a análise.
+
+# Análise Descritiva
+
+## Análise Descritiva
+
+```{r echo=FALSE, fig.align='center'}
+brvehins1a=read.csv("brvehins1a.csv", sep = ";")
+attach(brvehins1a)
+exposporsexo=c((ExposTotal[1]+ExposTotal[2]+ExposTotal[3]+ExposTotal[4]+ExposTotal[5]),(ExposTotal[6]+ExposTotal[7]+ExposTotal[8]+ExposTotal[9]+ExposTotal[10]))
+sexo = c("Feminino", "Masculino")
+barplot(exposporsexo,names.arg = sexo,ylim=c(0,20000), col=c("black","red"),xlab="Sexo", main="Frequência por sexo")
+```
+
+
+
+## Análise Descritiva
+
+```{r echo=FALSE, fig.align='center'}
+exposporfaixa=c((ExposTotal[1]+ExposTotal[6]),(ExposTotal[2]+ExposTotal[7]),(ExposTotal[3]+ExposTotal[8]),(ExposTotal[4]+ExposTotal[9]),(ExposTotal[5]+ExposTotal[10]))
+faixas = c("18-25","26-35","36-45","46-55",">55")
+barplot(exposporfaixa,names.arg = faixas,ylim=c(0,12000), col=c("blue","red","green","orange","black"),xlab="Faixa Etária", main="Expostos por Faixa Etária")
+```
+
+
+## Análise Descritiva
+
+```{r echo=FALSE, fig.align='center'}
+premioporfaixa=c((Prem[1]+Prem[6])/2,(Prem[2]+Prem[7])/2,(Prem[3]+Prem[8])/2,(Prem[4]+Prem[9])/2,(Prem[5]+Prem[10])/2)
+barplot(premioporfaixa,names.arg = faixas, col=c("blue","red","green","orange","black"),xlab="Faixa Etária", main="Valor do Prêmio por faixa etária")
+```
+
+
+## Análise Descritiva
+
+```{r echo=FALSE, fig.align='center'}
+totalFire=sum(ClaimAmountFire)
+totalColl=sum(ClaimAmountTotColl)
+totalOther=sum(ClaimAmountOther)
+valorportipo=c(totalFire,totalColl,totalOther)
+tipo = c("ClaimAmountFire","ClaimAmountTotColl","ClaimAmountOther")
+barplot(valorportipo,names.arg = tipo, col=c("blue","red","green"),xlab="Tipo de Indenização", main="Valor da indenização total pelo tipo de indenização")
+```
+
+
+## Análise Descritiva
+```{r echo=FALSE, fig.align='center'}
+barplot(ClaimNbFire,names.arg = DrivAge, col=Gender,xlab="Faixa Etária", main="Frequência de incêndio")
+legend("topright", legend=c("Feminino", "Masculino"),
+       fill=c("black", "red"), bty="n")
+```
+
+## Análise Descritiva
+```{r echo=FALSE, fig.align='center'}
+barplot(ClaimNbTotColl,names.arg = DrivAge, col=Gender,xlab="Faixa Etária",ylim=c(0,700), main="Frequência de Colisão")
+legend("topright", legend=c("Feminino", "Masculino"),
+       fill=c("black", "red"), bty="n")
+```
+
+## Análise Descritiva
+```{r echo=FALSE, fig.align='center'}
+barplot(ClaimNbOther,names.arg = DrivAge, col=Gender,xlab="Faixa Etária", main="Frequência de Outros")
+legend("topright", legend=c("Feminino", "Masculino"),
+       fill=c("black", "red"), bty="n")
+```
+
+# Ajuste do Modelo
+
+## Ajuste do Modelo
+```{r echo=FALSE, fig.heigth=1, fig.width=1}
+brvehins1a=read.csv("brvehins1a.csv", sep = ";")
+Modelo = glm(ClaimNbTotColl ~ Gender + DrivAge + offset(log(ExposTotal)) , family = poisson(link = "log"), data = brvehins1a)
+summary(Modelo)
+```
+
+## Ajuste do Modelo
+
+-Neste caso a Deviance residual é de 3.349, com 4 graus de liberdade, diferença < 1 . 
+
+-Para uma melhor confirmação do ajuste, comparamos o valor da Deviance com a Qui-Quadrado, sendo esta no valor de 9,488 para 4 graus de liberdade e 0,95 % de confiança, afirmamos que o nosso modelo está bem ajustado. 
+
+-Notamos também que todas as variáveis foram significativas.
+
+## Ajuste do Modelo
+
+-Interpretação dos parâmetros:
+
+-β1: Para um acréscimo de uma unidade em sexo, a razão de chance aumenta em 9,39%.
+
+-β21: Para um acréscimo de uma unidade em Faixa Etária entre 18 e 25 anos, temos uma diminuição de 99,83% na razão de chance.
+
+-β22: Para um acréscimo de uma unidade em Faixa Etária entre 26 e 35 anos, temos um aumento de 33,87% na razão de chance.
+
+-β23: Para um acréscimo de uma unidade em Faixa Etária entre 36 e 45 anos, temos um aumento de 33,85% na razão de chance.
+
+-β24: Para um acréscimo de uma unidade em Faixa Etária entre 46 e 55 anos, temos um aumento de 24,38% na razão de chance.
+
+# Fim

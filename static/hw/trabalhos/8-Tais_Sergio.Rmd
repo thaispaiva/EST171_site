@@ -1,0 +1,296 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: "Sérgio Luiz Júnior e Taís Melo Torres"
+
+date: "27 de junho de 2018"
+
+
+output:
+ ioslides_presentation:
+  smaller: TRUE
+  widescreen: TRUE
+ lidy_presentation: default
+subtitle: "Apresentação Trabalho Final"
+---
+
+# Apresentando os Dados
+  
+  
+## UK Car Insurance Claims for 1975
+  
+ - O banco de dados mostra as reivindicações por danos ao automóvel do segurado, para carros privados na Inglaterra em 1975. Os custos médios são em libras esterlinas, ajustados pela inflação. O banco de dados é composto por 128 observações.
+  
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+##### carregando pacotes
+{
+require(car) 
+require(CASdatasets)
+require(fitdistrplus)
+require(ggplot2)
+require(VGAM)
+}
+```
+```{r message=FALSE, warning=FALSE}
+data("ukaggclaim")
+dados = na.omit(ukaggclaim)
+attach(dados)
+head(dados)
+```
+  
+## Descrição das Variáveis
+ - OwnerAge - idade do segurado em anos, dividida em 8 faixas.
+ - Model - tipo do carro, em 4 grupos.
+ - CarAge - idade do carro em anos, dividida em 4 grupos.
+ - NClaims - número de sinistros.
+ - AvCost - custo médio de sinistro.
+
+# Análise Descritiva
+## Variável Resposta - Severidade
+```{r echo=FALSE, message=FALSE, warning=FALSE,fig.align='center', fig.heigth=5, fig.width=10}
+par(mfrow=c(2,2))
+boxplot(AvCost)
+
+customedioOwnerAge<-aggregate(dados[,"AvCost"], by=list(OwnerAge=dados$OwnerAge), mean)
+barplot(customedioOwnerAge[,2], names.arg = customedioOwnerAge[,1], las=3, col="green")
+
+customedioModel<-aggregate(dados[,"AvCost"], by=list(Model=dados$Model), mean)
+barplot(customedioModel[,2], names.arg = customedioModel[,1], las = 0, col= "purple")
+
+customedioCarAge<-aggregate(dados[,"AvCost"], by=list(CarAge=dados$CarAge), mean)
+barplot(customedioCarAge[,2], names.arg = customedioCarAge[,1],las=0, col="blue")
+
+```
+
+## Variável Resposta - Frequência
+```{r echo=FALSE, message=FALSE, warning=FALSE,fig.align='center', fig.heigth=5, fig.width=10}
+par(mfrow=c(2,2))
+boxplot(NClaims)
+
+sinmedioOwnerAge<-aggregate(dados[,"NClaims"], by=list(OwnerAge=dados$OwnerAge), mean)
+barplot(sinmedioOwnerAge[,2], names.arg = sinmedioOwnerAge[,1], las=3, col = "green")
+
+sinmedioModel<-aggregate(dados[,"NClaims"], by=list(Model=dados$Model), mean)
+barplot(sinmedioModel[,2], names.arg = sinmedioModel[,1], las=0, col = "purple")
+
+sinmedioCarAge<-aggregate(dados[,"NClaims"], by=list(CarAge=dados$CarAge), mean)
+barplot(sinmedioCarAge[,2], names.arg = sinmedioCarAge[,1], las=0, col="blue")
+
+
+```
+ 
+## Investigando relações entre variáveis
+```{r echo=FALSE, message=FALSE, warning=FALSE,fig.align='center', fig.heigth=3, fig.width=9}
+ggplot(data = dados) + 
+  geom_point(mapping = aes(x = OwnerAge, y = AvCost, color = CarAge))
+
+```
+ 
+# Severidade
+## Investigando Modelos
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.heigth=3, fig.width=9}
+fgam = fitdist(AvCost, "gamma")
+finvnorm = fitdist(AvCost, "inv.gaussian",start=list(mu=11,lambda=117))
+denscomp(list(fgam,finvnorm), legendtext=c("Gama","Normal Inversa"), fitcol=1:2, lwd=2,
+         main="Histograma e densidades gama ajustadas",xlegend="topright")
+```
+
+## Verificando Ajuste da Gama
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.heigth=3, fig.width=9}
+plot(fgam)
+```
+
+## Modelos testados
+```{r message=FALSE, warning=FALSE, eval=F}
+m1  = glm(AvCost ~ OwnerAge+Model+CarAge+NClaims,family = Gamma(link="log"))
+
+m2  = glm(AvCost ~ OwnerAge+Model+CarAge,family=Gamma(link="log")) 
+
+m3  = glm(AvCost ~ OwnerAge+Model*CarAge, family=Gamma(link="log"))
+ 
+m4  = glm(AvCost ~ OwnerAge*CarAge+Model, family=Gamma(link="log"))
+ 
+m5  = glm(AvCost ~ OwnerAge*Model+CarAge, family=Gamma(link="log"))
+
+m9  = glm(AvCost ~ OwnerAge+Model+CarAge, family=inverse.gaussian(link="log"))
+
+
+## agrupando faixas 21-24 e 25-29 pois não foram significativas
+dados2 = dados
+levels(dados2$OwnerAge)[levels(dados2$OwnerAge)%in%c("21-24","25-29")]<-"21-29"
+
+##modelo final com dados2 (faixas agrupadas)
+m6  = glm( AvCost~ OwnerAge+Model+CarAge,family=Gamma(link="log"), data = dados2)
+
+
+```
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE}
+m1  = glm(AvCost ~ OwnerAge+Model+CarAge+NClaims,family = Gamma(link="log"))
+summary(m1)
+pvalor_m1 = 1-pchisq(m1$deviance/0.09267202,m1$df.residual) 
+
+m2  = glm(AvCost ~ OwnerAge+Model+CarAge,family=Gamma(link="log"))
+summary(m2)
+pvalor_m2 = 1-pchisq(m2$deviance/0.0910768,m2$df.residual)
+
+m3  = glm(AvCost ~ OwnerAge+Model*CarAge, family=Gamma(link="log"))
+summary(m3)
+pvalor_m3 = 1-pchisq(m3$deviance/0.09340552,m3$df.residual)
+
+m4  = glm(AvCost ~ OwnerAge*CarAge+Model, family=Gamma(link="log"))
+summary(m4)
+pvalor_m4 = 1-pchisq(m4$deviance/0.07866378,m4$df.residual)
+
+m5  = glm(AvCost ~ OwnerAge*Model+CarAge, family=Gamma(link="log"))
+summary(m5)
+pvalor_m5 = 1-pchisq(m5$deviance/0.08380329,m5$df.residual)
+
+dados2 = dados
+levels(dados2$OwnerAge)[levels(dados2$OwnerAge)%in%c("21-24","25-29")]<-"21-29"
+
+##modelo final com dados2 (faixas agrupadas)
+m6  = glm( AvCost~ OwnerAge+Model+CarAge,family=Gamma(link="log"), data = dados2)
+summary(m6)
+pvalor_m6 = 1-pchisq(m6$deviance/0.09365582,m6$df.residual)
+
+m9  = glm(AvCost ~ OwnerAge+Model+CarAge, family=inverse.gaussian(link="log"))
+summary(m9)
+pvalor_m9 = 1-pchisq(m3$deviance/0.0004256355,m3$df.residual)
+```
+
+ 
+## Modelo Final 
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+ a =rbind(
+  with(m1, cbind(res.deviance = deviance, df = df.residual,dev_escalada=deviance/0.09267202,
+               p.valor =pchisq(deviance/0.09267202, df.residual, lower.tail=FALSE))),
+  with(m2, cbind(res.deviance = deviance, df = df.residual,dev_escalada=deviance/0.0910768,
+               p.valor =pchisq(deviance/0.0910768, df.residual, lower.tail=FALSE))),
+  with(m3, cbind(res.deviance = deviance, df = df.residual,dev_escalada=deviance/0.09340552,
+               p.valor =pchisq(deviance/0.09340552, df.residual, lower.tail=FALSE))), 
+   with(m4, cbind(res.deviance = deviance, df = df.residual,dev_escalada=deviance/0.07866378,
+               p.valor =pchisq(deviance/0.078663788, df.residual, lower.tail=FALSE))),
+   with(m5, cbind(res.deviance = deviance, df = df.residual,dev_escalada=deviance/0.08380329,
+               p.valor =pchisq(deviance/0.08380329, df.residual, lower.tail=FALSE))),
+   with(m6, cbind(res.deviance = deviance, df = df.residual,dev_escalada=deviance/0.09365582,
+               p.valor =pchisq(deviance/0.09365582, df.residual, lower.tail=FALSE))),
+  with(m9, cbind(res.deviance = deviance, df = df.residual,dev_escalada=deviance/0.0004256355,
+               p.valor =pchisq(deviance/0.0004256355, df.residual, lower.tail=FALSE)))
+  )
+ nomes=cbind(modelo=c("m1","m2","m3","m4","m5","m6","m9"))
+ cbind(nomes, a)
+```
+
+## Modelo Final
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+summary(m6)
+```
+
+## Análise de Resíduos
+```{r message=FALSE, warning=FALSE, include=FALSE}
+ r1 = residuals(m6,type="deviance")
+eta1 = log(fitted(m6))
+
+
+iconf = confint(m6,level=0.95)
+
+b = as.vector(m6$coefficients)
+beta_ord = cbind(b,iconf)
+
+
+```
+
+ 
+```{r echo=FALSE, message=FALSE, warning=FALSE,,fig.align='center', fig.heigth=3, fig.width=10}
+par(mfrow=c(1,2))
+
+#Neste gráfico os residuos devem ficar distribuidos aleatoriamente em torno 
+#de zero e com amplitude constante.
+plot(eta1,r1,ylab="Deviance Residual",xlab=expression(eta[1]))
+abline(h=0, lwd=2,col="red")
+
+plot(0:12,beta_ord[,1],ylim=c(min(beta_ord[,2]),max(beta_ord[,3])),pch=19,
+     ylab="Intervalo de Confiança",xlab=expression(beta))
+arrows(0:12,beta_ord[,2],0:12,beta_ord[,3], length=0.05, angle=90,code=3)
+abline(h=0,col="red",lwd=1)
+
+```
+ 
+## Interpretando os Betas
+- efeito = $(e^{\beta_j} - 1) * 100$, IC($95\%$)
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+betas = rbind(
+cbind(
+(exp(b[2])-1)*100, (exp(b[2]-1.96*0.10148)-1)*100,(exp(b[2]+1.96*0.10148)-1)*100),
+cbind(
+(exp(b[3])-1)*100, (exp(b[3]-1.96*0.11476)-1)*100,(exp(b[3]+1.96*0.11476)-1)*100),
+cbind(
+(exp(b[4])-1)*100, (exp(b[4]-1.96*0.11616)-1)*100,(exp(b[4]+1.96*0.11616)-1)*100),
+cbind(
+(exp(b[5])-1)*100, (exp(b[5]-1.96*0.11476)-1)*100,(exp(b[5]+1.96*0.11476)-1)*100),
+cbind(
+(exp(b[6])-1)*100, (exp(b[6]-1.96*0.11476)-1)*100,(exp(b[6]+1.96*0.11476)-1)*100),
+cbind(
+(exp(b[7])-1)*100, (exp(b[7]-1.96*0.11476)-1)*100,(exp(b[7]+1.96*0.11476)-1)*100),
+cbind(
+(exp(b[8])-1)*100, (exp(b[8]-1.96*0.07651)-1)*100,(exp(b[8]+1.96*0.07651)-1)*100),
+cbind(
+(exp(b[9])-1)*100, (exp(b[9]-1.96*0.07718)-1)*100,(exp(b[9]+1.96*0.07718)-1)*100),
+cbind(
+(exp(b[10])-1)*100, (exp(b[10]-1.96*0.07957)-1)*100,(exp(b[10]+1.96*0.07957)-1)*100),
+cbind(
+(exp(b[11])-1)*100, (exp(b[11]-1.96*0.07957)-1)*100,(exp(b[11]+1.96*0.07957)-1)*100),
+cbind(
+(exp(b[12])-1)*100, (exp(b[12]-1.96*0.07651)-1)*100,(exp(b[12]+1.96*0.07651)-1)*100),
+cbind(
+(exp(b[13])-1)*100, (exp(b[13]-1.96*0.07718)-1)*100,exp(b[13]+1.96*0.07718))
+)
+betasnomes=rbind("OwnerAge21-29","OwnerAge30-24","OwnerAge35-39","OwnerAge40-49","OwnerAge50-59","OwnerAge60+","ModelB","ModelC","ModelD","CarAge10+","CarAge4-7","CarAge8-9")
+cbind(betasnomes, betas)
+```
+# Frequência
+## Poisson
+```{r message=FALSE, warning=FALSE, include=FALSE}
+m7  = glm(NClaims ~ OwnerAge+Model+CarAge, family=poisson(link="log"))
+pvalor_m7 = 1-pchisq(m7$deviance,m7$df.residual) 
+
+m8  = glm.nb(NClaims ~ OwnerAge+Model+CarAge)
+pvalor_m8 = 1-pchisq(m8$deviance,m8$df.residual) 
+```
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+summary(m7)
+pvalor_m7
+```
+
+## Binomial Negativa
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+summary(m8)
+pvalor_m8
+```
+ 
+## Verificando ajuste dos modelos
+```{r}
+with(m7, cbind(res.deviance = deviance, df = df.residual,
+               p.valor =pchisq(deviance, df.residual, lower.tail=FALSE)))
+with(m8, cbind(res.deviance = deviance, df = df.residual,
+               p.valor =pchisq(deviance, df.residual, lower.tail=FALSE)))
+```
+
+ 
+## Verificando a qualidade do ajuste - Poisson
+```{r echo=FALSE, message=FALSE, warning=FALSE,,fig.align='center', fig.heigth=5, fig.width=10}
+fit.model=m7
+source("envel_pois")
+```
+
+## Verificando a qualidade do ajuste - Binomial Negativa
+```{r echo=FALSE, message=FALSE, warning=FALSE,,fig.align='center', fig.heigth=5, fig.width=10}
+fit.model=m8
+source("envel_nbin")
+```
+ 
+ 
+ 
+ 
+ 

@@ -1,0 +1,608 @@
+---
+title: "Métodos computacionais para análise de risco"
+author: 'Ygor Viana e Tomaz Lanza'
+
+date: "25 de março de 2018"
+subtitle: "Apresentação Trabalho Final"
+
+output:
+  ioslides_presentation:
+    smaller: TRUE
+    highlight: pygments
+    widescreen: TRUE
+---
+  
+  
+  
+## BANCO DE DADOS USPRIVAUTOCLAIM
+
+Este banco de dados mostra reclamos de seguros de automóveis de um seguradora nos EUA. As reivindicações que não foram fechadas até o final do ano são excluídas. Além disso, uma classifição de risco está disponível e é baseada nas características do motorista e do veículo.
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+
+require(CASdatasets)
+library(CASdatasets)
+data("usprivautoclaim")
+attach(usprivautoclaim)
+
+str(usprivautoclaim)
+
+
+```
+
+
+
+
+
+
+
+## Medidas da variável PAID (Valor das indenizações pagas)
+
+Uma breve analise descritiva dos dados foi realizada, onde a média de pagamentos da seguradora
+gira em torno de $1001,70.
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+summary(usprivautoclaim$PAID)
+
+```
+
+
+
+
+
+
+
+## Distribuição da variável PAID
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+boxplot(PAID)
+
+```
+
+
+
+
+
+
+## 1. Distribuição da variável PAID
+
+Após transformar a variável em log, observa-se uma melhor simetria dos valores observados. 
+Nota-se uma melhora na variância, porém ainda não parece ser constante a medida que nos afastamos dos quartis dois e três.
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+boxplot(log(PAID))
+
+```
+
+
+
+
+
+
+
+## Distribuição da variável PAID
+
+Nota-se uma assimetria na distribuição do valor das indenizações.
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+{hist(usprivautoclaim$PAID, freq = F, xlab = "Valores em d?lares", ylab = "Densidade", main = "Histograma de ln(PAID)")
+lines(density(log(usprivautoclaim$PAID)),lwd=1,col="red")}
+
+```
+
+
+
+
+
+
+
+## Distribuição da variável PAID
+
+Ao fazermos a transformação da variável para log, consegue-se observar uma distribuição parecida com a Normal, 
+podendo vir a sugerir que essa variável segue essa distruibuição.
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+{hist(log(PAID), freq = F, xlab = "Valores em d?lares", ylab = "Densidade", main = "Histograma de ln(PAID)")
+lines(density(log(PAID)),lwd=1,col="red")}
+
+
+```
+
+
+
+
+
+
+
+## 3. Distribuição variável AGE
+
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+summary(AGE)
+
+```
+
+
+## 3. Distribuição variável AGE
+
+Os valores parecem estar distribuídos de forma "parecida" com os da variável PAID: uma grande concentração de observações nas primeiras idades - assimetria à esquerda - e uma cauda pesada à direita, com poucas idades grandes, mas que ocorrem com alguma frequ?êcia esperada. A variância não parece ser constante também.
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+
+hist(AGE, freq = T, xlab = "Idades", ylab = "Frequ?ncia", main = "Histograma de AGE")
+
+```
+
+
+
+## 3. Distribuição variável AGE
+A melhor transformação encontrada foi: 1/sqrt(AGE):
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+
+hist((1/sqrt(AGE)), freq = T, xlab = "1/SQRT(Idades)", ylab = "Frequ?ncia", main = "Histograma de 1/SQRT(AGE)")
+
+
+```
+
+
+
+## 3. Distribuição variável AGE
+
+Medidas da variável AGE transformada:
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+summary(1/sqrt(AGE))
+
+```
+
+
+
+
+## 3. Distribuição variável AGE
+
+Coeficiente de variação.
+Interpretando tal coeficiente, pode-se afirmar que, em média, os desvios atingem em relação à média 8,063% do valor desta.
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+sd(1/sqrt(AGE), na.rm=TRUE)/mean(1/sqrt(AGE), na.rm=TRUE)*100
+
+```
+
+
+
+
+
+## 4. Descrição variáveis categóricas
+O restante das variáveis do banco são todas categóricas
+
+
+## 4.1. Variável STATE
+Existem 13 estados distintos.
+
+Há diferenças entre o número de indenizações e o estado de ocorrência. Certamente, há variáveis implícitas por trás de cada categoria de estado - número de expostos na apólice, número de motoristas habilitados, tamanho da população, idade para habilitação, etc. - que podem influenciar no número de indenizações.
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+require(ggplot2)
+library(ggplot2)
+require(plyr)
+library(plyr)
+
+sprop = count(usprivautoclaim, "STATE")
+
+splot = ggplot(sprop,aes(x = STATE, y = freq), width = 0.3)
+splot + geom_boxplot()+theme_minimal()
+
+
+```
+
+
+
+
+
+
+## 4.2. CLASS
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+require(ggplot2)
+library(ggplot2)
+require(plyr)
+library(plyr)
+
+cprop = count(usprivautoclaim, "CLASS")
+cprop
+cprop[order(cprop$freq, decreasing = TRUE),]
+
+cplot = ggplot(cprop,aes(x = CLASS, y = freq), width = 0.3)
+cplot + geom_boxplot(color="red") + theme_minimal()
+
+
+
+```
+
+
+
+
+
+## 4.3. GENDER
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+require(ggplot2)
+library(ggplot2)
+require(plyr)
+library(plyr)
+
+gprop = count(usprivautoclaim, "GENDER")
+gprop
+
+gplot = ggplot(usprivautoclaim,aes(x = GENDER, fill = GENDER))
+gplot + geom_bar(color="black", width = 0.5) + theme_minimal()
+
+
+```
+
+
+
+
+
+
+
+## 5. ANÁLISE MULTIVARIADA
+
+
+5.1. Análise ln(PAID) com AGE
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+require(ggplot2)
+library(ggplot2)
+require(plyr)
+library(plyr)
+
+
+lnpaidxage = ggplot(data=usprivautoclaim, aes(y=log(PAID), x=AGE))
+lnpaidxage + geom_hex()
+lnpaidxage + geom_hex() + geom_smooth(method='lm', aes(color="red"))
+
+```
+
+
+
+
+
+## 5. ANÁLISE MULTIVARIADA
+
+5.1. Análise ln(PAID) com AGE
+
+Valores dos resíduos são bem consideráveis; coeficiente pra idade deu significativo (valor p < 5%), porém, pelo R² e R² ajustado, o modelo não explica nada da variabilidade.
+
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+require(ggplot2)
+library(ggplot2)
+require(plyr)
+library(plyr)
+lmlogpaidxage = lm(formula = log(usprivautoclaim$PAID) ~ usprivautoclaim$AGE)
+summary(lmlogpaidxage)
+
+```
+
+
+
+
+
+## 5. ANÁLISE MULTIVARIADA
+
+
+5.2. Análise ln(PAID) com 1/sqrt(AGE)
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+require(ggplot2)
+library(ggplot2)
+require(plyr)
+library(plyr)
+
+plot1 = ggplot(data=usprivautoclaim, aes(y=log(PAID), x=1/sqrt(AGE)))
+plot1 + geom_hex() + geom_smooth(method='lm', aes(color="red"))
+
+```
+
+
+
+
+## 5. ANÁLISE MULTIVARIADA
+
+5.2. Análise ln(PAID) com 1/sqrt(AGE)
+
+
+Variância não é constante ao longo da variável resposta -> necessidade de usar um modelo do tipo "weighted least square".
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+usprivautoclaim$TRAGE = (1/sqrt(usprivautoclaim$AGE))
+lmtransf = lm(formula = log(PAID) ~ (TRAGE), data=usprivautoclaim)
+summary(lmtransf)
+
+```
+
+
+
+
+## 5. ANÁLISE MULTIVARIADA
+
+5.2. Análise ln(PAID) com 1/sqrt(AGE)
+
+Melhorou o ajuste e os resíduos são menores e mais bem comportados.
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+lmtransf = lm(formula = log(PAID) ~ (TRAGE), data=usprivautoclaim, weights = 1/AGE^3)
+summary(lmtransf)
+
+```
+
+
+
+
+
+## 5. ANÁLISE MULTIVARIADA
+
+5.3. LN(PAID) com STATE
+
+
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+require(ggplot2)
+library(ggplot2)
+require(plyr)
+library(plyr)
+
+boxstate = ggplot(data = usprivautoclaim, aes(x = STATE, y = log(PAID))) + geom_boxplot() + theme_bw()+ theme(axis.text.x=element_blank())
+
+boxstate + ggtitle("Boxplot de ln(indeniza??o) por estado")  + xlab("estado") + ylab("ln(indeniza??o)")
+
+
+```
+
+
+
+
+
+## 5. ANÁLISE MULTIVARIADA
+
+5.3. LN(PAID) com STATE
+
+Rejeita-se h0: não consideramos as médias entre os grupos iguais
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+oneway.test(log(PAID) ~ STATE, data = usprivautoclaim, na.action = na.omit, var.equal = FALSE)
+
+```
+
+
+
+
+
+
+
+
+## 5. ANÁLISE MULTIVARIADA
+
+5.4. LN(PAID) com CLASS
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+require(ggplot2)
+library(ggplot2)
+require(plyr)
+library(plyr)
+
+usprivautoclaim$lnPAID <- log(usprivautoclaim$PAID)
+str(usprivautoclaim)
+
+
+```
+
+
+
+
+## 5. ANÁLISE MULTIVARIADA
+
+5.4. LN(PAID) com CLASS
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+require(ggplot2)
+library(ggplot2)
+require(plyr)
+library(plyr)
+
+boxclass = ggplot(data = usprivautoclaim, aes(x = CLASS, y = lnPAID)) + geom_boxplot() + theme_bw()+ theme(axis.text.x=element_blank())
+boxclass + ggtitle("Boxplot de ln(indeniza??o) por classe")  + xlab("classe") + ylab("ln(indeniza??o)")
+
+
+```
+
+
+
+
+## 5. ANÁLISE MULTIVARIADA
+
+5.4. LN(PAID) com CLASS
+
+Rejeita-se h0: não consideramos as médias entre os grupos iguais
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+oneway.test(log(PAID) ~ CLASS, data = usprivautoclaim, na.action = na.omit, var.equal = FALSE)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+## 5. ANÁLISE MULTIVARIADA
+
+5.5. LN(PAID) com GENDER
+
+
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+require(ggplot2)
+library(ggplot2)
+require(plyr)
+library(plyr)
+
+boxgender = ggplot(data = usprivautoclaim, aes(x = GENDER, y = lnPAID)) + geom_boxplot() + theme_bw()
+boxgender + ggtitle("Boxplot de ln(indeniza??o) por g?nero")  + xlab("g?nero") + ylab("ln(indeniza??o)")
+
+```
+
+
+
+## 5. ANÁLISE MULTIVARIADA
+
+5.5. LN(PAID) com GENDER
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+oneway.test(log(PAID) ~ GENDER, data = usprivautoclaim, na.action = na.omit, var.equal = FALSE)
+
+```
+
+
+
+
+
+
+
+
+
+## AJUSTANDO O MODELO
+
+Modelo não ficou muito bem ajustado, sem muitas coisas explicaticas. 
+
+Vários níveis das variáveis categóricas não significativos estatisticamente.
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+lmfinal = lm(formula = log(PAID) ~ (TRAGE) + CLASS + STATE, data=usprivautoclaim, weights = 1/AGE^3)
+summary(lmfinal)
+
+```
+
+
+
+
+
+
+## Modelo apenas com a variável TRAGE
+
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+lmfinal2 = lm(formula = log(PAID) ~ (TRAGE), data=usprivautoclaim, weights = 1/AGE^3)
+lmfinal2
+summary(lmfinal2)
+```
+
+
+
+
+
+## Modelo considerando apenas vari?ál STATE
+
+Modelo considerando apenas variável STATE
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+lmfinal3 = lm(formula = log(PAID) ~ (STATE), data=usprivautoclaim, weights = 1/AGE^3)
+summary(lmfinal3)
+
+```
+
+
+
+
+
+
+## Modelo considerando apenas variável AGE
+
+
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+lmfinal4 = lm(formula = log(PAID) ~ (AGE), data=usprivautoclaim, weights = 1/AGE^3)
+summary(lmfinal4)
+
+```
+
+
+
+
+
+
+
+## Diferença entre os modelos
+
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+anova(lmfinal, lmfinal2, lmfinal3, lmfinal4)
+
+
+```
+
+
+
+
+
+
+
+
+## Gráfico dos Resíduos
+
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=5, fig.width=8}
+
+library(ggfortify)
+require(ggfortify)
+autoplot(lmfinal2)
+autoplot(lmfinal) + geom_hex()
+
+
+```
+
+
+
+
+
+
+## OBRIGADO
+
+
+```{r echo=FALSE, fig.align='center', message=FALSE, warning=FALSE, fig.height=3, fig.width=5}
+
+
+```

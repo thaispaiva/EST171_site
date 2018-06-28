@@ -1,0 +1,272 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: "Fernanda Barros e Verônica Bittencourt"
+date: "25 de junho de 2018"
+output:
+  ioslides_presentation:
+    highlight: pygments
+    widescreen: yes
+  slidy_presentation:
+    highlight: pygments
+  beamer_presentation:
+    highlight: pygments
+subtitle: Apresentação Trabalho Final
+---
+
+```{r, echo=FALSE, message=FALSE}
+
+```
+
+# Análise Descritiva
+
+```{r, echo=FALSE, message=FALSE, results=FALSE}
+library(CASdatasets)
+library(ggplot2)
+library(HH)
+library(Hmisc)
+library(MASS)
+library(knitr)
+library(png)
+```
+
+```{r, echo=FALSE, message=FALSE, results=FALSE}
+#getwd()
+#swautoins=read.csv(file="swautoins.csv",header=TRUE, sep=";" )
+data("swautoins")
+#attach(swautoins)
+```
+
+## Descrição dos dados
+
+- O banco de dados escolhido é o *Swedish Motor Insurance dataset*.
+
+- Os dados são referentes aos seguros de automóveis sueco, e foram coletados em 1977 pelo *Swedish Committee on the Analysis of Risk Premium* (Comitê Sueco para a Análise do Prêmio de Risco).
+
+- O banco de dados possui 7 variáveis e 2.182 observações.
+
+## Descrição dos dados
+
+- As variáveis do banco de dados são:
+
+Kilometres: quilômetros percorridos por ano. Agrupada em 5 categorias: 1) <1.000; 2) 1.000-15.000; 3) 15.000-20.000; 4) 20.000-25.000 e 5) >25.000
+
+Zone: zona geográfica. Agrupada em 7 categorias: 1) Stockholm, Göteborg, Malmö e arredores; 2) Outras cidades grandes e arredores; 3) Pequenas cidades e arredores no sul da Suécia; 4) Áreas rurais no sul da Suécia; 5) Pequenas cidades e arredores no norte da Suécia; 6) Áreas rurais no norte da Suécia e 7) Gotland.
+
+Bonus: experiência de aviso do motorista. Agrupada em 7 categorias, igual ao número de anos, mais um, desde o último aviso.
+
+## Continuação
+
+Make: tipo do veículo. Agrupado em 9 categorias: 1-8) representam oito modelos diferentes de carro comum e 9) todos os outros modelos são combinados nessa classe.
+
+Insured: número de anos segurados.
+
+Claims: número de reivindicações.
+
+Payment: soma dos pagamentos (em milhares de coroas suecas).
+
+
+## Descrição dos dados
+
+```{r, echo=FALSE}
+summary(swautoins)
+```
+
+
+## Análise das distribuições das variáveis contínuas
+
+- Distribuição da variável Soma dos Pagamentos:
+```{r, echo=FALSE, fig.align='center'}
+hist(log(swautoins$Payment), col="grey", probability=TRUE, xlab="Log (Soma dos pagamentos)",
+     main="Histograma do Log(Soma dos pagamentos)")
+lines(density(log(swautoins$Payment)), col="blue", lwd=2)
+```
+
+
+## Análise das distribuições das variáveis contínuas
+
+- Distribuição da variável Número de Reivindicações:
+```{r, echo=FALSE, fig.align='center'}
+hist(log(swautoins$Claims), col="grey", probability=TRUE, xlab="Log(Número de Reclamações)",
+     main="Histograma do Log(Número de Reclamações)")
+lines(density(log(swautoins$Claims)), col="blue", lwd=2)
+```
+
+
+## Análise das distribuições das variáveis contínuas
+
+- Distribuição da variável Log(Número de anos segurados):
+```{r, echo=FALSE, fig.align='center'}
+#swautoins$Insured=as.numeric(swautoins$Insured)
+hist(log(swautoins$Insured), col="grey", probability=TRUE, xlab="Log(Número de Anos Segurados)",
+     main="Histograma do Log(Número de Anos Segurados)")
+lines(density(log(swautoins$Insured)), col="blue", lwd=2)
+```
+
+
+## Relações entre as variáveis
+
+- Distribuição da Soma de Pagamentos segundo o Número de Reivindicações e o Número de Anos Segurados.
+```{r, echo=FALSE, fig.align='center', fig.height=4, fig.width=8}
+#swautoins$Insured=as.numeric(swautoins$Insured)
+par(mfrow=c(1, 2))
+plot(swautoins$Insured, swautoins$Payment, xlab="Número de Anos Segurados", ylab="Soma dos Pagamentos", pch=20)
+plot(swautoins$Claims, swautoins$Payment, xlab="Número de Reivindicações", ylab="Soma dos Pagamentos", pch=20)
+```
+Os valores dos pagamentos aumentam com o tempo de exposição e o com o número reivindicações de forma linear.
+
+
+## Frequência de Reivindicações
+
+```{r, echo=FALSE, message=FALSE}
+FreqClaims=swautoins$Claims/swautoins$Insured
+SevClaims=swautoins$Payment/swautoins$Claims
+```
+Para compreender os efeitos das variáveis explicativas sobre a frequência de reivindicações, apresentamos boxplots com o número médio de reivindicações por segurado versus cada variável categórica.
+
+
+## Frequência de Reivindicações por Distância Percorrida e Zona Geográfica
+```{r, echo=FALSE, message=FALSE, fig.align='center', fig.height=4, fig.width=8}
+swautoins2 = subset(swautoins, Claims/Insured < 1 )
+par(mfrow=c(1, 2))
+boxplot(swautoins2$Claims/swautoins2$Insured ~ swautoins2$Kilometres, data=swautoins2,
+   ylab="Número Médio de Reivindicações",xlab="Distância Percorrida")
+boxplot(swautoins2$Claims/swautoins2$Insured ~ swautoins2$Zone, data=swautoins2,
+   ylab="Número Médio de Reivindicações",xlab="Zona Geográfica")
+```
+Verifica-se frequências mais baixas associadas a distâncias menores e a zonas não urbanas.
+
+## Frequência de Reivindicações por Bônus e Modelo do Veículo
+```{r, echo=FALSE, message=FALSE, fig.align='center', fig.height=4, fig.width=8}
+par(mfrow=c(1, 2))
+boxplot(Claims/Insured ~ Bonus, data=swautoins2,
+   ylab="Número Médio de Reivindicações",xlab="Anos Livre de Acidentes")
+boxplot(Claims/Insured ~ Make, data=swautoins2,
+   ylab="Número Médio de Reivindicações",xlab="Modelo do Veículo")
+```
+Frequências mais baixas de reivindicações estão associadas com um maior nível de Bônus (anos livres de acidentes) e quanto ao tipo de automóvel verifica-se que impacta bastante no número de reivindicações.
+
+
+## Severidade das Reivindicações
+
+Para a severidade dos sinistros, apresentamos boxplots com o pagamento médio do sinistro versus cada variável categórica.
+
+
+## Severidade das Reivindicações por Distância Percorrida e Zona Geográfica
+```{r, echo=FALSE, message=FALSE, fig.align='center', fig.height=4, fig.width=8}
+swautoins2 = subset(swautoins, Claims>0, Payment/Claims<31000 )
+swautoins2 = subset(swautoins2, Payment/Claims<31000 )
+par(mfrow=c(1, 2))
+boxplot(Payment/Claims ~ Kilometres, data=swautoins2,
+   ylab="Valor Médio de Pagamentos",xlab="Distância Percorrida")
+boxplot(Payment/Claims ~ Zone, data=swautoins2,
+   ylab="Valor Médio de Pagamentos",xlab="Zona Geográfica")
+```
+Observa-se que o Valor Médio de Pagamentos por Reivindicação praticamente não muda para a Distância Percorridapor ano. A análise por Zona Geográfica mostra que a Zona 7 possui severidade média muito menor que as demais.
+
+
+## Severidade das Reivindicações por Bônus e Modelo do Veículo
+```{r, echo=FALSE, message=FALSE, fig.align='center', fig.height=4, fig.width=8}
+par(mfrow=c(1, 2))
+boxplot(Payment/Claims ~ Bonus, data=swautoins2,
+   ylab="Valor Médio de Reivindicações",xlab="Anos Livre de Acidentes")
+boxplot(Payment/Claims ~ Make, data=swautoins2,
+   ylab="Valor Médio de Reivindicações",xlab="Modelo do Veículo")
+```
+O Modelo do veículo resulta em grande variação no Valor Médio dos Pagamentos.
+
+
+# Inferência e Ajuste
+
+## Ajuste para a Frequência - Poisson
+
+Usamos um modelo de regressão de Poisson com função de ligação logarítimica para modelar a frequência de reivindicações. O modelo foi ajustado usando máxima verossimilhança. As categorias de referência correspondem à primeira de cada variável.
+
+
+## {.smaller}
+```{r, echo=FALSE, message=FALSE}
+#Insured=as.numeric(swautoins$Insured)
+#ContPoisson1=glm(swautoins$Claims ~ 1, offset=log(swautoins$Insured), poisson(link=log))
+ContPoisson2=glm(swautoins$Claims ~ factor(swautoins$Kilometres) + factor(swautoins$Zone) + factor(swautoins$Bonus) + factor(swautoins$Make), offset=log(swautoins$Insured), poisson(link=log))
+summary(ContPoisson2)
+```
+
+
+## Continuação
+
+```{r, echo=FALSE, message=FALSE, out.height=400, out.width=400}
+
+img2_path <- "imagem2.png"
+img2 <- readPNG(img2_path, native = TRUE, info = TRUE)
+#attr(img2, "info")
+
+include_graphics(img2_path)
+
+```
+
+## Ajuste para a Frequência - Poisson
+
+Ex.: Um motorista  mora na Zona Geográfica 1, dirige entre 1 e 15 mil km por ano (kilometres = 2), teve 1 acidente no último ano (Bônus=1) e dirige o tipo de veículo 6. A partir dos coeficientes:
+-1.813 + 0.213 - 0.336 = -1.936
+Para uma apólice dessa combinação, estimamos um número de reivindicações com exp(-1.936) = 0,144. A probabilidade de não haver reivindicações no ano é 0.866.
+
+## Ajuste para a Severidade - Gama
+
+Para a Severidade das Reivindicações ajustamos um modelo de regressão Gama, usando a função de link logarítimica, e a máxima verossimilhança. Optamos pelo ajuste de um modelo apenas com as variáveis explicativas Zona Geográfica e Modelo do Veículo.
+
+## {.smaller}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results=FALSE}
+swautoins3 = subset(swautoins, Claims>0 )
+rm(SevClaims)
+SevClaims=swautoins3$Payment/swautoins3$Claims
+Weight=1/sqrt(swautoins3$Claims)
+Gotland = 1*(swautoins3$Zone==7)
+Safe = 1*(swautoins3$Bonus ==7)
+
+#SeveridadeGAM3=glm(swautoins3$Payment  ~ factor(swautoins3$Kilometres) + factor(swautoins3$Zone) + factor(swautoins3$Bonus) + factor(swautoins3$Make), offset=log(swautoins3$Claims), weights=Weight, Gamma(link=log))
+
+#summary(SeveridadeGAM3)
+#anova(SeveridadeGAM3,test="Chisq")
+#resids = residuals(SeveridadeGAM3, type=c("deviance"))
+```
+
+```{r, echo=FALSE, message=FALSE}
+#removemos as variáveis Kilometres e Bonus
+SeveridadeGAM4 = glm(swautoins3$Payment  ~ factor(swautoins3$Zone) + factor(swautoins3$Make), offset=log(swautoins3$Claims), weights=Weight, Gamma(link=log))
+
+summary(SeveridadeGAM4)
+#anova(SeveridadeGAM4,test="Chisq")
+#resids = residuals(SeveridadeGAM3,type=c("deviance"))
+#hist(resids)
+#temp1S = coefficients(SeveridadeGAM4)
+#temp2S = temp1S/sqrt(diag(summary(SeveridadeGAM4)$cov.scaled))
+#temp3S = cbind(temp1S,temp2S)
+
+```
+
+
+## Continuação
+
+```{r, echo=FALSE, message=FALSE, out.height=400, out.width=400}
+
+img1_path <- "imagem1.png"
+img1 <- readPNG(img1_path, native = TRUE, info = TRUE)
+#attr(img1, "info")
+
+include_graphics(img1_path)
+
+```
+
+
+## Ajuste para a Severidade - Gama
+
+Pelo summary do modelo veificamos que as categorias de referência são a Zona 1 e o Modelo do Veículo 1. 
+Ex.: Um motorista que mora na Zona 1 e possui veículo do tipo 6 :
+8.388 + 0.108 = 8.496
+A expectativa de valor do pagamento é de exp(8.496) = 4.895 (em milhares de coroas suecas)
+
+
+# Bibliografia
+
+## Referências Bibliográficas
+
+Frees (2010), Regression modelling with actuarial and financial applications, Cambridge University Press.

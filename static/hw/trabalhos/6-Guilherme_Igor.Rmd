@@ -1,0 +1,303 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+
+date: "27 de Junho de 2018"
+subtitle: "Apresentação Trabalho Final"
+
+output:
+  revealjs::revealjs_presentation:
+    theme: league
+    highlight: pygments
+    widescreen: FALSE
+    center: TRUE
+    transition: zoom
+    fig_height: 5
+
+---
+
+
+# Pacote CASdatasets: freaggnumber
+
+```{r message=FALSE, warning=FALSE, echo=F, size="small"}
+
+if(!require("revealjs"))    install.packages("revealjs")
+if(!require("CASdatasets")) install.packages("CASdatasets")
+if(!require("ggplot2"))     install.packages("ggplot2")
+if(!require("xts"))         install.packages("xts")
+if(!require("corrplot"))    install.packages("corrplot")
+if(!require("dplyr"))       install.packages("dplyr")
+if(!require("qwraps2"))     install.packages("qwraps2")
+if(!require("knitr"))       install.packages("knitr")
+if(!require("gridExtra"))   install.packages("gridExtra")
+if(!require("cluster"))     install.packages("cluster")
+if(!require("kableExtra"))  install.packages("kableExtra")
+
+data(freaggnumber)
+dados <- freaggnumber
+dados <- subset(dados,
+                DriverAge <= 100
+                & VehAge >= 0
+                & LicenceAge <=100)
+
+dados <- cbind(dados, dados[,5]/dados[,4])
+dados <- cbind(dados, dados[,1]-dados[,2])
+fit <- kmeans(dados[,c(1, 3, 6, 7)], 2)
+dados <- cbind(dados, fit$cluster)
+names(dados) <- c(names(dados)[1:5], "ClamisPerExposure", "TimeOfLicence", "Cluster")
+```
+
+## O Pacote
+
+- O conjunto de dados `freaggnumber`, é parte do pacote `CASdatasets`, e apresenta informações referentes à reivindicação agregada de motoristas franceses. Nele se encontram 12.513 registros, e as seguintes variáveis:
+
+- **DriverAge**: Idade do motorista;
+- **LicenceAge**: A idade do motorista quando obteve a CNH;
+- **VehAge**: Idade do veículo;
+- **Exposure**: Exposição (em anos do seguro);
+- **ClaimNumber**: Número de reivindicações para aquele grupo.
+
+
+## Análise Descritiva
+
+```{r message=FALSE, warning=FALSE, echo=F, size="small"}
+g <- dados[c(1:10),c(1:5)]
+knitr::kable(g, padding = 0) %>%
+  kable_styling(bootstrap_options = "striped", font_size = 18)
+```
+
+
+## O Pacote
+
+- Duas novas variáveis foram adicionadas ao modelo para a análise:
+
+- **ClamisPerExposure**: Sinistros por tempo de exposição;
+- **TimeOfLicence**: Tempo de CNH (= Idade do motorista - A idade do motorista quando obteve a CNH)
+
+- Foram retirados da base alguns dados inverossímeis: DriverAge > 100, VehAge < 0, LicenceAge > 100
+
+## Análise Descritiva
+
+```{r message=FALSE, warning=FALSE, echo=F, size="small"}
+a <- as.matrix(summary(dados$DriverAge))
+a <- cbind(a, as.matrix(summary(dados$LicenceAge))[,1])
+a <- cbind(a, as.matrix(summary(dados$VehAge))[,1])
+a <- cbind(a, as.matrix(summary(dados$Exposure))[,1])
+a <- cbind(a, as.matrix(summary(dados$ClaimNumber))[,1])
+a <- cbind(a, as.matrix(summary(dados$ClamisPerExposure))[,1])
+a <- cbind(a, as.matrix(summary(dados$TimeOfLicence))[,1])
+colnames(a) <- c("DriverAge", "LicenceAge", "VehAge", "Exposure", "ClaimNumber", "ClamisPerExposure", "TimeOfLicence")
+a <- round(a, 2)
+
+knitr::kable(a, padding = 0) %>%
+  kable_styling(bootstrap_options = "striped", font_size = 18)
+
+```
+
+## Análise Descritiva
+
+- Existe uma forte relação (inversamente proporcional) entre o tempo de carteira do motorista e o número de sinistros por tempo de exposição:
+
+```{r message=FALSE, warning=FALSE, echo=F, fig.align="center"}
+
+correlacoes <- cor(dados)
+corrplot(correlacoes, type = "lower", order = "hclust",
+         tl.col = "black", tl.srt = 45, method="number")
+```
+
+## Análise Descritiva
+
+```{r message=FALSE, warning=FALSE, echo=F, fig.align="center"}
+q1 <- qplot(dados$DriverAge, geom="histogram",
+            binwidth = 5, main = "Idade dos Motoristas", 
+            xlab = "Idade", ylab = 'Frequência',
+            fill=I("blue"), 
+            col=I("red"), alpha=I(.2), xlim=c(0,100))
+
+q2 <- qplot(dados$LicenceAge, geom="histogram",
+            binwidth = 5, main = "Idade dos Motoristas quando obteve a carteira", 
+            xlab = "Idade", ylab = 'Frequência',
+            fill=I("blue"), 
+            col=I("red"), alpha=I(.2), xlim=c(0,100))
+
+q3 <- qplot(dados$VehAge, geom="histogram",
+            binwidth = 5, main = "Idade do veículo", 
+            xlab = "Idade", ylab = 'Frequência',
+            fill=I("blue"), 
+            col=I("red"), alpha=I(.2), xlim=c(0,100))
+q4 <- qplot(dados$TimeOfLicence, geom="histogram",
+            binwidth = 5, main = "Tempo de carteira", 
+            xlab = "Idade", ylab = 'Frequência',
+            fill=I("blue"), 
+            col=I("red"), alpha=I(.2), xlim=c(0,100))
+
+grid.arrange(q1, q2, q3, q4, ncol=2)
+```
+
+## Análise Descritiva
+#### Clusters
+
+```{r message=FALSE, warning=FALSE, echo=F, fig.align="center"}
+
+clusplot(dados, dados$Cluster, color=T, shade=TRUE, 
+         labels=1, lines=0, main = "Clusters")
+
+```
+
+## Análise Descritiva
+#### Clusters
+
+```{r message=FALSE, warning=FALSE, echo=F, fig.align="center"}
+
+dados1 <- subset(dados, Cluster == 1)
+dados2 <- subset(dados, Cluster == 2)
+
+a1 <- as.matrix(summary(dados1$DriverAge))[4,]
+a1 <- cbind(a1, as.matrix(summary(dados1$LicenceAge))[4,])
+a1 <- cbind(a1, as.matrix(summary(dados1$VehAge))[4,])
+a1 <- cbind(a1, as.matrix(summary(dados1$Exposure))[4,])
+a1 <- cbind(a1, as.matrix(summary(dados1$ClaimNumber))[4,])
+a1 <- cbind(a1, as.matrix(summary(dados1$ClamisPerExposure))[4,])
+a1 <- cbind(a1, as.matrix(summary(dados1$TimeOfLicence))[4,])
+
+a2 <- as.matrix(summary(dados2$DriverAge))[4,]
+a2 <- cbind(a2, as.matrix(summary(dados2$LicenceAge))[4,])
+a2 <- cbind(a2, as.matrix(summary(dados2$VehAge))[4,])
+a2 <- cbind(a2, as.matrix(summary(dados2$Exposure))[4,])
+a2 <- cbind(a2, as.matrix(summary(dados2$ClaimNumber))[4,])
+a2 <- cbind(a2, as.matrix(summary(dados2$ClamisPerExposure))[4,])
+a2 <- cbind(a2, as.matrix(summary(dados2$TimeOfLicence))[4,])
+
+a3 <- rbind(a1, a2)
+colnames(a3) <- c("DriverAge", "LicenceAge", "VehAge", "Exposure",
+                  "ClaimNumber", "ClamisPerExposure", "TimeOfLicence")
+rownames(a3) <- c("Cluster 1", "Cluster 2")
+a3 <- round(a3, 2)
+
+knitr::kable(a3)%>%
+  kable_styling(bootstrap_options = "striped", font_size = 18)
+
+```
+
+## Análise Descritiva
+#### Smooth plots:
+
+```{r message=FALSE, warning=FALSE, echo=F, fig.align="center"}
+#results='hide'
+
+a1 <- ggplot(dados) + 
+  geom_smooth(mapping = aes(dados$DriverAge, dados$ClamisPerExposure)) + labs( x = "Idade do Motorista", y = "Clamis Per Exposure")
+
+a2 <- ggplot(dados) + 
+  geom_smooth(mapping = aes(dados$LicenceAge, dados$ClamisPerExposure)) + labs( x = "Idade Quando Obteve a CNH", y = "Cliaims Per Exposure")
+
+a3 <- ggplot(dados) + 
+  geom_smooth(mapping = aes(dados$TimeOfLicence, dados$ClamisPerExposure)) + labs( x = "Tempo de CNH", y = "Cliaims Per Exposure")
+
+a4 <- ggplot(dados) + 
+  geom_smooth(mapping = aes(dados$VehAge, dados$ClamisPerExposure)) + labs( x = "Idade do Veículo", y = "Cliaims Per Exposure")
+
+grid.arrange(a1, a2, a3, a4, ncol=2)
+
+```
+
+## Modelo de frequência anual de indenizações
+### Ajuste do modelo: Tempo de CNH
+
+- Após identificar na análise descritiva que a variável *Tempo de CNH* é a que mais influencia no número de sinistros por tempo de exposição, vamos usa-lá como foco do estudo.
+
+## Modelo de frequência anual de indenizações
+
+```{r message=FALSE, warning=FALSE, echo=T, fig.align="center"}
+
+regrpoislog <- 
+  glm(dados$ClaimNumber~as.factor(dados$TimeOfLicence)
+      + as.factor(dados$DriverAge) + as.factor(dados$VehAge)
+      +offset(log(dados$Exposure)),
+      data=dados,family=poisson(link="log"))
+```
+
+## Modelo de frequência anual de indenizações
+
+#### Summary
+```{r message=FALSE, warning=FALSE, echo=T}
+summary(regrpoislog)
+```
+
+## Modelo de frequência anual de indenizações
+
+#### 
+```{r message=FALSE, warning=FALSE, echo=F, fig.align="center"}
+plot(regrpoislog, which = 2)
+```
+
+## Modelo de frequência anual de indenizações
+
+```{r message=FALSE, warning=FALSE, echo=F, fig.align="center"}
+a3 <- ggplot(dados) + 
+  geom_smooth(mapping = aes(dados$TimeOfLicence, dados$ClamisPerExposure)) + labs( x = "Tempo de CNH", y = "Cliaims Per Exposure", title = "Observado")
+
+df4 <-
+  data.frame(
+    dados$ClaimNumber,
+    dados$Exposure,
+    dados$TimeOfLicence
+  )
+
+fit4 <-
+  glm(dados$ClaimNumber~as.factor(dados$TimeOfLicence) + as.factor(dados$DriverAge) + as.factor(dados$VehAge)
+      +offset(log(dados$Exposure)),
+      data=dados,family=poisson(link="log"))
+
+a4 <- predict(fit4, type="response")
+
+p4 <-
+  data.frame(
+    dados$TimeOfLicence,
+    a4/dados$Exposure
+  )
+
+q4 <- ggplot(p4) + 
+  geom_smooth(mapping = aes(p4[,1], p4[,2])) +
+  labs( x = "Tempo de CNH", y = "Frequencia anualizada", title = "Modelo")
+
+grid.arrange(a3, q4, ncol=2)
+```
+
+## Modelo de frequência anual de indenizações
+#### Resultados do Modelo:
+```{r message=FALSE, warning=FALSE, echo=F, fig.keep = 'last'}
+regrpoislog <- 
+  glm(dados$ClaimNumber~as.factor(dados$TimeOfLicence) + as.factor(dados$DriverAge) + as.factor(dados$VehAge)
+      +offset(log(dados$Exposure)),
+      data=dados,family=poisson(link="log"))
+ 
+
+a4 <- predict(regrpoislog, type="response")
+
+p1 <-
+  data.frame(
+    dados$DriverAge,
+    a4/dados$Exposure
+  )
+
+q1 <- ggplot(p1) + 
+  geom_smooth(mapping = aes(p1[,1], p1[,2])) +
+  labs( x = "Idade do Motorista", y = "Frequencia anualizada")
+
+p2 <-
+  data.frame(
+    dados$VehAge,
+    a4/dados$Exposure
+  )
+
+q2 <- ggplot(p2) + 
+  geom_smooth(mapping = aes(p2[,1], p2[,2])) +
+  labs( x = "Idade do Veículo", y = "Frequencia anualizada")
+
+
+grid.arrange(q1, q2, ncol=2)
+
+```
+  
+## Fim

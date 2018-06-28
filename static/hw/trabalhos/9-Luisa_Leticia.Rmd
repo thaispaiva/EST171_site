@@ -1,0 +1,185 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Letícia Barros e Luísa Coppe'
+
+date: "30 de maio de 2018"
+subtitle: "Apresentação do Trabalho Final"
+
+output:
+  ioslides_presentation:
+    highlight: pygments
+    widescreen: TRUE
+
+---
+
+
+# O banco de dados
+
+## O banco e suas variáveis 
+
+- Histórico de desastres na Austrália
+
+- Período: 1967 a 2014
+
+- 10 variáveis
+
+- **Discretas**
+
+    - Ano de ocorrência
+
+    - Trimestre de ocorrência
+
+    - Primeiro Dia da ocorrência
+
+    - Último Dia da ocorrência
+    
+## O banco e suas variáveis
+
+- **Contínuas**
+    
+    - Custo Original
+    
+    - Custo em 2011
+    
+    - Custo em 2014
+    
+- **Nominais**
+    - Evento (descrição)
+    
+    - Tipo (11 possibilidades)
+    
+    - Localidade 
+    
+# Análise Descritiva
+
+## Summary
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE }
+require(CASdatasets)
+require(ggplot2)
+data("auscathist")
+dados = auscathist
+auscathist$Type = as.factor(auscathist$Type)
+print(summary(auscathist))
+```
+
+## Histograma Custo 
+```{r, echo=FALSE , message=FALSE, warning=FALSE , fig.align='center'}
+
+attach(dados)
+print(hist(OriginalCost, xlab="Custo", ylab="Frequência", main="Custo", col="violetred", border="white", probability=T))
+
+```
+
+
+## Histograma LOG - Custo 
+```{r, echo=FALSE , message=FALSE, warning=FALSE , fig.align='center'}
+print(hist(log(OriginalCost), xlab="Custo", ylab="Densidade", main="Custo", col="violetred", border="white", probability=T))
+```
+
+## Log Custo por ano
+```{r, echo=FALSE , message=FALSE, warning=FALSE , fig.align='center'}
+print(plot(Year, log(OriginalCost), xlab = "Ano", ylab = "Custo", title = "Ano X Custo"))
+
+
+```
+
+## Log do Custo por tipo e ano
+ 
+```{r, echo=FALSE ,  fig.align='center'}
+ b = ggplot(data = auscathist ) + 
+  geom_point(mapping = aes(x = Year, y = log(OriginalCost), color = Type)) 
+print(b)
+```
+
+## Log Custo por tipo
+
+```{r, echo=FALSE , message=FALSE, warning=FALSE , fig.align='center'}
+
+a = ggplot(data = auscathist, aes(x = Year, y = log(OriginalCost))) +
+  facet_grid(. ~ Type) +
+  geom_point()
+                           
+                           
+print(a)
+```
+
+## Log Custo por tipo das variáveis selecionadas
+
+```{r, echo=FALSE , message=FALSE, warning=FALSE , fig.align='center',fig.heigth=3, fig.width=10.5}
+
+attach(auscathist)
+dados2 = auscathist[Type == "Cyclone" | Type == "Storm" |Type ==  "Flood"| Type == "Flood, Storm" | Type == "Hailstorm" | Type == "Bushfire" , ]
+
+
+a = ggplot(data = dados2, aes(x = Year, y = log(OriginalCost))) +
+  facet_grid(. ~ Type) +
+  geom_point()
+                           
+                           
+print(a)
+```
+
+
+## Custo por trimestre e tipo
+```{r, echo=FALSE , message=FALSE, warning=FALSE , fig.align='center'}
+a = ggplot(data = dados2, aes(x = Quarter, y = log(OriginalCost))) +
+  facet_grid(. ~ Type) +
+  geom_point()
+                           
+print(a)
+```
+
+
+# Inferência e Ajuste
+
+## Modelo Gamma - Custo
+
+```{r, echo=FALSE , message=FALSE, warning=FALSE , fig.align='center'}
+require(CASdatasets)
+require(ggplot2)
+data("auscathist")
+
+dados3 = auscathist[ Location == "Sydney" | Location == "Melbourne" |Location ==  "Brisbane"| Location == "Perth" , ]
+
+dados4 = dados3[Type == "Cyclone" | Type == "Storm" |Type ==  "Flood"| Type == "Flood, Storm" | Type == "Hailstorm" | Type == "Bushfire" , ]
+
+dados4 = dados4[1:50 ,]
+
+attach(dados4)
+
+mod1 = glm(OriginalCost ~ Year + Quarter + Type  + Location, family=Gamma(link="log"))
+
+summary(mod1)
+
+```
+
+## Modelo Gamma (sem localização) - Custo
+
+```{r, echo=FALSE , message=FALSE, warning=FALSE , fig.align='center'}
+
+
+
+mod2 = glm(OriginalCost ~ Year + Quarter + Type, family=Gamma(link="log"))
+
+summary(mod2)
+
+
+```
+
+## Análise de Resíduos
+
+```{r, echo=FALSE , message=FALSE, warning=FALSE , fig.align='center'}
+
+plot(fitted.values(mod2),mod2$residuals)
+abline(h=0)
+
+
+
+```
+
+## Exemplo 
+
+De acordo com o modelo ajustado, caso ocorra um desastre do tipo ciclone,
+no ano primeiro semestre do ano de 2019, o custo médio esperado que esse 
+desastre irá causar seria de aproximadamente R$ 4,2 milhões.

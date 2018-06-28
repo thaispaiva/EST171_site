@@ -1,0 +1,149 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: "Beatriz Villano e Iara Fernandes"
+date: "27 de junho de 2018"
+output:
+  ioslides_presentation:
+    highlight: pygments
+    widescreen: yes
+  slidy_presentation:
+    highlight: pygments
+subtitle: Apresentação Trabalho Final
+---
+
+```{r warning=FALSE, echo=FALSE, message=FALSE, include=FALSE}
+require(CASdatasets)
+data(canlifins)
+library(knitr)
+```
+
+# Descrição dos dados  
+
+## Banco de dados  
+
+- O banco de dados escolhido do pacote CASdatasets é o canlifins.
+
+- Este banco contem 14889 observações de contratos de anuidades de vida conjunta e de último sobrevivente em vigor de uma seguradora do Canadá no periodo de 29 de Dezembro de 1988 a 31 de dezembro de 1993.     
+
+- Há 5 variáveis que são:      
+Idade das mulheres no momento de contratação do plano.      
+Idade dos homens no momento de contratação do plano.      
+Tempo da morte das mulheres, zero se sobreviveu.      
+Tempo da morte dos homens, zero se sobreviveu.      
+Data do fim do contrato, se aplicável.      
+
+
+# Análise descritiva dos dados
+
+## Análise descritiva: mulheres
+
+```{r warning=FALSE, message=FALSE, echo=FALSE, fig.align='center', fig.heigth=7, fig.width=7}
+par(mfrow=c(1,1))
+hist(canlifins$EntryAgeF,prob=TRUE,xlim = c(0, 110),ylim = c(0, 0.08), xlab = "Idade das mulheres", main="Histograma e densidade empírica" )
+lines(density(canlifins$EntryAgeF), lty=1, lwd=4, col="purple")
+
+```
+
+## Análise descritiva: mulheres
+
+```{r warning=FALSE, message=FALSE, echo=FALSE, fig.align='center', fig.heigth=10, fig.width=10}
+par(mfrow=c(1,2))
+hist(canlifins$DeathTimeF,prob=TRUE,ylim = c(0, 2.1), xlab = "tempo da morte das mulheres", main="Histograma e densidade empírica" )
+hist(log(canlifins$DeathTimeF),ylim = c(0,1),prob=TRUE, xlab = "log do tempo da morte das mulheres", main="Histograma e densidade empírica" )
+
+```
+
+
+## Análise descritiva: homens
+
+```{r warning=FALSE, message=FALSE, echo=FALSE, fig.align='center', fig.heigth=7, fig.width=7}
+hist(canlifins$EntryAgeM,prob=TRUE,xlim = c(0, 110),ylim = c(0, 0.08), xlab = "Idade dos homens", main="Histograma e densidade empírica" )
+lines(density(canlifins$EntryAgeM), lty=1, lwd=4, col="brown")
+```
+
+## Análise descritiva: homens
+
+```{r warning=FALSE, message=FALSE, echo=FALSE, fig.align='center', fig.heigth=10, fig.width=10}
+par(mfrow=c(1,2))
+hist(canlifins$DeathTimeM,prob=TRUE,ylim = c(0, 2.1), xlab = "tempo da morte dos homens", main="Histograma e densidade empírica" )
+hist(log(canlifins$DeathTimeM),prob=TRUE,ylim = c(0, 1), xlab = "log do tempo da morte dos homens", main="Histograma e densidade empírica" )
+
+```
+
+## Análise descritiva: tempo do contrato
+
+```{r warning=FALSE, message=FALSE, echo=FALSE, fig.align='center', fig.heigth=7, fig.width=7}
+hist(canlifins$AnnuityExpiredM,prob=TRUE,ylim = c(0,1.5), xlab = "tempo do fim do contrato", main="Histograma e densidade empírica" )
+
+```
+
+
+## Análise descritiva
+
+```{r warning=FALSE, message=FALSE, echo=FALSE, fig.align='center', fig.heigth=20, fig.width=10}
+par(mfrow=c(1,2))
+plot(canlifins$AnnuityExpiredM, canlifins$EntryAgeM, xlab = "anuidade", ylab ="idade masculina")
+plot(canlifins$AnnuityExpiredM, canlifins$EntryAgeF, xlab = "anuidade", ylab ="idade feminina")
+
+```
+
+## Análise descritiva
+
+```{r warning=FALSE, message=FALSE, echo=FALSE, fig.align='center', fig.heigth=20, fig.width=10}
+par(mfrow=c(1,2))
+plot(canlifins$AnnuityExpiredM, log(canlifins$DeathTimeM), xlab = "anuidade", ylab ="tempo da morte masculina" )
+
+plot(canlifins$AnnuityExpiredM, log(canlifins$DeathTimeF), xlab = "anuidade", ylab ="tempo da morte feminina")
+
+```
+
+## Correlações
+
+```{r warning=FALSE, message=FALSE, echo=FALSE}
+novo <- canlifins
+novo$contrato = ifelse(novo$AnnuityExpiredM > 5,1,0) #1 para ativo  
+attach(novo)
+table(contrato)
+ageF = cor(contrato, EntryAgeF)
+ageM = cor(contrato, EntryAgeM)
+deathF = cor(contrato, DeathTimeF)
+deathM = cor(contrato, DeathTimeM)
+
+correlacoes = data.frame(ageF,ageM,deathF,deathM)
+kable(correlacoes)
+
+```
+
+
+# Modelo logístico
+
+## {.smaller}
+
+```{r warning=FALSE, message=FALSE, echo=FALSE, fig.align='center', fig.heigth=8, fig.width=8 }
+m1=glm(contrato ~ EntryAgeM + EntryAgeF + DeathTimeM + DeathTimeF, family=binomial(link="logit"))
+summary(m1)
+
+```
+
+## Análise do modelo
+
+O acréscimo de uma unidade na idade de entrada do homem ocasiona um aumento de 8% na chance, já com o mesmo acréscimo na idade da mulher o aumento da chance é de 2%.
+Já para as mortes, para cada unidade acrescida no numero de mortes dos homens e das mulheres há um amento de 23% e 25% respectivamente.
+
+O aumento na chance de cada variável é analisado sempre considerando as demais variáveis contantes.
+
+```{r warning=FALSE, echo=FALSE, message=FALSE}
+beta.1 = exp(0.081659) 
+beta.2 = exp(0.019890) 
+beta.3 = exp(0.210113) 
+beta.4 = exp(0.227501) 
+Tabela = data.frame(beta.1,beta.2,beta.3,beta.4) 
+
+kable(Tabela)
+```
+
+
+
+
+
+

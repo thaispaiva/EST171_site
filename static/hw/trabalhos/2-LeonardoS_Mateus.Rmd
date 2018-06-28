@@ -1,0 +1,225 @@
+---
+title: "Métodos Computacionais para Análise de Risco"
+author: 'Prof.: Thais Paiva'
+date: "25 de junho de 2018"
+output:
+  ioslides_presentation:
+    highlight: pygments
+    smaller: yes
+    widescreen: yes
+  beamer_presentation:
+    highlight: pygments
+subtitle: Apresentação Trabalho Final
+---
+
+
+# Trabalho Final - Mateus e Leonardo
+
+
+## Banco ustermlife
+
+O Banco de Dados selecionado foi originado da Survey of Consumer Finances (SCF) de 2004 que é uma pesquisa que obtem vários dados familiares e individuais relativos a renda. Abaixo as variáveis presentes:
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+require(CASdatasets)
+data("ustermlife")
+names(ustermlife)
+
+```
+
+Neste trabalho, a variável de interesse será a Renda (Income).
+
+## Análise Descritiva
+
+A variável renda apresenta alto grau de dispersão, por isso durante todo o trabalho, iremos trabalhar com o log(renda).
+O Histograma da variável log(renda) apresenta um comportamento semelhante ao da distribuição normal.
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+summary(ustermlife$Income)
+hist(log(ustermlife$Income), col="dodgerblue1", probability=TRUE,
+     xlab="Log(Renda)", main="Histograma Log(Renda)", ylim=c(0,0.4))
+
+```
+
+## Análise Descritiva - Sexo
+
+
+Primeiramente, deve-se ter noção que a quantidade de homens respondendo a pesquisa é bastante superior a de mulheres, sendo assim, há uma maior variabilidade das respostas entre as mulheres. 
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+
+sexo =c(sum(ustermlife$Gender==0)/length(ustermlife$Gender)*100,sum(ustermlife$Gender==1)/length(ustermlife$Gender)*100)
+matrix(data=sexo, nrow = 1, ncol = 2, dimnames = list(c("proporção"),c("mulheres","homens")))
+
+
+```
+
+Ao analisarmos as média das rendas, somos levados a acreditar que as mulheres recebem mais do que os homens.
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+
+m_mul = mean((ustermlife$Income[ustermlife$Gender==0]))
+m_hom = mean((ustermlife$Income[ustermlife$Gender==1]))
+matrix(data=c(m_mul,m_hom), nrow = 1, ncol = 2, dimnames = list(c("média renda"),c("mulheres","homens")))
+
+```
+
+## Análise Descritiva - Log(Renda) x Sexo
+
+Porém ao analisarmos o boxplot do log da renda em relação ao sexo, vê-se que as mulheres recebem, no geral, menos do que os homens.
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+
+boxplot(log(Income)~Gender,data=ustermlife, main="Distribuição log(Renda) por Sexo",	xlab="Sexo", ylab="Log(Renda)")
+
+```
+
+
+## Análise Descritiva - Idade
+
+Vêmos que a idade dos entrevistados é bem espalhada, tendo 50% dos dados concentrados entre as idades 37 e 58 anos.
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+summary(ustermlife$Age)
+hist(ustermlife$Age, main = "Histograma Idade",col="dodgerblue1", xlab = "Idade")
+```
+
+## Análise Descritiva - Log(Renda) x Idade
+É possível perceber uma tendencia de aumento nos rendimentos pela idade.
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+
+BD =ustermlife
+BD$fx = ifelse(BD$Age >19 & BD$Age<26,"20 a 25", BD$Age)
+BD$fx = ifelse(BD$Age >25 & BD$Age<31,"26 a 30", BD$fx)
+BD$fx = ifelse(BD$Age >30 & BD$Age<36,"31 a 35", BD$fx)
+BD$fx = ifelse(BD$Age >35 & BD$Age<41,"36 a 40", BD$fx)
+BD$fx = ifelse(BD$Age >40 & BD$Age<46,"41 a 45", BD$fx)
+BD$fx = ifelse(BD$Age >45 & BD$Age<51,"46 a 50", BD$fx)
+BD$fx = ifelse(BD$Age >50 & BD$Age<56,"51 a 55", BD$fx)
+BD$fx = ifelse(BD$Age >55 & BD$Age<61,"56 a 60", BD$fx)
+BD$fx = ifelse(BD$Age >60 & BD$Age<66,"61 a 65", BD$fx)
+BD$fx = ifelse(BD$Age >65 & BD$Age<71,"65 a 70", BD$fx)
+BD$fx = ifelse(BD$Age >70 & BD$Age<76,"71 a 75", BD$fx)
+BD$fx = ifelse(BD$Age >75 & BD$Age<81,"76 a 80", BD$fx)
+BD$fx = ifelse(BD$Age >80 & BD$Age<86,"80 a 85", BD$fx)
+
+boxplot(log(Income)~fx,data=BD, main="Distribuição log(Renda) por Idade",	xlab="Faixa Etária", ylab="Log(Renda)")
+```
+
+## Análise Descritiva - Escolaridade
+
+A variável Educação apresenta o número de anos que a pessoa passou estudando, podemos observar que a média e a mediana estão muito próximas.
+Entre 13 a 14 anos a pessoa se forma no Ensino médio nos EUA. Sendo assim, percebemos que aproximadamente 50% dos entrevistados concluíram o ensino médio.
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+summary(ustermlife$Education)
+```
+
+Como de 2 a 5 e de 6 a 10 anos representam uma parcela pequena na massa, estes foram agrupados
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+
+
+BD$escola = ifelse(BD$Education >1 & BD$Education<6,"2 a 5", BD$Education)
+BD$escola = ifelse(BD$Education >5 & BD$Education<11,"6 a 10", BD$escola)
+BD$escola = ifelse(BD$Education >10 & BD$Education<15,"11 a 14", BD$escola)
+BD$escola = ifelse(BD$Education >14 & BD$Education<18,"15 a 17", BD$escola)
+
+escolaridade =c(sum(BD$escola=="2 a 5")/length(BD$escola)*100,sum(BD$escola=="6 a 10")/length(BD$escola)*100,sum(BD$escola=="11 a 14")/length(BD$escola)*100,sum(BD$escola=="15 a 17")/length(BD$escola)*100)
+
+matrix(data=escolaridade, nrow = 1, ncol = 4, dimnames = list(c("proporção"),c("2 a 5","6 a 10", "11 a 14", "15 a 17")))
+
+```
+
+## Análise Descritiva - Log(Renda) x Escolaridade
+
+Percebemos uma tendencia de aumento dos rendimentos de acordo com os anos de estudos.
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+
+
+BD$escola = ifelse(BD$Education >1 & BD$Education<11,"2 a 10", BD$escola)
+
+boxplot(log(Income)~escola,data=BD, main="Distribuição log(Renda) por Escolaridade",	xlab="Anos Estudados", ylab="Log(Renda)")
+
+
+```
+
+## Análise Descritiva - Log (Renda) X Estado Civil
+Tem-se que a maioria dos entrevistados são casados, sendo que estes apresentam maiores rendas anuais. 
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+
+sit_civil =c(sum(BD$MarStat==1)/length(BD$MarStat)*100,sum(BD$MarStat==2)/length(BD$MarStat)*100,sum(BD$MarStat==0)/length(BD$MarStat)*100)
+
+BD$civil = ifelse(BD$MarStat ==0,"outra forma", BD$MarStat)
+BD$civil = ifelse(BD$MarStat ==1,"casado(a)", BD$civil)
+BD$civil = ifelse(BD$MarStat ==2,"morando parc", BD$civil)
+
+
+matrix(data=sit_civil, nrow = 1, ncol = 3, dimnames = list(c("proporção"),c("casado(a)", "morando com o parceiro(a)","outra forma")))
+
+boxplot(log(Income)~civil,data=BD, main="Distribuição log(Renda) por Estado Civil",	xlab="Estado Civil", ylab="Log(Renda)")
+
+```
+
+
+## Análise Descritiva - Log(Renda) x Etnia
+
+A grande maioria dos entrevistados são brancos, seguidos, em ordem, dos negros, hispânicos e outros.
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+
+etnia =c(sum(BD$Ethnicity==1)/length(BD$Ethnicity)*100,sum(BD$Ethnicity==2)/length(BD$Ethnicity)*100,sum(BD$Ethnicity==3)/length(BD$Ethnicity)*100, sum(BD$Ethnicity==7)/length(BD$Ethnicity)*100)
+
+matrix(data=etnia, nrow = 1, ncol = 4, dimnames = list(c("proporção"),c("brancos", "negros","hispânicos","outros")))
+
+BD$etnia = ifelse(BD$Ethnicity ==1,"branco", BD$Ethnicity)
+BD$etnia = ifelse(BD$Ethnicity ==2,"negro", BD$etnia)
+BD$etnia = ifelse(BD$Ethnicity ==3,"hispânico", BD$etnia)
+BD$etnia = ifelse(BD$Ethnicity ==7,"outro", BD$etnia)
+
+boxplot(log(Income)~etnia,data=BD, main="Distribuição log(Renda) por Etnia",	xlab="Etnia", ylab="Log(Renda)")
+
+
+```
+
+## LM Log(Renda)
+
+Ao aplicar a regressão linear obtemos um modelo com as variáveis significantes consoantes com o esperado de acordo com a a análise descritiva. Entretanto o coeficiente de determinação ficou bastante baixo, sugerindo talvez seja necessário incluir outras variáveis. <span class="green2"> 0.3006</span>
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+
+modelo2= lm(formula = log(Income)~ as.factor(Gender) + as.factor(fx) + as.factor(civil) + as.factor(etnia) + as.factor(escola) ,data = BD)
+summary(modelo2)
+
+
+```
+
+## LM Log(Renda) - Gráfico
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+
+par(mfrow=c(2,2))
+plot(modelo2,which=c(1,2,3,4))
+```
+
+## GLM log(renda) - Gamma
+
+Por fim, aplicamos um GLM utilizando a família Gamma e função de ligação identidade e obtemos um modelo bastante interessante.
+
+<span class="green2">deviance</span>
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+modelo3 = glm(formula = log(Income)~ as.factor(Gender) + as.factor(fx) + as.factor(civil) + as.factor(etnia) + as.factor(escola), family = Gamma(link = "identity"), data = BD)
+
+deviance(modelo3)
+
+```
+
+```{r echo=FALSE, fig.align='center',message =FALSE,warning=FALSE, fig.heigth=3, fig.width=5}
+
+
+summary(modelo3)
+
+```
